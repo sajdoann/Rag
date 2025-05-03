@@ -1,0 +1,1106 @@
+So, hello, we'll have to run everybody. It's a pleasure. We'll come to you with another
+continuation of the new information from the deep learning area.
+And welcome, before I will start transforming you, which will be doing for the whole
+lecture, are there maybe some questions, comments, wishes?
+Yeah, so the question is, what is the unagram distribution when the word pieces are
+being generated? So, if we have some text, then it's composed of words, or we have
+like one or two, and something. So, when I say unagram distribution, then unagram, that
+there's just like a single word by itself. So, when I say unagram distribution, I mean,
+I will consider all the words in the input text as a collection of, like, ram collection
+of elements, and I will compute the probability of each of them appearing in the whole
+context. So, probability of somewhere, w will be the number of occurrences of this divided
+by the sum of, or the whole, some of the occurrences of all words that we would cry
+or something. So, that's, it's just like a virtuality, but they call it unagram distribution
+to explicitly say or explain that they don't consider the neighborhood. It's just the,
+the, I think, itself. You could also say by-grime distribution, instead of unagram distribution,
+then you'll be computing the pairs of words that you want w to, and again, as the number
+of occurrences of these, of these sequence that will you want w to divide it by the number
+of all pairs of purg, which we have in the text. But if I said word probability, it would
+be the same thing. Okay. So, one more announcement is that tomorrow there is state holiday, either
+you know, it, or we affect the answer, or you don't, and then know it now because you are here,
+or you are, well, you're into the recordings and are sitting on the particular tomorrow,
+but there will be no practical tomorrow, right? Instead, there will be recorded on Thursday morning,
+for the time you can vote on Piazza if you are interested in, actually, like, being there,
+but you, of course, don't have to, maybe if cool on Thursday or something. So, the recordings
+will be available on Thursday afternoon or something. There will be the usual
+ablations and the results of the competition's plus the introduction of the new assignments,
+but the deadlines are still the same and unchanged, so they are still the day in the evening.
+And that will be the same, the next week because there is another state holiday on the 8th of May.
+Yep. So, we started talking about the transformer architecture as an alternative to recurrent
+new networks and also the convolutional new networks in some settings and the original paper
+introduced the transformers in the area of machine translations. So, we, for some time,
+we will be staying in the same domain, saying that the inputs are birds and we are translating things.
+And so on, but the basic blocks are then being used for various other things, other than just
+machine translation. But anyway, in this translation or sequence to sequence in an early
+architecture, the transformer has this encoder and the decoder part. And each of them is a stack of
+some number of layers, you can imagine six layers or 12 layers. And then the final output of the
+last encoder layer is then used in the decoder and then that produces the final outcome. So,
+every layer is composed of a self-attention, which is the main setting point of the transformers,
+right, followed by some non-local, sorry, non-linear but local processing. So, maybe this is the
+better representation. So, we process all the elements in the self-attention, so every element
+can look everywhere else. And then we do this non-local processing. So, I am now quickly recapitulating
+what we ended up with. For the attention, it works by every element having these three signs,
+query, p, and value, or pairs of queries and keys are combined, measured, and then each query
+computes a distribution over all possible keys. That's where it wants to attend to and then the
+value of these elements is copied proportionally or according to the attention, to the distribution,
+which given word or query gives to all other neighboring points. And similarly to, for example,
+Resnext, we don't perform just one single attention, but we allow the model to perform several
+parallel to the attention. So, it's not like that every element will get just these three signs,
+but it will get some number of sets of these three signs. So, for example, we get at eight,
+these parallel, such attention did they are called heads in this context. So, you could say,
+we have a multi-head attention with eight heads, which means that every element will get eight sets
+of these signs each query can value, but shorter one this time, so that the total sum of Q,
+K and V values generated for them is still the same, right? So, I've got multi-is.
+Yes, yes. Egypt's process is just part of the queries key sent values, but they are computed
+from all the X's. So, it's not like you don't see all the X's, but you have just a smaller matrix.
+So, we will generate smaller number of features out of the whole input. So, in some sense,
+every head still sees the whole input, but every head sees different features and a smaller number
+of features compared to single head attention. So, in the single head attention, let's say that we
+have got these X, right? So, that's some vector of some given size. So, then when you generate this
+query key and value, you do it by multiplying the X by the matrix XQ and you get Q. So,
+in the multi-head attention, then you will slice this Q into some number of parts,
+and then each of them will be independent query which you will use in the corresponding head.
+So, this is where we are slicing things, but these are just features computed from this whole
+representation. So, everybody can still see some, like, like potentially all the input, but
+different features in every head. Yeah, but in the convolutional, like in Resnex,
+we also did this, like we started the same number of channels, and first we did the convolution,
+which was one times one. So, this is the part which actually generated features out of all the
+thing, but I know what you mean, like in convolutions, you only always see on the local neighborhood.
+So, but that's true, like, in serve attention, there is no limit, so you can always visit and
+remember. So, what I meant here is that in Resnex, instead of running this three-time
+three convolution on all pairs of channels, we ran a lot of independent group convolutions,
+so these convolutions ran only on some small number of features. So, here we also run small
+number of features, but the kernel sizes are not affected. So, in S in the convolutions,
+where you could still visit the same neighborhood, just the small number of features,
+then here again, we can visit the same neighborhood, which is everything, but the attention
+works on on smaller signs. So, in theory, each of them can do different things, but
+unlimited on the distance of the interactions. And then when we get the results out of all these
+such attentions, we will combine them together, right, because each of those such attentions
+will produce some of the values. And we want them to be combined together with your original x,
+so we will run another, and now the features, basis, are not ideal, probably, right, because
+when this first part computed the value here, it's not like that this is the value in the same
+space, as originally on the input, but instead it's just some feature produced by this
+attention. So, we will add another linear layer here, so that we transform the intermediate values
+into input or into the features space, right, so that's what they mean here by saying this
+w, or output where the final result is linear combination of all the features, which the individual
+has generated. So, when we have the self-attention, it's natural to compare it to other elements,
+which allow combining a neighboring elements. So, we have seen RNNs, right, RNNs, also combined
+things in the neighborhood, and then they do it by this sequential processing, so when you have the
+feature for or output for some element, it depends not just on its element, but on some number
+of the preceding elements, and in the convolution, you do, or maybe I shouldn't draw circles,
+but when you have the inputs, then you are running these kernels, applying the kernels on some
+fixed neighborhoods, which I try to draw a lot of one dimensional convolution with a kernel size
+pre. So, first, how costly, or what's available, the performance, which we need to actually
+process or perform these operations. So, for the recurrent neural networks, each cell contains a lot
+of matrices of the size d square root, these, the dimensionality of the cell. So, running each cell
+will cost time, which is quadratic in the dimension, so running the whole RNN will be n times d square.
+Regarding the convolution, then for each element, what we do is we need to combine all the inputs
+and the output channels, which will cost me these squared, then I will need to apply the kernel
+or the positions, and then the kernel has some size. So, if k is 3, the kernel size, I need to
+do everything pre times, which is there, or 9 times when it was for the images.
+So, for the serve attention, once you have queries and values, you only need to, like most
+we need to do these operations. So, this multiplication takes the time of n square d. So,
+this is the part where you need to consider all pairs of the input birds. So, this is the part
+which is problematic, because that's something we didn't have to do before. Now, we have to
+consider all possible pairs of the input birds. And it's natural to be worried that it would be
+a problem. And it is a problem at some point, but because the alternative is to compute
+n d square, then it means that while this number of elements is limited by the dimensionality,
+it is fine, because those two complexities are authentically the same. So, if the number of
+elements is bounded by the dimensionality and it's usually 501,000 or something, then the quadratic
+part will not be problematic, because we do less operations for every pair of elements anyway.
+Only when we start talking about sequences, which would be larger thousands, tens of thousands
+and something, then this becomes an issue, but for like many usual inputs, this is fine.
+The good thing though is that the substitution can be computed in parallel, this it shares
+with the convolutional networks unlike the requirement network, which need to be computed
+one by one, which is why we wanted to get rid of it. But in the convolutional networks,
+you cannot combine all elements in one step. So, if you would like to somehow get an interaction
+or dependent between elements which are quite far from each other, you will need to do many
+convolutions and then poolings, so that the spatial resolution will get so small that they will
+interact in a single convolution, so you will need roughly like the logarithm of applications
+anyway to get these informations between these elements together, while in some attention you can
+combine any pair of elements when you want. Now, this is the greatest strength and also a
+great weakness of a transformer architecture. Transformers can do nearly anything, but that means that
+when you are training, it will have trouble deciding which of all these many behaviors which
+can do is the correct one. So, you can easily train to zero training error, but the generalization
+might be a bit shaky. For the other hands, there is like a built-in limitation that when you
+process the elements you do it one by one, but also means that you always know who is your predecessor,
+well, that's the element which was processed just before you. So, you have like the like this order
+is built in the processing and for the convolutions that will be strictly made that you only
+consider the local neighborhood and you do the same thing for all the places. With transformer,
+you can break both of these rules, but that also means that in some sense it's more difficult
+to train it because you need to choose the behavior which will transfer to the unseen data out
+of many possibilities. So, if you have a large number of data like millions of examples,
+then it will probably be fine and you won't need these limitations of the RNNs or convolutions,
+but if you have a small data set, then these limitations will become a useful biases which will
+choose the models which will luckily then transfer or verb also on the unseen data compared
+to the transformer where it's the large quantity of data which plays this role for you. Like
+if you have a lot of data it will learn it and it will do the right thing, but for a smaller data
+sets it might be the great. So, apart from the convolutions, sorry, from the self-attention part,
+there is this non-linear processing part which is very similar to the mobile inverted bottleneck.
+So, in the updated version there is a layer norm, then a fully connected layer which makes
+this wider non-linearity and a fully connected layer which makes things narrower to the overall
+architecture of transformer is this. We have these two sub-layers, the self-attention
+and the feed forward network and each sub-layer has a layer norm at the beginning, then the sub-layer
+then drop out then we add everything and we repeat this many times. So, this is the encoder.
+We then also have the decoder and in the decoder, we have got two tensions actually right,
+the one, the the mast, self-attention which allows you to attend to the other decoder elements,
+but you cannot attend to the future. During training, you could look there because we used
+teacher force saying so during training, we cheated and we already know what you should have
+generated, but you need to like this allow, we are not going to actually look there, right?
+So, we use this mask attention which allows you to attend only to you and to the pre-seeding
+elements, but not the following ones. And then we have the encoder decoder attention that's
+the attention from our hands, but our attention, well, this is more like long attention,
+but the one where the queries come from the decoder and it's the elements which are being generated
+which attend to look into the source in the original sentence. So, the queries are from the
+decoder and the keys and the values are from the encoder. Even if there are there are multiple
+levels, we always use just the last layer of the encoder. Like the last layer of the encoder is
+being used in all the layers indeed decoders. Sometimes people wonder whether maybe the first
+layer of the encoder should be used with the first layer of the decoder, but that's not how it is.
+We take the final encoder and just use it everywhere. So, one thing and now we go to the
+face where we are no longer no longer just reminding ourselves how the transformer works.
+One thing which we need to deal with is that right now the transformer has no idea where the
+elements which are playing grow in the self-attention. So, where they are in the original sentence.
+Right now we just have these signs, but if you take the input, sometimes then just terminate the
+things and then you would run the self-attention again, you just get the same output because the
+information of where the elements are is not preserved anywhere in any way. But for some
+that I mean even beneficial because this way we can process sets which don't have any order.
+But when we have sent them then the order of verse in the sentence is actually kind of important
+because if I say red apple and I don't know green plum then the fact that the apple is red and the
+plants aren't green is mostly set by the order of the verse. Right? You could also guess it from
+from the semantics, but really just knowing that there would be all the apple is red that
+can give away of all the these things belong together. And so we need to allow the transformer
+to also use this kind of information. And we will do it by representing the input elements
+not by just the usual embeddings like the token embeddings like the embeddings of whatever
+label or classes we have put inside. But also we will have an embedding or encoding for the position.
+So every position will get vector and that's actually we will just sum
+head together with the token embedding. Now this is summing over my sense weird.
+We could have just said how of the embedding will be the token embedding and the second half
+of the embedding will be the positional embedding and it would work. It's just that it is usually
+easier to just just like sum them all together like over each other and then let the network
+to decide how to distinguish or how to divide the capacity between these things. But there are
+models which keep the content embedding and the position embedding separate. But originally they
+were just sum over and summing the over is actually better than having just half of the embedding
+being the content and half being the position. But it's worse than the full weight to be the
+content and then having another position next to each other. So where will we get our positional
+embeddings, right? So here they show weight. We have the usual embeddings positional embeddings
+with some of them and that's what you'll pass in some. So one way we could do is we could just
+have a learnable embeddings. So we could have a matrix and then the individual rows in the matrix
+which would correspond to position like on the row i we would have the vector representing
+position i in the input sentence. So when we will get to see the input element, the first element
+would get this embedding, the second this one and so on until the end of the second sentence.
+So the slide disadvantage of this is that you always only learn some fixed number of embeddings
+so we may have a sequence which is longer than, well, tough, black. You just don't know how to represent
+the positions but many models which we are using nowadays still have these limitations. So
+so there is like a limit on those on the sequence which you can actually pass inside.
+So this looks well. In the transformer paper they also came up with not a trainable but given
+fixed embeddings which work as well or as good sometimes may be slightly better but like
+in the same way as this one. Now it will look a bit weird. So the main like keep your mind
+that this is not important in a sense that the transformer architecture works independently
+it's just that at the same time they also describe how these position embeddings might look like
+but you can easily train them and get the same results. So the design of the position embeddings
+should be that they will allow us this separation. If you have a verb you want to be able to say
+a query which will be like I am searching for a verb which is like K number of words apart.
+So like like the my my my immediate right name neighbor for example or my my the verb which is
+two words before me. Like you want to be able to generate queries which will contain like
+relative positions like if you are this right chair right apple then the apple might be saying
+I'm interested in knowing what words is just in front of me so you need to weigh of from your
+position embeddings create this sign which will say the previous position. So that that was the
+idea that this is what we want and we can achieve this if the position embeddings are signs and
+cosines of various frequencies. So I was starting with an image right so here what we are seeing
+are how these embeddings will look like let's say that the position embeddings will have a
+dimension of 500 and 12. So I will just write this or the positional encoding for I just want to
+use the same notation. So for the given position and index 2 I is sign of the position divided by
+I will just say 10k right it's 10,000 to I divided by D and then the second one so the position.
+I'm just just lying to slow myself down position and to I plus 1 is cosine of the position divided
+by 10,000 to I divide by D. So what this means? Well we will have signs and cosines of various
+frequency so depending on how this I goes. So there will be a sign of the position divided by 10,000 to 0
+right so it's not there. Then we will have a sign of the current position divided by D,
+root of 10,000 I don't know maybe I should say 10,000 to I divided by D. So 1 divided by D well I should
+say 2 for some reasons I would say 2 divided by D and then it will be 10,000 times for divided
+by D and so on. So I have got this 6 divided by D and so on and then the last one will be the sign
+of the position divided by 10,000 to 1. So these curves are drawn in this image so the signs are
+available here. So here on the left border there is this quick sign which changes quickly so
+there the position is just being passed through the sign it it oscillates like every 2 by
+birds it it gets repeated and then the further you move in the embedding the slower the signs are
+like so it's extremely slow sign which is like at the 0 when I was like very slowly increasing.
+So if I will consider a longer sequences so right now I'm considering sequences with 510 to 12
+subverts then you can see that they are like extremely quick signs and then they get slower and slower
+and slower and now this is a sign which starts increasing from the 0 but very very slow.
+And then I have the cosines there as well with the same frequency just about offset it.
+So this is what this description is it says okay on the dimension of 2i like the i is the index
+of the feature index of the dimension. I will assign with a frequency of
+maybe with a period of 10,000 to i over d. So this is an exponent which goes from 0 to
+d minus 2 over d so 1i. And then the so this is the dimensionality and then this position post
+that's the position of the bird in the sentence right so the first one will have position there
+0 and the second one will get the position 1 and so on and so on. So if you have like
+whole input birds on the input then this will be the embedding of the first one this will be the embedding
+of the second one is the embedding on the third one and so on. So this is the embedding matrix but
+explicitly constructed. So why is this working or why is it a good idea? Well what I said is that
+I wanted to be able to express relative positions. So these signs and cosines they have a good
+this good property that you can express way how to construct this this like offset it embedding.
+If you have an embedding for the position post you can create an embedding for the position
+position plus k some fixed offset with just a linear transformation of the original embedding.
+So why is that the case? Well maybe you remember that this formula which we have learned in the
+grammar school that sign of x plus y is sine x cosine y plus cosine x sine y.
+So how is it going to be useful to us? Well let's have a look how this sign of the position plus k
+divided by this large constant I'm lazy so I will just call this new and I will just say divided by
+new. So this is the sine of position divided by 10 cosine of k divided by 10 plus cosine of the
+position divided by 10 and the sine of k divided by 10. So these and these are the position embeddings
+for the position the OS and this these other elements that's a linear transformation which will
+remake them the sine and cosine into the sine of the offset position you can do the same formula
+similar formula for cosines and the blue parts of these they don't depend on the position they
+only depend on k and that I mentioned so it's like a fixed linear transformation which can take the
+position embedding and just offset it by any fixed constant and when we have the set of
+addition and when we are computing these queries and values we do it by a linear transformation.
+So whenever we are doing the signs we can use for example these transformations so the
+the serve attention is capable of expressing signs which will say please I want to look one position
+to the left for example. So we will see that these position and codeings work as well as the
+trainable lines so but this is not some some reason for success of transformers this is like a
+minor detail of how we can save slides some some work and we'll get the embedding which work
+by itself sometimes people say that this is like the important well it's like a small nitpick.
+But but the embeddings are being used in various cases generally when you want to represent
+number and give it to a network then usually instead of giving it just a number giving it this
+sign and beddings tend to work well in in most in in many tasks because you have like a
+different dimensions or like a richer representation of the same same quantity and you can do various
+interesting operations let the network and do interesting operations with it so we will see it later
+in other other tasks that we will say and we will use the the confining beddings for the numbers.
+So the transformer is being trained in parallel because we are going to teach a forcing and
+we use adom we discussed warm up how could be with the possible live versions at the beginning.
+So these are the results on the original paper they evaluated on the machine translation
+so they use the metric on the machine translation I don't want to go very very much into it but
+generally well what you see here are the like the scores of how many one grams by grams
+three grams or four grams you generated from from the reference translation but generally
+larger is better and the main point of of the whole result is that they were able to get to
+better results while requiring really like significantly less resources and by significantly
+less resources I really mean like 10 times less compute than what people need it so maybe in
+more interesting table is this one where the the authors perform a lot of oblation experiments
+which might give us an idea of how these components influence the final performance so we start with
+the base configuration like all the start commerce you can have small ones what the player
+larger mentions so we have various size configurations that is based small large extra large extra
+extra large and so on so the default one here is based so the base transformer has six
+players both in the encoder and in the coder that I mentioned a lot of all the features and
+everything in case 512 the all the difference is the feed forward network so the part where you
+expand things during the non-linear processing that's four times as large so that corresponds to the
+MBcon of expansion factor for and to we'll be using eight heads so each head has 64 dimensions
+for the queries and the keys and 64 for that so we are using the dropout of 10 percent
+labor smoothing of 10 percent and we are training for 10 thousand steps so with here we can see the
+translation score quality again larger is better and we can also see a perplexity so in some
+papers especially when fitting itself is difficult you are also showing losses so this is in fact
+the loss but the loss is this the loss entropy value and it depends on on the base so
+which we are computing it by so you can we do it with the natural logarithm you can also do it
+with binary logarithm and if you remember this cross entropy loss so in the case where the targets
+are one-hot values then this cross entropy is the pale divergence and the quantity if you remember
+it tells you like how many bits you need to describe the the produce distribution so if the new
+network just produce this correct output with the probability of one then the entropy of the
+would be zero right a unit no bit to transfer it and the larger the number is the the less I'm sure
+the network is about the outcome and so these these perplexities they are just an explanation
+of the cross entropy sprite so it's like E to the suitable cross entropy so
+while these cross entropy are measured in bits or nuts then this is measured in the number
+of possibility so what I mean is that if you say I need four bits to transfer the distribution
+you can also say well you can think about it as choosing between 16 equal possibilities
+right because choosing between 16 equal possibilities also means to like send four bits to
+which of these 16 possibilities are choosing and that's that's what the perplexity does right so
+the perplexity is four point nine that means that whenever the new network produce the distribution
+for for its output then the it contains same number of entropy as if you would be doing
+or if you get a uniform distribution over for point 42 elements so you can have some some
+idea like like it's like what this content is and this it doesn't depend on the base
+which are competing the logarithm in right because it's not it's not clogged but it's it's
+really like the number of possibilities which are kind of choosing from so these these perplexities
+are being used to show how well you train your model especially for the model which are difficult
+to train then apart from showing the metrics you are also showing the losses right which is
+what we sometimes also do but it's it's standard to show the explanations of those although
+the losses are usually quite small so the explanation numbers are larger anyway
+these are the base results so so by themselves the results are not interesting but what will be
+interesting how they will change when we change the architecture so first we could consider
+using just a single head attention so the queries keys and the values would be full with of 500
+and 12 and you can see that both the the loss and the the blue score are significantly
+diverse so using multi head attention is definitely a good idea and we could try using for
+816 or 32 heads and looking at the results then it seems that 8 and 16
+8 and 16 give very similar results and all the other ones are flight livers so there is like a
+trade of summary in the middle where we have got more than just one head but the queries and the
+keys signs are still large enough so that they could give you some meaningful meaning for results
+so nowadays I would say that it is a become a standard to say that the dimensionality of the queries
+and the keys will be 64 and then you have as many heads as needed so that these 64 chunks fill
+the D model so if the D model would be twice as large I would have twice as many layers that's twice
+as many heads sorry we could also try saving some computation by making the queries and the
+each smaller I can theory even if I would 512 teachers I could just just do a half of that
+for the queries and then divide it into the heads and we will say something save some things
+so we have smaller number of parameters but the results are worse for both of these cases so
+people are not really doing it and we are just using the same width as everywhere else
+we could also look at the capacity so decreasing the number of players with very detrimental
+so just having only two layers in the first row in this in this table on the other hand
+using eight players well gives mixed results so the losses better but the performance of the
+development set is not so it's obvious whether adding more layers would be helpful
+if we play with the dimensionality so making the whole model narrower so everything will be
+how again makes considerably versus results on the other hand making the model wider
+seems to be beneficial both for the loss and for the metric so increasing with
+seems to be more effective than then increasing that and we could also increase the depth
+or sorry the width in the feed forward network and again doing that is a good idea so
+out of this what they concluded is that like for scaling we will be not that much concerned about
+the number of players but we will most list scale by by making all the dimensionality wider
+dimensions wider and the standard is to do it both for the feed forward network and for the main
+dimensionality of the model so again nowadays standard is to like quadruple the number of dimensions
+in the feed forward network whatever the size of the remote is then they try evaluating the
+performance of a dropout and play with the move thing well in both cases the regularization
+is important because switching it off would give you a result on the death for the dropout
+it would even give you a worse loss so without the dropout it's even more difficult for the
+model to trade then there is this important line let's consider trained position bedding instead
+of the sinusoidal one because all about is the sinusoidal ones and well the results are
+really really identical but it's just one ten somewhere so it's fine and we can just use the
+sign once if we don't want to bother with a trained ones and so out of all the experiment they
+also say well let's design also a better bigger architecture by keeping the number of
+players but making everything wider and then they also need it to add a dropout trained longer
+and they were able to get to this bottom row of the results which achieved the best possible
+ones at the time so for the idea that the base model has 64 million parameters so it's like
+240 megabytes on your disk and this is more than 200 so it's like 400 megabytes or 800 megabytes
+so the main takeaway is something what I already discussed when we discussed talk about the
+self-adension tool transform is great it has much more expressive power than recurring
+one percent of the Russians but that comes with a price of the need to have so much data you can
+feel it into it so that the trained model will actually generalize well but in many situations
+we will have a lot of data so then this becomes an old non-issue if you like 3D visualizations
+there is a visualization here of the coder only model so we can see all the way it says this I
+don't know three dimensional cubes in the space and you can just try thinking about like what
+this component probably is according to the schema it's just a fun time and let's now discuss
+how we can use the transformers for other things than just translation so we will talk about
+two things today the first is how to generate better embeddings right we discussed virtual
+we discussed L mode and now we will use the transformers to generate as good embeddings as
+possible and then at the end of the lecture we will also discuss how we can use transformers to actually
+do image processing so nowadays if you have a lot of data the best models are also transformer based
+even if you want to do the image classification so first let's start with the with the embeddings
+so the MOS per released at the end of 2017 and the year later afterwards the afterwards a new
+model was released which is called burnt well in the paper they say that it's a bi-directional
+encoder representation from transformers but they are lying a lot in a sense that they didn't come
+up with a huge name first but they become up with the birth first so for us like here in Czech
+Republic this is not the show that we would watch watch every day so maybe you don't know
+this is any street but the the authors of all these these papers about various embeddings do
+they don't know it and so actually L mode is this guy right and from then on people are like well
+it's it's a nice thing let's just name everything according to the like figures from from this show
+so so burnt is this guy with this like high head or I don't know non symmetrical head
+and there it is Ernie and there is a model Ernie and Ernie and this is Big Bird he even got two
+different models named after him and there is Oscar and Cookie Monster and many others so it's like a
+full claw of naming these models they so it's like a probably took some time for the people to
+come up with a way how how they they could like this and that they're choice of a cronium
+but it's like a fun part of what you do when you write the paper like then you can read about
+papers which introduce actually to architecture or things like that and everybody writing them is
+just enjoying their time so burnt well anyway the name is not so bad because we will be using
+it transformers and the interesting part about it is that it's bi-directional so let's
+compare our possibilities sort of the prior approaches so in the L mode what we did is we got the
+input so we had the input embeddings and then we trained a forward facing our forward direction LSTM
+which was trained to predict the next word in the sequence we also have the backward facing LSTM
+and during inference we are both of them we can't contain eight or some of the results
+and we get the representations of every time put element so that representations contains
+both the information from the backward and the forward direction also people did
+the forward is that this unknown model called GPT was released the GPT is like a direct application
+of what L mode did but with transformers so what we do is we can create train a language model
+so something which gets a prefix of the sentence and then generates next word in the sentence there
+so it's like a decoder only model like you start with nothing and then you generate
+generate a whole sentence so it's like half of a transformer right you only have a masked
+self-attention and that's it it needs to be masked of course because we will be generating the
+sequences from it so whenever you are generating the first verb you cannot look into the future
+because there you would see the verb which we have like like virtually generated during training
+so you can do this and also obtain a good embeddings right because you will get the context
+generalized embeddings where the embedding of a verb would depend on itself and and the the pre
+pre-deceasing pre-deceasing once the previous ones probably so in bird they say well
+the problematic part about both of these approaches is that a single verb cannot look
+to both sides at the same time right you cannot really consider that the previous word is
+I don't know red and the following word is this this chair in the original sentence which I said
+in the LSTM you can look at one side only for the whole processing and then you get the output
+you can do this for the GPT and they also even did it only in one direction but in bird they
+try to come up with way of how you could actually look into both sides so you want to be able
+to generate the sentence so bird is not the generative model in a sense it cannot just generate
+a sentence word by word because well during processing it needs the whole sentence already so that
+it can look anywhere anywhere it wants but if you want to process a finished sentence and that's
+probably what you want to do so first let's deal with the technical stuff so the bird is just
+the transformer in coder right so there will be some number of the in coder layers and the
+bi-directionality the ability to look also to the future of the sentence is something which
+will make the training difficult so before we'll get to that let's consider how the inputs look
+like so the inputs of the birds are actually like to they call its sentences but it's better to say
+segments like like two segments of vex they are two because it will be useful for the downstream
+tasks when we use the model sometimes you might be solving tasks which required two parts of
+text for example you can imagine that you get some context and then a question right so the context
+is I don't know a variational author and coders allow you to I don't know whatever what great things
+we will be able to achieve with them and then the question would be like what is the name of the
+model which allows you to something and then you need to answer so it's like a ant question answering
+thing but it's not like you have to come up with the answer it's just the answer is somewhere in the
+text right so when doing this this breathing comprehension kind of task then you have naturally
+two parts of text the other contact them the question which you want to process so that's why
+they said okay let's let's train the model from the beginning that the input might be composed
+of two different parts so that there are these two segments in total so the element that the
+interior elements are still subverts and in total the sum of the two segments cannot exceed
+512 let's like the limit on the number of embeddings which they have at the beginning of the
+sequence you will always add a special token called CLS it's like classification token and at the end
+we will add a special token which just says that's and it's like a separator token and that's also being
+used in the middle to to separate the two segments if they are there so when generating the input
+for the transformer we will be summing 3 embeddings at this point actually the usual subvert embeddings
+then the positional embeddings they use just a train every once by by sign then cosine ones
+in some other models they do it again but by here they don't I never found out why
+whether they just didn't want to or it wasn't working really don't know and then we have these
+segment embeddings so the segment embeddings we will just have two segment embeddings the one just
+indicates I am a subvert which belongs to a segment A and the other one which has the I am a
+subvert which belongs to a subvert B so you immediately see where a subvert comes from
+so now this is the input so what will be the output what will be the goal of
+retraining of this model well in the LMO and GPT we are using the language model right so we get
+some number of words and then we are predicting the next one here we cannot predict the next one
+because if we allow to attend to the future right then if here I should be predicting apple
+and this but this apple is being passed here on the input and if I would be allowed to look there
+it will be trivial to generate apple right but if I will disallow looking there then this is not a
+bi-directional model just just a unidirectional one so what they do is instead of this they
+they perform masking so when you have a sentence you know right if something then what they do
+is they randomly choose some of the words and replace them with a mask so you can imagine that
+generated a space in their place and now the goal of this model is to actually come up with the
+verb which the model things should be there right this is something you can also do when you are
+doing some language exam so you are missing words and then you are trying to fill them in so this is
+all this mask language model means we choose only some number of words to be masked in this way so
+randomly we choose 15% of the input well I say words but I mean subverse right
+that is a bit tricky if you just remove half of the subverse because then it's kind of simple to
+decide what is the remaining part there so in some future versions the this mask equals improved
+to mask wholeverse back but here in the original one they still did subverse and the model will
+try to predict them so this is a mask language model if we have physically deleted the verb you can
+look anywhere you want but the information just will not be available anywhere right and we pay for it
+by being able to do this only with some small portion of the inputs there's still masking things
+like this is really being performed by physically replacing them with a different subverse the mask
+subverse but the problematic part is that during inference we don't want to mask anything right
+but during training if the model is required to predict some interesting stuff only for the mask
+inputs then it might learn that for the non mask inputs it can do whatever it wants because that
+how it's done the loss is not computed on the non selected words so the model might be
+slacking off and not doing anything for the non mask words and for the inference we might use
+we might have only non non mask words because we don't want to remove any version of the input
+and not to give it to the model so the the authors have came up with a strategy of
+convincing the model to actually do something also for the non mask words so how does it work
+well they first 80% of these 15% chosen subverts are really replaced by the mask tokens so they
+are physically missing but then the remaining 20% will be the cases where the words will not be
+replaced by the mask token so that even words which are not physically masked might be interesting
+for the model and in 10% of the cases what we will do is we will replace the selected words with
+a random number so the word is not there like the original one instead some randomly chosen one is
+there so this means that even for a non mask word you should try producing something
+because it might be a part of a loss computation and sometimes we replace this chosen word with
+a random word and sometimes we keep the original the idea behind this is that you just don't want
+the model to copy the value from the input to the output right so there needs to be some
+hurdles some obstacle and the obstacle is that with like in 50% of these cases like I mean this
+is 50% of this 20% of the 15% cases what we do is we replace it with a random word so the
+model has to think like like consider the context and this side whether the word like makes sense
+and then maybe that's the right thing to predict or it doesn't make sense and it's just a random
+replacement and it needs to generate the right thing so it needs to generate the output and it might
+take the current word on the input as a hint so this is all very heuristic and technical and
+weird but it seems to work well in practice they do a lot of application experiments regarding
+today so when we get through all the parts we will see that this is really like if this gives
+the best results out of all the the I don't know what obvious alternative you could try to
+to to propose so that's one thing like this way we will make the model to generate good
+opportunities to represent the birds together with the context but the authors also wanted the
+model to be able to like understand the whole text so let's say that the part from just just
+embeddings we might want to to solve tasks like get a sentence get another sentence and then say
+whether they are the same or not like they are the same meaning or not right but they can be
+paraphrase so it can be like I am happy and the other sentence can be kind of like cheerful or I
+feel good or something and then you need to understand what they mean and then say whether they
+seem to be the same or not either score and say they are the same or from from one to five or
+something so for that the model would benefit from like having a output which would contain the
+meaning of the whole input sequence not just the individual version but but as a whole and
+this is where the CLS token comes into play we discussed the first token is this classification token
+so that's like an artificial token and we will be using the output generated for this token
+as the representation of the whole input sequence right so when we want to represent the whole
+whole text we will just take the value computed for the embedding computed for the CLS token
+and in order for the network to like generate something interesting there we will add
+another loss to the pre-training so all the other like all these tokens are being pre-trained
+using the mask language model but the classification token is being trained using the so called
+next sentence prediction so the next sentence prediction is a task where the model considers the two
+segments which it got segment A and segment B and it should say well ideally whether they are the same
+but we don't have the data for it we need to find you something which we can do without
+manual annotation so what you'll do is we will try to decide whether the second segment
+comes immediately after the first ones will come from the same document and the second segment
+really immediately follows the first one so that's why it's called next sentence prediction
+whether the next segment follows the first one so maybe it would be called it would be called
+like is segment B following segment A loss to generate the data 50% of time we sample
+the segment which is actually the following one and in 50% we sample anything from the data set
+they even from different domains just whatever comes from our random generated
+yep so
+yes yes exactly so in the work to like we get embedding for every verb independent on the context
+here we actually need the context to get the embedding and that's the same thing as in elbow right
+in elbow we also needed the whole sentence already so these are called these context
+true allies embeddings and that means that you you don't you can just compute the embeddings by
+themselves but you need the whole context and but the good thing is that you will get the meaning
+with respect to these context so when you have this can you drink a can sentence then
+when you pass it through birth these two cans will already get different meanings one of them
+probably will say I'm a verb the other will say I'm a noun while verb to like
+cannot do it verb to like for both of these cans will give you the same vector and somebody
+later in the processing would need to distinguish these words so it's it's a good thing you get
+the better embeddings but it's much more expensive to compute and much more expensive to trade
+so when talking about training the original birth was trained on English so they used Wikipedia
+and book corpus the collection of books all together more slightly more than three billions of
+and they used the verb piece vocabulary with 30,000 verb pieces the training used
+item the batch size was 226 sequences each with 500 and 12 subverts so the batch is one eight
+million of subverts small batch from today's point of view and the learning crate is like
+follows this triangular schedule so at the beginning there is a quick warm up and then we have
+like a linear decay which goes to zero nowadays I would go for the cosine one right but
+but it looks very different if you look at the you know in the shape it's just that it's like
+cool to have the cosine decay well anyway we use the usual momentum parameters so no more tricks
+like beta 2 set to 0.98 s in transformer and actually the quite large
+way decay is big in the convolutions we were like five times 10 to minus four so this is like 100 times
+larger but we have a very large net also so this means that in in my head there is an
+wideest large way the case are fine so in the transformer there is one small change that
+different activations being huge so instead of a hello with yellow which I will comment on the next slide
+just really engineering hint during training because the quadratic attention is kind of expensive
+and it wasn't very efficient like the implementation were very very efficient then it was
+making the training slower slower so just as an engineering hint at the beginning what they do
+is instead of generating really sequences of this length they generate a smaller ones so like
+they generate instead of four sequences of length 128 to the same number of words but the attention is
+smaller and they do it for the 90% of the training so the finish is quicker and then the last
+10% of the training they use the full length so that they train the positional embeddings also
+for the positions from 129 to 512 it might seem that 10% of the training might not be enough but
+I think they use million updates for training so it takes time anyway and of course similar to
+transformers we will be seeing different sizes of these models so they use the base one so these
+12 layers and then go the only so in transformer they had six but they had six in code of six
+decoder so here they had 12 and they they made it the hidden size a bit wider and increase the
+attention has correspondingly so this resulting model has something like slightly more than one
+million per meter so 400 megabytes on your drives and then they have a large version which is twice
+deep and a bit wider so overall it's four times a more expensive to compute and roughly three times
+large so it's it's funny from the three point of view calling these models large when we are talking
+about language models which are well 1000 times larger than this one but at that this time this
+was three little large so yellow right we have mentioned the the swish activation already when we
+talked about that efficient that if you remember the swish activation was x times sigma x and instead
+of rello which looks like this it looks roughly like this mmm mmm so there is like a bump here
+and the activation is actually non monotonical and it was working slightly better so now we will
+describe yellow and the thing is the shape of yellow is very much similar for this one but it's
+being used for these models and so in the paper which introduced it there is a motivation which I will
+I will tell you so you can see where the function comes from so we know that rello
+either keeps the data or just copied through so we can think about it as taking the input x and
+either multiplied by zero or multiplied by one depending on the size of the input price of the x
+was hydrogen zero then it gets multiplied by zero and it's not passed at all otherwise
+it's multiplied by one and it passes unchanged dropout can also be thought about as multiplying
+the input either by zero or by one but this time it doesn't depend on x this time this is really
+pure chance right so with probability or or or some some other ones I said 0.5 but with probability
+of p I should have said and then that means and they say well maybe we could combine it we could
+come up with an activation which drops things to has this statistically but the probability of
+with which we are going to drop things will depend on the input value so if the input is very large
+the probability of keeping it will be really one and so it will behave nearly like a linear
+function when the input is very small the probability of being kept will be extremely close to zero
+so we will most of the time not keep it and then in the middle some magic will have them so
+how they how they decide it is they say okay so we will take x and we will look at the error function
+so this this pie that's a Gaussian error function by the way it's Gaussian error linear unit
+and that's the cumulative density function of the normal distribution right so if you have a normal
+distribution the usual image which you are used to is this bell shaped curve and that's the probability
+density and when you compute the integral of that you'll get a cumulative density function so it will
+look I don't know roughly like this so it starts at zero on the left and then it ends at one
+to the right because well it's a distribution so it needs to integrate to one right and what it
+gives you by the condition is the probability that some x is smaller or equal to the given value
+and so we will use this this error function and we will multiply the input by either zero or one
+is generated by the Bernoulli distribution with this this by x probability so when x is very large
+this this error function is one and we always keep it keep the value because the m is one
+most of the time when x is very small but negative then the error function is this nearly zero
+and we will nearly never generate m equals one but you're using a right m equals an equals to zero
+and then they say okay but this is the we would like the deterministic activation function
+so the computer expectation so the expectation is the output in x with a probability given by the
+error function or the the output can be zero with well whatever probability we don't care in zero
+anyway so they say the activation function is actual x times the error function of x this is very
+much similar to the x times sigmoid x because well actually a sigmoid and the error function
+looks nearly the same like they started zero and then they slowly go and get to one they
+they have slightly different shape but I don't know if you show me two images I wouldn't be able
+to say which one is the error function which one is sigmoid so here you can see the shape the blue
+one that's that's like a real value none of the one drawn by me with a very unsure hand but
+it has the same kind of kind of a shape so now I have given you the motivation from the original
+paper personally I have to say that it didn't help me at all to like see why somebody would
+would come up with the activation function but even if I tried I didn't come up with any better
+explanation like this is the only one which I got apart from it works right with swish it was like
+yeah we tried we built a neural network to generate activation and this one was generated out of
+many and it works great so that I understand this kind of approach yeah so the question is how much
+different with this would be with respect to fellow so the answer is that in the original paper they
+didn't say they just say well we tried to replicate the GPT kind of thing and they used it so we
+will do it as well in the GPT paper they say yeah we like yellow it seems fine we'll use it but
+they don't do it but the good thing is that of course the the evaluations came later so the answer
+is the difference is very small but there is one and we will see some additional improvement of the
+activation function and then the both the improved yellow and the improved swish will be better
+than than the network but only slightly so the general idea is this if you are not bound by capacity
+that much then you don't have to care for detectivations and if you just make your model larger
+by making your hidden layers 20% larger or something you'll probably get where you could get
+with smaller activations and and these slightly better activation functions so if you are training things
+on your computer then you'll nearly never benefit from from switching the activation function to
+the yellow because they are like better when you have like a tick budget if you can spend more time
+on generating more features than in these settings I don't think none none of these is like dramatic
+better but when you are training these large models then you have to fix budget so then
+having better function might actually help you so we will see that the results on the last
+lecture or something where we will know enough about gated function related activations
+that we can see see the results. So we also need to compute this the problematic part is that
+the error function is a function which cannot be written down using these basic function like
+sign and cosine and logarithm like it's obvious what it is is the integral of the
+pdf of the normal distribution so it's the integral of 1 over square root of 2 pi and you know
+how it how it goes but other than that you just cannot write down how it looks like because we
+don't have a function for it well we have the error function right we have just given the name but
+when we are computing it we are using this it's cost it's cost fast approximation right in the end
+it's not so bad there is just one ton of agent and some multiplications and some constants
+which you can pretty compute but but anyway so originally I think everybody used yellow because
+everybody else used yellow and they just didn't want to get retro results just because they are
+unlucky but the experiments were performed to few of these later especially when people started
+training these large language models like gpts and gpts and things like that so nowadays people are
+still using yellow so there is some small advantage in using it but but not very large one so
+yeah so the question is whether these two things or how they relate so now they are not the same
+in a sense that this is much better approximation of this then and then this one here
+that the shape of the curve is all wrong so this is because this is most of the switch right so
+it's a way of how you can compute it very quickly but even if I saw this this approximation
+nowadays all the frameworks converged on actually using this one so maybe it would be better at this
+point we just I don't know explain that when we are computing things you would do it in this way like
+specifically for example when we look at the yellow activation in the torch it will tell us that
+that's exactly how they are computing it there if we look in TensorFlow then they don't tell us anything
+how they are doing it but but I think they are doing it in the same way if I remember the sources
+yes or but but you cannot yeah yeah like it is but the problem is that you can just
+just write an analytic function which will be this integral but this is somehow like an approximation
+of the integral integral to whatever level you could have done so maybe although the
+interesting question is not just how the the yellow and yellow compares but how yellow and
+swish compares right because swish is much easier to compute xx times sigma xy having very similar
+very similar curve and the answer is that they are very similar like the yellow and swish so
+many of these large language models use so called swig loop which is the the swish base
+gated thinner units which we will see because it's slightly faster to compute but the effect
+on the result doesn't seem to be large so what we'll be able to do with our pre-trained model
+so one thing what we can do is we can represent the individual elements of the of the input sequence
+so we can perform part of each tagging named entity recognition like anything where we want to
+get a representation for every word in in the context so that's fine this also what the
+other in it for us like we got an output for every sequence elements we can also
+represent the whole sequences so sentences in this case so we can do things like text
+classification so the whole sequence on input and then just one output and that's what we do using
+here that's what we do using the CLS token and we can also sort of like deal tasks
+which represent relations between sentences somehow so we give it to sentences and we want to
+somehow ask how they how they relate so we could get or we could measure some kind of paraphrase
+detection whether they express the same thing even if they don't look the same or we could do
+a natural language inference which means we're able to sentence based and we should decide whether
+the second length second sentence is implied by the first one or it's contradictory by the first one
+order is no relation between them that's something what people like a lot because they kind of thought
+that if these logical inferences could be done by some model then it would really understand
+not just the language but some kind of logic as well so we do this by inputting the two sentences
+as two segments but then still we'll just take the CLS token and add an classification head on the
+bullet in these trainings or a fine tuning usually training for quite small number of
+epochs suffice it's like two or three for and we need to use a learning crate which is the
+it's a smaller than the one used for training similar to fine tuning convolutions where we used
+this smaller learning crate here we even start with a smaller learning crate so why in the
+convolutions we use to use this one here we'll be using even smaller ones so the common approach
+when we have a new rate of set is to do a small great search over the learning crates which are
+two to five times smaller than the one used for training and for the number of epochs or you can
+like train for large number of epochs and perform a whole lot of issue in every
+every epoch and see how the model is doing so regarding the results they were able to
+surpass what all other existing models in dozens or large units of benchmarks they are of course
+textual in a sense that they are mostly about some kind of language understanding so
+that's time there was a glue language understanding bench mark which consists of nine I think
+that for other time assignments and in all of them they have pushed the the state of the art
+by like a significant margin like this was huge when this came out people said oh it's
+impossible that a single model was actually able to give that much that much improvement
+and like this came out like two weeks before the conference in Brussels the MLT 2018 right
+and the only thing which people thought it was a conference was this even if it was not actually
+part of the conference it was just just a series an archive or something but it was really
+like the the main event of the year in an LTE so that's good I will not go to the individual
+numbers you can believe me that it was it was really a big improvement what you will do though
+is we will consider some some ablations to show which components on how influential results so
+one thing is we have seen that this is much better than the GPT so the question is whether
+this is because they had better hyperparameters or whether or not the the bidirectionality which
+they boast is actually important and the letter is true so if you just do everything
+the same but you would train it in the same way as GPT so just a decoder model so you just
+look at the so during training you will never look to the right side you will just always consider
+you and the previous words then if you do it then the results are first by significant level
+in many of the tasks so being able to actually consider both the letter and the right context
+seems to be important then they also discuss all these various ways of how things could be
+mask kept or randomly replaced so the top line here that's the chosen one so out of these 15
+percent selected birds with mask 80 percent of them and then 10 is being kept the same and
+10 is being randomized and we will see two interesting numbers this is the performance on the
+MNLIs so this is multi natural language inference so we get texts from various domains
+with the multi is there are two sentences and we should say whether the second one is being
+implied contradict date or has no relation to the first one so it's like a natural language
+but I'm understanding task of the whole text and then we'll be looking at the main entity
+recognition performance so this is a task which generates embeddings for every
+river and then attach a plusifier similar to what we do in bigger nerve actually so one thing
+what we could do is we could just use the masks all the time mask everything and then new other tricks
+that it will be a straightforward thing and while this doesn't hurt the performance of when we
+want to represent the whole text in the CLS token it hurts the performance when we want to look
+at what the individual words actually produce so the embeddings of the individual words are
+affected in this way and usually it's being interpreted as saying that the model all own generate
+reasonable outputs for the masked inputs because it has no incentive no losses being
+computed on input which are not masked we could also say let's not mask at all let's replace
+words with some random words and to maybe we could keep the word with a small probability or not
+that sounds nice but it works badly in both the cases maybe like the thing is that when you
+consider context you will be seeing a lot of bogus words in the context which you can rely on because
+they are just randomly generated so so relying on the context might be difficult but but that's
+really just an idea but in any way it's not a good idea and then we could consider whether we
+like what we will do with our remaining 20% we could just replace words with a random one or
+we could just keep the words on the input and there the results are not contrary different so
+it doesn't really matter that much but overall there is no stable strategy which would
+be dramatically better than the one we think shows so let's now have a break and we will continue
+in five minutes if you have got a lot of energy and then fresh motivation and then a lot of
+oxygen we can continue well we will continue even if you didn't get that but but hopefully you did
+so we just described the word in English which can be used to get you pre trained representations
+of words in the context of whole sentences for a graphs or something and it works universally
+in every task where you want to process text but the question is what about the other languages
+like here in check we also wanted a check model when bird came out and nearly at the same time
+as the English bird came out the authors also released the so-called multi-lingual bird so they didn't
+train bird for every other language there is but instead they trained one single multi-lingual
+model which downloaded the top 100 Wikipedia and then trained on them the check was included in
+that one so one percent of the training data was checked and even with just one percent of the training
+data adding these to whatever pipelines which we had dramatically improved the performance compared
+to whatever we had before and the interesting thing is that this emperor has the property which
+probably people didn't expect because it has taken several months for the people to realize
+that is the case and that's that even if you're training just trained or individual sentences each
+with one language it learns to embed inputs into the shared space so what I mean is that if you say
+cat in English and then you say caught kind check that even if you didn't train it that they are
+parallel or have the same meaning you just don't do it just put a lot of sentences in check they are
+in an English and in the remaining 1998 languages then still the model learns this by itself
+and just align the languages so that the meaning is being represented by very similar embeddings
+independently on what the language is that that's really like pure magic in some sense
+and people really didn't expect it because the the experiments which tried to verify
+this is taken months before people like stumbled upon it somehow and so this allows new for
+example to solve tasks by training on one language and then just running on another one right so if
+I wanted the best check I don't know reading comprehension system what I could do is I could just
+take this model I could trade it on English and then just start using it on check without
+it's showing it any check question like it wouldn't understand explicitly who is or how or what
+it doesn't just really just just do it this way and it works surprisingly good so after people
+realize that there have been many yeah there have been I think hundreds is it's then understatement
+thousands of papers talking about this phenomenon and how we can use it how we can achieve it
+why it was achieved and and all these things so it's called cross lingual transfer that like like
+we had this this this this transfer learning so here we are transfer hour knowledge across the
+languages for example this is from a paper which does this reading comprehension so we get a
+context and a question and we should we should answer by by showing the part of the
+input context which is the answer so just point where the answer is and they what they did is they
+trained it for on English and then they evaluated on on Spanish German Arabic Spanish Vietnamese and Chinese
+and the the results which they get are well not exactly the same as as in English but still
+very high compared like considering that you didn't see any input example in these corresponding languages
+and these these results are even better than actually translating beforehand in many cases because
+that's another way what you could do if you have a translation system you could take the English data set
+translate it to English sorry a translate it to check and then brand things on check or you could
+train the English model and when you do want to do the inference you could translate to English
+there you could sort of task and then you could translate back all these things you can do but
+actually just training the model on English and then just using it on check gives you
+actually better results than when then doing the translation which is I don't know
+I still think it's pure magic after half of these many years but I'm just saying that these
+not bilingual models work so if you would like to train a model which works in in sort of a task
+which works in three languages your best way how to do it is to take a multilingual model
+train it on all these three languages at the same time if you can find data in more languages
+train it on on data in five languages and then you have to model which works for well all the
+languages which is the original model is pretty trained on and it will probably do a very good thing
+even if you don't see the corresponding data in the innovative languages sorry yeah
+so the question is whether this is zero shot learning so I wouldn't say this is zero shot learning
+zero shot learning means you would be trying to getting the answers to to this reading
+comprehension task without showing it any example at all so zero shot means that you are
+not training at all you didn't see any anything so in some sense I understand that in check
+you haven't seen anyone but but if you start by training in English you wouldn't say
+you wouldn't call it as you know shot you would call it cross language transfer like you you start
+somewhere and then you do the evaluation another language without showing it to the training it
+but you can get a little of knowledge from from like the crossing crossing the boundaries
+while zero shot would mean not only that at all just the development set and get the results
+and you can also have a few shot learning where you can have like five to any examples of
+something and you try to use them in any way you want yep so
+after birth of course many people try to train there or national models improve the original
+model think about various components like whenever something great peers they know that people can
+come and then they can do the the the the research there as well so one important or one interesting
+paper which is I don't know here younger than bird is roberta it's like robustly optimized bird
+roberta it's nicer right and the interesting thing about the paper is that actually
+wasn't accepted to the confirms where it was submitted and then the people I don't know
+head better things to do than to publish it so it only exists and I'm released I'm released
+like pre pre print and until now it has it has gotten more than 12,000 of citations
+this this I'm I'm really sting so it has shaped the landscape of the future models a lot
+so I'm just saying that if you submit something to a conference if you don't get accepted then
+then don't don't be worried many great papers didn't get accepted as well even if they they have
+made a large mark in the whole area of of the building so whatever in roberta they did a lot of
+searches or evaluations of what you could do to get a better bird the one thing is that they
+discuss the next sentence prediction this next sentence prediction originally was thought to be
+great to be an important part in in the bird being able to understand the other meanings of the whole
+sentences they even do an ablation experiment in the paper in bird but people later realized
+that it was designed incorrectly so the conclusion which the bird authors came to was not actually
+correct so in in roberta they they revisited it and so what you could do in bird they use
+something what they call here a segment pair so we have got a pair of segments so that the so
+total sum of the subverts is five hundred and twelve and you use additionally the NSP
+in theory you could also have just pairs of sentences small smaller inputs but that will definitely
+be worse because the model is print should be trained on on very small segments of text it's visible
+here that the second line is for so I will not discuss that but the other interesting thing like what
+you could do is you could just ignore the next sentence prediction but that means you wouldn't
+need these two segments at all right you would just have just one large piece of text which would be
+five hundred and twelve subverts and you can either do this so that it can cross the document
+boundaries so if you just sample you get a number of text and then if you're document and you can just
+continue with the next one so that they are no holes or something or you could be careful and only
+use the text from the same document on the input and the thing is the full sentences and the
+document sentences are both actually better than the segment pair so it's better for the tasks to
+just get one large piece of text so why it wasn't working in bird because in bird they did the
+experiment of still inputting pairs of segments but without the NSP loss they just switched it off
+but they still kept two segments and so that's not great for the model because the NSP can also tell
+him whether the model should maybe relate things with each other in these two segments or not but
+if you instead will give it just a single large segment on the input then the model is happy
+right so all the or many of the newer models just just ignore an acceptance prediction and just
+train it with one single chunk of of input so the bird is trained for one million steps
+so the Robert authors do two things first they consider larger batches so instead of just 256
+batches they they consider various ones so 2008000 now the thing is when you make a batch
+ice larger you get a better better gradient estimate but the problem is that if you have some
+some number of data right and then if your original batches were this large and now your
+batches will be at an old twice as large that means that if you close as the same number of
+training examples your your number of updates will be smaller right because if you have
+double the batches you will have the number of updates if you keep the data constant but some
+of the training properties are like like the training like you need to go through this area of
+the loss function and in every step your like average average step size is fixed by the learning
+so if you just do less number of steps even if your gradients are better you will not be able to
+travel like as as far as if you've done more updates so what I'm trying to say is that how
+think your updates might be the treatment so what they do to compensate for it is that they increase
+the learning rates so if you are doing hardly updates but you allow every step to be twice as large
+learning in some sense you could compensate and you could justify the steps being
+longer by the gradients being of higher quality because if you have larger batches then hopefully
+more the there will be less noise in the instance so they don't scale the learning rates completely
+in the early so here we have multiplied the batches by eight and they multiplied the learning
+rate only by seven so there is some limit on how much you could scale things but generally
+business strategy which is being used so if you want to make your training faster you can make
+larger batches with larger batches you can also use multiple accelerators right so if I have a lot
+of GPUs then processing the batches of large size can be done efficiently well just each GPU
+will do some portion of the batch so I will be able to to finish the training quickly but you need
+to increase the learning rates to account for the number of the update being smaller but anyway
+when you do hyperbolic research and try you will see that you can get actually better models
+when training with a larger batch size and proportionally small steps so this thing will process
+the same number of data it will finish probably sooner because you can use multiple GPUs easier
+you will get better results in the contrary so the for for these text processing like one eight
+of a million of a number of tokens per batch is not enough so this is one million of tokens per batch
+and the other thing which they realized is that the birth was undefeated actually so training
+three times longer or five times longer than they did in birth with more data results in
+actually non trivial non trivial improvements right so they had these scores when they trained
+with the same number of data as birth for the same number of steps and then adding data and adding
+training actually improves the results considerably just by training times so that's that's
+Roberta we so many of the new models actually use all these information found out here we also have
+a check model that this rubber check thing which is Roberta in check right so we'll be using it
+on the tomorrow's or on the assignments for the for the practicals so you will be able to actually
+work with this base size models for yourself as well so the transformers have gotten nearly
+everywhere of like to most of the domains of the planning if you can have a lot of data
+then the transformer architecture is like what you need so instead of attention is all you need
+now it's like a transformer so you need this here you know data so one of these areas which is now
+very visible is the area of the large language model sprites all these activities and copilots
+copilots probably and things like that are well they are just off what what we would be described
+like if you have a GPT it's really just a language model so it's like a large transformer model
+which you train by predict the next group and the center and then that's that's mostly it
+you just have to do it very carefully because you will need like 8000 GPUs to train it in
+parallel or something like that but and a lot of data but the power from that conceptually it's just
+just the models which we talked about today so as I said there are real large number of them
+and they are getting larger and at some point this stop to being science and it's start to being
+like engineering and business kind of things so people stopped presenting like the number of
+parameters of their models and how the architectures work and what data they use and all of these
+is kind of invisible right now because well there is a lot of money involved so at the beginning
+the sizes of the models were increasing like 10 or 110 times or even 100 times every
+every year or so nowadays it's not obvious how large the models are some guesses are that this
+GPT for something like 8 times this maybe like 8 of these mixture of experts each roughly
+of this size but but nobody know they are just like Twitter messages of people like you know
+you can come up with various interesting future messages as well right so apart from from from
+OpenAI there is NVIDIA doing training models with half so listen to billions so this is
+what this is half a trillion probably a parameters with 2,240 A100s each with 80 megabytes of
+memory the Google has been training the power models well just 6000 CPUs each with 256
+gigabytes of memory or something like that it's really terrible so I had there like for two
+years like a slide worth a pound model can explain the job so nowadays it doesn't make sense because
+it seems so many interesting jet GPT conversations that this will not impress you at all right
+well so like releasing a lot of things which model now is like a monthly I don't know entertainment
+so you can look what's happening so there are many companies releasing the models either
+open source or close source or so meta is releasing something which you can download so these lava
+three models are kind of kind of good the mischal is the French company but now being sponsored
+from USA mostly took to the level that it cannot probably take part in the like European calls
+anymore because it's big fun it's too much by by by by other people well but anyway they they have
+these mischal the mixed parameters some of them are also really so for example for Czech
+uh this mixed trial has been at least in the past months the best model for for having good
+generality uh generative model anthropic is doing called uh the Google went from town to
+Gemini and Gemini and there are really many of them so there is actually even a whole course
+uh the new one uh in this in this here which is called large language models uh switch discuss
+this and how to use the language models and like what you can do for them to make the right thing
+and how to deal with the fact that they are hallucinating things a lot uh so uh i'm not
+not saying you need to go there but you can look there and you can look at the slides maybe
+then see if something interesting that if you're interested or you can just ignore it if you
+don't uh so that's these are all the coder models the coder only right so uh you you can still
+uh like imagine that you have a prompt like in a sense that you can use teacher for saying
+can say the model well look you've already generated this with the sentence right and now let's
+continue generating uh so like it can have an input uh but it's the coder only in a sense that
+during the attention every token just looks at itself and the previous token so you can easily
+train and by predicting uh the next part uh but sometimes it might be useful to have also
+in coder models pre-chain like birth or in coder decoder models so there are models where you
+you have with these two coder components components pre-chain and you can use them if you want to
+fine tune uh well whatever in coder decoder architecture which one so there was a barc model
+released as the first one like similar to birth but including also the decoder uh and then there is
+a sequence of of models t5 mt5 and by t5 so especially mt5 that's modeling well t5 and the
+t it's like I don't know text you something something something five words beginning with t sorry
+I forgot transformer text I don't know three more but it's an encoder decoder model it's
+modeling well one so it's pre-chain and 100 languages it's pre-trained in this way the input is
+a sentence uh so I uh or red apple let's let's use the apples and in the input sentence there are
+some special holes or masks as as before red apple is let's say taste it so there can be some
+number of them so we are still doing this kind of mask language model but this time the decoder
+will be generating things so the encoder get a descent and the decoder will say x is apple uh and then
+y is delicious for example so you can mask even longer paths than just single subwords you can just
+part of the whole spans and this way the encoder will learn to read the text decoder will
+generate the output and then you can use this model and fine tune it on whatever sequence
+sequence task you have so if you want to do uh sequence to sequence task in one of these
+languages or all of these languages at the same time then this is a good way where to start with
+the pre-trained model and the good thing is that they have even kind of large models like from the
+point of large language models this they are tiny but still non trivial ones so if you want to
+large encoder this is where you probably want to go um and they they even have a bite version
+to the bite P5 uh is the same thing but the individual of things are not subverts they are like
+characters but there are many characters for some of the language so they are not even characters
+they are really bites of the UTF8 encoding so you have really like just 256 different input that
+use uh and so that there is some uh like technical engineering stuff out of how to deal with
+large sequences but uh this can be useful if you process text which contains of errors I don't know
+like a tweet uh with a lot of weird letters and a lot of emojis and something or text with a lot
+of uh a lot of errors because it's written by some second learner or or something so for these things
+the pre-trained models which operate really on less than character kind of level might be useful as
+well so these are just just as a uh set of things which might be good to take uh download and
+then use for whatever task which you want uh and of course apart from just the language models
+uh we have got these chatbots nowadays right so these chatbots they don't happen just by training
+a language model itself because if you train a language model and then uh you would say I don't know
+tell me uh who uh I don't know what this building is then the response of the model like like
+continuing uh with this prompt there is no reason why it should be well this building is being
+found little by little but it can be and tell me also what this second building is uh or tell
+me what the weather is like there is no reason for for the language model to start replying you need
+to do something uh and so there's something that there is a stake in much longer uh to come up with
+then just training the the language models it's called instruction fine tuning mostly because we
+find you need for for following instructions uh and uh the original and still the most uh used
+approach is based on reinforcement learning we'll have a quick introduction into that uh on the next
+lecture actually uh not into this specifically but but into reinforcement learning uh uh and it's called
+reinforcement learning from human feedback so you uh meet you generate various conversations uh and then
+are like several continuations uh after a single prompt uh and then some some annotator chooses
+which one of them they like the better right so that's the human feedback like which of these
+conversations would you uh would you prefer to head and then use this to uh train the model so that
+it will generate outposts which according to these data should be preferable by uh well by the
+annotators uh uh and so they have this this loss how much uh the annotators would like this output
+uh and that does not differeniable it's really like a model which they train from the data set
+you give it a center or conversation and then it's like I think people would like it uh I don't
+know four point seven out of five or something and then you use this reinforcement learning which
+allows you to optimize non-differentiable loss and then you just update the model in whatever way
+so that it will generate outposts which would score uh as much as possible in this lecture so
+this way whatever the people indicate they they want uh like if you want to check both which uh like
+uses a lot of complex words because you think outposts cool you will get one right because
+during instruction time tuning that exactly uh exactly what will happen that is actually a nice paper
+showing that uh one of the things or signals how to how to see that things is from ChGPT is that
+there will be uh a very 12 being used a lot and a meticulous is also being used a lot and and they
+they they they hypothesis are either the reason is uh that the annotators who generated the dataset
+were from specific countries were these words are being used much more uh than than in the others
+and this way uh they kind of uh like influence what the woodwatches book is but that's how it is
+with the deep learning all the data is always uh very important well anyway uh there are a
+many of these uh models which you know like so be a good chat GTV, Gemini, Claude, Laman, whatever
+the best open source model right now is today when I looked what's command are plus so you can
+go and download it and and run it it's uh quality relatively on the level of some of the GPT
+four turbo versions so none of the best one but but kind of kind of a good so you can run your
+on what if you want and there is also a link to the leaderboard which I used to to say what is the
+best one and this is being generated by by people so you you you can in insert a prompt you will
+get two results from two unknown chat boards and you can vote which of do you like the most and
+here is the resulting voting table of how people uh like blindly choose which respond do they want
+I actually visited uh once upon a time to see how the open source things have gotten and whether
+Google has already generated something reasonable or not whether the GPT is the winning and so
+yep so uh that was uh chat boards like that's all I'm going to spend on the topic and
+but we have a whole lecture on it right now I think it was anyway in the remaining few minutes
+I will show you how you can also use transformers for image processing so what I will be describing
+is I don't know how it's set in English like I say just a bit in check it's like a visual transformer I
+don't know it'll be bit and and it was uh released or it was proposed in the paper which is called
+and image is worth 16 times 16 birds uh transformers for image recognition and so what they do is they
+just take the transformer uh and they do like the minimums of changes required to come up with architecture
+which will be able to do image classification right so we get image and we just want to generate
+some number of classes uh so uh the the model will look like that we will get an image so we need
+to generate the sequence out of it somehow so what we will do is we will divide it into fixed
+size they call it patches so you can imagine 16 times 16 squares of pixels and then they
+linearize it so you just take all the these patches and put them in a long sequence and then put
+this as the input sequence to the transformer so for the usual 2 to 4 times 2 to 4
+this would be 14 times 14 so 196 sequence elements that's kind of kind of manageable probably
+this needs to be somehow embedded so they they embedded by well just running a linear
+layer from the pixel space of the patches into some fixed dimensionality you can also think about
+it as a convolution with kernel size 16 times 16 and uh stride 16 that's exactly what
+would happen right you just apply this fully connected layer uh on all these 16 times 16 squares
+once you have it you consider them to be the embeddings so you need to add
+positional embeddings right so what they do is they use the uh sinusoidal one or the pre-trained one
+sorry sorry sorry the train number ones yeah so they use the train number one dimensional
+positional embeddings the one dimensional seems weird like the original patches were in two dimensions
+but if the input resolution is fixed then even if you just hit one dimensional embedding then
+still minus one plus one means left right and plus 14 minus 14 means up and down so the model can
+learn to to live with just one dimensional embeddings and then you will do a lot of encoder layers
+and the encoder layer is well straight over to one so we have layer norm and the multi-head
+retention and then the layer norm and then another piece so this pre-legger's the usual one and at the end
+you will use the CLS token so we still use the CLS token and uh we will add an output layer into
+whatever classes we want so this surprisingly works so they they consider various sizes large
+base huge and the thing is this gets to the results compared comparable to efficient
+net if you train it on a lot of data by a lot of data I mean 300 million images but if you have
+this large data set then it kind of works if you consider the small number of data by small I mean
+a million images from image net that's nothing would be processed at all like kags was for
+4000 images or something right so if you have just this one million of images then the result
+of these transformers is considerably worse than then the convolutional network they they have
+like efficient that like or resident like kind of baseline and the the explanation for that
+are these inductive biases right so the convolution networks you do a lot of things automatically
+because you just cannot do it them in another way while in the transformers you can just overfeed
+on on your small uh million elements data sets so they have a comparison here how the
+performance look like so this is the one million images this is a convolutional network
+this is the best of the visual transformers and then this is three million images so this is the best
+transformer and this is just just slightly below it's the best convolutional network but still
+it was doing something right and once you see these people try and try so after some some
+engineering and some changes people were actually able to improve it further so I said that they
+are using this one dimensional position and betting they also tried two dimensional ones actually
+were you would have a trainable embeddings for x x is independent trainable embeddings for the y
+x is and then you can just concatenate them it actually kind of works in many other many other places
+here the the results were like like mixed in a sense that it sometimes worked better with the
+2d sometimes worked with the 1d so they didn't use the 2d but in many other places especially if
+you don't want to keep your input resolution fixed then these two dimensional embeddings are
+actually enjoyed it so as I said the improvements were were flowing so mostly the improvements were
+we know that we are over the thing so let's let's let's regularize as much as we can
+two people let's try many different regularizations and came up with the new ones and so the last
+in this series was date three the revenge of the bit which achieved a reasonable result even for
+this one million image size so it's possible to train the models but you have to be careful well
+actually the the right thing how to train a visual transformer on a million images not to
+really start training on the on the classification task but to use some kind of training like for
+example in the birth model we start with this mask language model to just understand the raw
+depth we might come up with a similar way like training on images without any labels just to
+start understanding the the raw images that something which was which was described in November
+21 the main author is the guy who did ResNet so like a famous team and they they came up with
+the way of how to train this visual transformer architecture in like a mask language model kind of thing
+which worked very well and so the idea is to say okay let's say that we have the input image and we
+will mask throw away a lot of these input pitches and then they really throw away a lot like three
+quarters of them or something and then they only take the the remaining ones they pass them to the
+encoder and they also have a very small decoder so it's just just one number of layers
+and that way they will get the representation of every input every input batch and they just try to
+reconstruct the batch right during training they they try to mostly for the ones which are missing
+and I'm I'm not really sure whether they also include the loss for the one which I'm not missing
+but they are not important anyway by the way with the transformers you can even physically leave out
+the missing pitches for the encoder like you just give them the correct positional embeddings
+but you just don't put the empty patches there on the input you can save compute it truly and it's
+one of the reasons why the encoder is wider and the decoder is smaller because it needs to the
+decoder needs to run also for the for these patches and then you try to predict them so this is
+how the train model look like these are validation images so not seeing during training
+the inputs with these models are these weird things to fill out on the left and then the
+middle one are the predictions of the model right so from this weird thing they they generate the
+dog and from I don't know this weird thing they generate the console then everything it's really
+well quite good and then after you do this you have like a pre-trained model which doesn't
+know anything about the classes but it tends to understand the images so instead of having the biases
+in the convolutional networks we can like learn the model how the images look like well we still need
+a million images but million is better than 300 million images that let people you did and with this
+you can get to really very good very very good results better than the efficient so at some point
+this was the best model on the image net data set so just for fun how does the best
+image of models look like so at least this month unless there was a new paper yesterday
+the the second best paper is like a vet thing cry so it's like a visual transformer but at the
+beginning it actually uses some number of convolutional layers so we'll use the mobile
+environment the botanized mobile inverted botanized vanvolutions with this mbcon that was the
+best convolution the feed came up with so you can have some number of layers like that's better
+than just doing the linear transformation for the batch embeddings and then just keep the
+transformer to do everything like we want to do a lot of local understanding of how things relate
+to each other so they're having the biases of the convolution that makes sense there is no reason
+in the initial layers of the processing to do very costly self attention but at some point
+we will stop and we will be using the the transformer processing which can which will add this
+this strength which is not otherwise available for the convolution of networks so it's like a
+straight over thing which you will train on six billion image pairs of image and text we will
+with a batch size of 65,000 images it needs 7,000 TPU for days which is a lot but it achieves
+really superior performance and even like without seeing any image net label at all it can surpass
+all the models which we have just seen on the image net and so this is just the sheer amount of
+everything right we have a scale, I have architecture, some number of mobile network connections
+and then a transformer but we will be because of the data right but that's that's so it's the
+second best and the first best is the model which although pertains a lot of transformers but they do
+it for for many domain so at the same time they pertain model for for images depth maps speech
+audio 3D points videos so they have with like 60 different encoders
+transformer based all of them and then they have some common processing across all these domains
+and then there are like simple simple decoders and they pertain it in this masked way so for each
+of these domain they just have a mask the input and they run it through the encoders
+through the common part and then they try to decode the missing parts and this this pretraining
+across many domains on large data for the image only uses image net for example it doesn't
+use these six billion images of something they just use one billion images but they also use a lot of
+videos and this gives you the representation they call it omnivac like we can represent anything in
+the shared vector space and that gives you really like a superior performance well the best one
+so here they don't win because they have like an insane amount of data but because this mask
+pretraining seem to be good thing but they benefit from actually considering all possible
+modalities at the same time so I didn't do this on the on the check lecture so I will
+skip the last two slides anyway so this means we have successfully ended the like supervised
+part of the lecture like until now all our teaching or training was like a supervised
+training so we had these labels and the supervision yes yes now it will be unsy provides learning so
+I will be just looking at you training learning whatever you want and then choose now but what
+we will be doing in the next three lectures is that first we will just see a quick introduction
+into the pre-informed learning so we will use neural networks but we will try to solve
+a very simple problems where we don't have the like differential loss but we have a way of
+obtaining some kind of reward so we'll have some evaluator which will tell us how good we did
+and you'll try to optimize it without passing the gradients through so in the end you will see
+how the efficient networks trained in some sketches like you'll be able to actually write it after
+after the second and then we will spend time on on generative modeling we actually like that
+the coders are all of the generatic models in a sense you can do generate sequences but we
+also talk about how to do that with images and speech which is also being used a lot like all
+these videos images voices or the phones or the voices which they make are being generated by
+some deep learning models so that's that's our plan for the remaining three lectures so
+I am looking forward to it I hope you are also looking forward to it so we will not see each other in
+person tomorrow so I'm looking forward to see you next Tuesday

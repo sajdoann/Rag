@@ -19,8 +19,6 @@ ENV/
 # MetaCentrum virtualenv
 /storage*/**/.virtualenvs/
 
-# Transcription outputs
-data/transcripts/
 logs/
 
 .idea

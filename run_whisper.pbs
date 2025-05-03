@@ -28,7 +28,7 @@ mkdir -p transcripts
 DIR="/auto/vestec1-elixir/home/sajdokova/Rag/data"
 
 # Output directory for transcriptions
-OUTDIR="$DIR/../transcripts"
+OUTDIR="$DIR/transcripts"
 
 SCRATCH_DIR==./whisper_run
 mkdir -p "$SCRATCH_DIR"
