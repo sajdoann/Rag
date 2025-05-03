@@ -1,32 +1,51 @@
 #PBS -N whisper_transcribe
 #PBS -l select=1:ncpus=4:mem=16gb:scratch_local=10gb
 #PBS -l walltime=04:00:00
-# or use gpu if you want to try CUDA
 #PBS -j oe
 
-# run this with:
-#   qsub run_whisper.pbs
+# run with
+# qsub run_whisper.pbs
+# logs: https://docs.metacentrum.cz/en/docs/computing/jobs/job-tracking
 
+# make venv (before just once:)
+# python3 -m venv /storage/praha1/home/sajdokova/.virtualenvs/whisper_env
 
 # Load modules
 module add python/3.10.4-gcc
 module add ffmpeg
+echo 'modules added'
 
-# Activate your environment
-export PATH="$HOME/.local/bin:$PATH"
-source $HOME/.virtualenvs/whisper_env/bin/activate
+source /storage/praha1/home/sajdokova/.virtualenvs/whisper_env/bin/activate
 
-# Go to your working directory (where data/ is)
-cd $HOME/Rag/
+echo 'venv running'
 
-# Create transcripts folder if it doesn't exist
+# Make sure output dirs exist
 mkdir -p transcripts
 
-# Transcribe all MP4s
-for filepath in data/*.mp4; do
-    echo "🎙️ Transcribing $flsilepath..."
-    whisper "$filepath" --language English --task transcribe
+# Directory with .mp4 files
+DIR="/auto/vestec1-elixir/home/sajdokova/Rag/data"
 
-    base=$(basename "$filepath" .mp4)
-    mv "${base}.txt" transcripts/
+# Output directory for transcriptions
+OUTDIR="$DIR/../transcripts"
+
+# Loop over all files in the directory
+for filepath in "$DIR"/*; do
+    # Check if it's a regular file and ends with .mp4
+    if [[ -f "$filepath" && "$filepath" == *.mp4 ]]; then
+        echo "🎙️ Transcribing $filepath..."
+
+        # Get base filename without extension
+        base=$(basename "$filepath" .mp4)
+
+        # Run Whisper and save output as base.txt in OUTDIR
+        whisper "$filepath" \
+            --language English \
+            --task transcribe \
+            --model tiny \
+            --output_dir "$OUTDIR" \
+            --output_format txt
+
+        echo "✅ Saved: $OUTDIR/$base.txt"
+    fi
 done
+
