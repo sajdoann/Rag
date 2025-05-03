@@ -23,6 +23,8 @@ ENV/
 transcripts/
 logs/
 
+.idea
+
 # Large media files
 data/*.mp4
 *.wav
