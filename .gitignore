@@ -20,7 +20,7 @@ ENV/
 /storage*/**/.virtualenvs/
 
 # Transcription outputs
-transcripts/
+data/transcripts/
 logs/
 
 .idea
