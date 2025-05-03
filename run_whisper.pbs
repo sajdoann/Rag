@@ -1,0 +1,33 @@
+#!/bin/bash
+#PBS -N whisper_transcribe
+#PBS -l select=1:ncpus=4:mem=16gb:scratch_local=10gb
+#PBS -l walltime=04:00:00
+#PBS -q normal    # or use gpu if you want to try CUDA
+#PBS -j oe
+
+# run this with:
+#   qsub run_whisper.pbs
+
+
+# Load modules
+module add python/3.10.4-gcc
+module add ffmpeg
+
+# Activate your environment
+export PATH="$HOME/.local/bin:$PATH"
+source ~/.virtualenvs/whisper_env/bin/activate
+
+# Go to your working directory (where data/ is)
+cd ~/Rag/
+
+# Create transcripts folder if it doesn't exist
+mkdir -p transcripts
+
+# Transcribe all MP4s
+for filepath in data/*.mp4; do
+    echo "🎙️ Transcribing $filepath..."
+    whisper "$filepath" --language English --task transcribe
+
+    base=$(basename "$filepath" .mp4)
+    mv "${base}.txt" transcripts/
+done
