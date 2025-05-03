@@ -7,6 +7,8 @@
 # qsub run_whisper.pbs
 # logs: https://docs.metacentrum.cz/en/docs/computing/jobs/job-tracking
 
+#send only 4 lectures at time (out of space otherwise)
+
 # make venv (before just once:)
 # python3 -m venv /storage/praha1/home/sajdokova/.virtualenvs/whisper_env
 
@@ -28,6 +30,9 @@ DIR="/auto/vestec1-elixir/home/sajdokova/Rag/data"
 # Output directory for transcriptions
 OUTDIR="$DIR/../transcripts"
 
+SCRATCH_DIR==./whisper_run
+mkdir -p "$SCRATCH_DIR"
+
 # Loop over all files in the directory
 for filepath in "$DIR"/*; do
     # Check if it's a regular file and ends with .mp4
@@ -43,9 +48,13 @@ for filepath in "$DIR"/*; do
             --task transcribe \
             --model tiny \
             --output_dir "$OUTDIR" \
-            --output_format txt
+            --output_format txt \
+            --model_dir "$MODEL_DIR"
+
 
         echo "✅ Saved: $OUTDIR/$base.txt"
     fi
 done
+
+rm -rf $SCRATCH_DIR
 
