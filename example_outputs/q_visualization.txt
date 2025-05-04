@@ -1,4 +1,4 @@
-/home/a/codes/Rag/code/main.py --query Where can I find a visualization of an decoder only model?
+/home/a/codes/Rag/code/main.py --query Where can I find a visualization of a decoder only model?
 
 Docs:
 needs to be passed to the decoder and what they do is they like normally you embed the
