@@ -76,7 +76,7 @@ class LocalLLMInterface(LLMInterface):
         self.client = ollama.Client()
         self.model = model_path
 
-    def generate_completion(self, prompt: str, max_tokens: int = 1000, temperature: float = 0.7) -> str:
+    def generate_completion(self, prompt: str, max_tokens: int = 200, temperature: float = 0.7) -> str:
         """Generate a completion using a local LLM.
 
         Args:
@@ -88,7 +88,7 @@ class LocalLLMInterface(LLMInterface):
             The generated text completion
         """
 
-        response = self.client.generate(model=self.model, prompt=prompt)
+        response = self.client.generate(model=self.model, prompt=prompt, max_tokens=max_tokens, temperature=temperature)
         return response.response
 
 
