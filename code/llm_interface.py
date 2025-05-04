@@ -94,43 +94,6 @@ class LocalLLMInterface(LLMInterface):
 
 from openai import AzureOpenAI
 
-
-class AzureLLMInterface(LLMInterface):
-    """Azure OpenAI deployment via azure.ai.openai.OpenAIClient."""
-
-    def __init__(
-            self,
-            endpoint: str,
-            api_key: str,
-            deployment_name: str,
-            api_version: str = "2024-12-01-preview",
-    ):
-        """
-        Args:
-            endpoint: Your Azure OpenAI endpoint, e.g. "https://<your-resource>.openai.azure.com/"
-            api_key:    Your Azure OpenAI API key
-            deployment_name: The name you gave your model deployment in the Portal/CLI
-            api_version:     (optional) Azure API version
-        """
-        credential = AzureKeyCredential(api_key)
-        self.client = AzureOpenAI(api_version=api_version, endpoint=endpoint, credential=credential)
-        self.deployment_name = deployment_name
-
-    def generate_completion(
-            self,
-            prompt: str,
-            max_tokens: int = 1000,
-            temperature: float = 0.7
-    ) -> str:
-        resp = self.client.get_completions(
-            deployment_name=self.deployment_name,
-            messages=[{"role": "user", "content": prompt}],
-            max_tokens=max_tokens,
-            temperature=temperature
-        )
-        return resp.choices[0].text
-
-
 class OllamaInterface(LLMInterface):
     def __init__(self, model_name: str, host: str = "http://localhost:11434"):
         self.model_name = model_name
@@ -202,18 +165,13 @@ def get_llm_interface(provider: str, **kwargs) -> LLMInterface:
     """Factory function to get the appropriate LLM interface.
 
     Args:
-        provider: The name of the LLM provider ('gpt4o', 'local', etc.)
+        provider: The name of the LLM provider ('ollama', 'huggingface', etc.)
         **kwargs: Provider-specific arguments
 
     Returns:
         An instance of the appropriate LLM interface
     """
-    if provider.lower() == 'gpt4o':
-        api_key = kwargs.get('api_key')
-        if not api_key:
-            raise ValueError("API key is required for GPT-4o interface")
-        return GPT4Interface(api_key)
-    elif provider.lower() == 'ollama':
+    if provider.lower() == 'ollama':
         model_name = kwargs.get('model_path')
         if not model_name:
             raise ValueError("Model name (model_path) is required for Ollama interface")
@@ -224,13 +182,5 @@ def get_llm_interface(provider: str, **kwargs) -> LLMInterface:
             raise ValueError("Model name (model_path) is required for Hugging Face interface")
         device = kwargs.get('device', None)
         return HuggingFaceInterface(model_name=model_name, device=device)
-    elif provider == 'azure':
-        print("Using Azure OpenAI deployment...")
-        endpoint = kwargs.get('endpoint')
-        api_key = kwargs.get('api_key')
-        deployment_name = kwargs.get('deployment_name')
-        if not all([endpoint, api_key, deployment_name]):
-            raise ValueError("Endpoint, API key, and deployment name are required for Azure interface")
-        return AzureLLMInterface(endpoint=endpoint, api_key=api_key, deployment_name=deployment_name)
     else:
         raise ValueError(f"Unsupported LLM provider: {provider}")

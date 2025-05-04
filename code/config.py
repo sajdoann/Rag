@@ -19,29 +19,12 @@ class Config:
         # Default
         self._config = {
             "llm": {
-                "provider": "huggingface",  # huggingface, ollama or gpt4o
+                "provider": "ollama",  # huggingface, ollama
                 "api_key": os.environ.get("AZURE_GPT35_KEY", ""),  # OPENAI_API_KEY
-                "model_path": "llama3.2:latest",
+                "model_path": "deepseek-r1:1.5b", #"llama3.2:latest",
                 "temperature": 0.7,
                 "max_tokens": 2000
             },
-            "question_generation": {
-                "default_num_questions": 5,  # Let LLM decide by default
-                "prompt_template": "default"  # Use default prompt template
-            },
-            "evaluation": {
-                "use_llm": False,
-                "min_difficulty": {
-                    "easy": 1,
-                    "medium": 2,
-                    "hard": 1
-                },
-                "min_category": {
-                    "factual": 1,
-                    "inferential": 2,
-                    "analytical": 1
-                }
-            }
         }
 
         if config_path:
@@ -149,19 +132,3 @@ class Config:
             LLM configuration dictionary
         """
         return self.get("llm")
-
-    def get_evaluation_config(self) -> Dict[str, Any]:
-        """Get evaluation configuration for easy access.
-
-        Returns:
-            Evaluation configuration dictionary
-        """
-        return self.get("evaluation")
-
-    def get_generation_config(self) -> Dict[str, Any]:
-        """Get question generation configuration for easy access.
-
-        Returns:
-            Question generation configuration dictionary
-        """
-        return self.get("question_generation")

@@ -6,7 +6,14 @@ def embed_and_store(docs, db_path="./embeddings/chroma", collection_name="lectur
     collection = chroma_client.get_or_create_collection(name=collection_name)
 
     model = SentenceTransformer("all-MiniLM-L6-v2")
-    embeddings = model.encode(docs, show_progress_bar=True)
+    texts = [doc.page_content for doc in docs]
+    embeddings = model.encode(texts, show_progress_bar=True)
 
     for i, (doc, emb) in enumerate(zip(docs, embeddings)):
-        collection.add(documents=[doc], ids=[str(i)], embeddings=[emb.tolist()])
+        metadata = doc.metadata.copy()
+        collection.add(
+            documents=[doc.page_content],
+            ids=[str(i)],
+            embeddings=[emb.tolist()],
+            metadatas=[metadata]
+        )
