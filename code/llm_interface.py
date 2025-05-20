@@ -147,7 +147,8 @@ class HuggingFaceInterface(LLMInterface):
         Returns:
             Generated text completion
         """
-        inputs = self.tokenizer(prompt, return_tensors="pt").to(self.device)
+        # possibly change truncation, max tokens to get the most of your LLM
+        inputs = self.tokenizer(prompt, return_tensors="pt", truncation=True, max_length=max_tokens).to(self.device)
         with torch.no_grad():
             outputs = self.model.generate(
                 **inputs,
