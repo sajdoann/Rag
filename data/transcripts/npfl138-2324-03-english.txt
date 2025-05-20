@@ -1,0 +1,592 @@
+Good afternoon, everybody. Enjoy your lunch if you are having one and welcome to the third lecture of our semester meetings here.
+Today, in the evening, there is the first deadline for these assignments, right? So if you haven't solved them yet, there is a time to do it now.
+As usual, if you have any trouble, there is a consultation later today, or feel free to ask on Piazza.
+We have already had something like 50 posts on Piazza, so even if you don't see the traffic because most of it is hidden to you.
+It is being used, so don't hesitate to enjoy it if you need it as well.
+Before I start myself, part of any questions on your side, some comments, or something you would like to tell me, or anything.
+Then it is my turn in that case, so let's get down with the business.
+We started training on the first, or started talking about how new networks can be trained on the previous lecture, and we will wrap it up and finish it today.
+So the overall goal is at the end of the day's lecture for you to know everything, which people knew in these middle ages of deep learning, these 90s.
+And from the next lecture, we will really start doing something deep, which we haven't done so far, but the basics are still needed, because the deep neural networks are still new on networks, so many of the things people came up with and these are still being used.
+So first let's wrap up all the things which we have seen on the first lectures, so let's have a neural network and let's have the dataset.
+The dataset contains the input examples and some labels, so we are at the supervised settings.
+The dataset is split into the training part, validation part, and the testing part.
+So our model, it has got some input layers, some number of hidden layers, and then an output layer.
+And on the output layer, we need to choose an activation function.
+The activation is given by the form of our supervised data, so it's non-activation if we are going for regression.
+Right, or it's sigma, we are going for binary classification and softmax if we are classifying either one hot into K class, or we could have a full distribution on the output.
+So right now we have just seen straightforward networks where we have with the input layer, then some number of hidden layers, and an output layer.
+We know that the single hidden layer is enough in a sense, the universal approximation theorem says that it should be fine.
+Now regarding these output functions, activation functions, there are some reasons why they are reasonable choice, so they are almost universally used.
+One way how to look at it is that it's possible to derive using maximum entropy principle.
+I won't be going through that, but there is link to the slides which you can go through by yourself if you are interested.
+And there is another way how you can derive the output activation functions.
+So when you just start with a distribution itself, so in the case of binary classification, for example, you start with the Bernoulli distribution.
+It is actually possible to derive the formula for sigma directly from the formulation, and we will be doing it on the practicals so that you have some idea of how that might go.
+But there is a solid reason why these are somehow the simplest or the most straightforward choices, and it doesn't seem people will be able to come up with something better.
+So our network could look like this with a single hidden layer, so when we are computing the outputs, we get the examples, the input feature, the input values, right, and then we compute the output of i, neuron in the hidden layer, which just do a product between the excess inputs and the corresponding quades.
+We add bias and apply the activation function. The whole matrix of weights is either called weights, or sometimes it can also be called a kernel. We will see both of these in the APIs, and then we have these biases, which tell us what happens when there is no explicit input to a neuron.
+So if you consider a row of activation function, this bias, that is, you were the row function, which will start producing something crisis or something, I don't know if I said.
+I am probably probably said that it is just a linear function, which the neural network computes. So formally, this, or this, would be a linear function, but when we add also the bias, it's formally caught and fine transformation or refined function.
+So I will probably be in precise and then say linear when I mean this, but most of the things about the neural transformation still hold or refined transformation. So composition of two refined transformations is an advanced transformation and so on. So just, if you saw the name somewhere, but I will be lazy, and I will be just saying linear in what I will be doing.
+And this, this works for all the layers, so the same thing is happening on the output layer. So for this one hidden layer model, that the parameters, which we are training are this collection of these two weight matrices at the two biases, exactly as in the assignment, which you are working on in the, in the practicals.
+And in the algorithms, we just denote all of these parameters with theta, right? So then I'm, like, assuming that I have a vector of parameters, but in fact, there are these four, four, four tensors.
+And when we are training, such a neural network, we assume that we have the loss, this loss was derived while I am elite at the only way how we can do it, it can be computed as an expectation over the per example loss.
+So this expectation, we can compute it either exactly, or some purchase one sample or in the most common case, we sample a batch of examples and estimate this expectation by computing the average over the examples in the batch.
+And then we performed an update, so in the SGD algorithm, the simplest case is we take the gradient, actually, that's the direction where the function, the loss function increases to most, and we do a small step in the opposite direction.
+So when we look at it up from the point of the single theta, we say, okay, this theta gets updated by either subtracting or, or adding this quantity.
+And when you look at it from the point of single theta, this is kind of straight forward, because we were just able to compute if we have kept all the other statements, the constant, and just this data would change, increase or decrease.
+We know what effect it would have on the loss function, so we just turn it either up or down, depending on whether that will increase or decrease our loss.
+In the vector notation, we could say, okay, all the theta are updated by subtracting the gradient times the small small learning grade.
+So this trend, the parameters, we also need to train the hyper parameters and the hyper parameters are trained right now in the brute force kind of way that we try some of them evaluate their effect on the validation set and then just take whatever the best combination we can come up with.
+And once we have a finished model, we can evaluate its generalization performance on the test.
+So practical, some practicalities, we will always process data in batches, right?
+So we will always assume that when we are computing around, both we are computing it for some number of examples.
+So the data, which we will pass through the networks will be matrices, right?
+Where the rows are the individual examples.
+And we also represent the vector, not just in this in a way where each node would really be an entity or something, but we will represent it in usually one say vectorized way,
+so what we will do is the following. If you imagine how we compute one value of a neuron on the hidden layer, so this would be a formula for computing the i neuron on the hidden layer for the batch example b.
+And then there is this scalar product between the corresponding inputs and the corresponding row in the weight matrix plus the bias.
+But we can write this using matrix notation because while we are doing a lot of scalar product, so we can actually compute all of them at the same time using a single matrix multiplication.
+So it previously, it was vector times matrix on the slide on the previous lecture, but here we have a matrix times matrix because it's whole batch of examples times the weight matrix.
+We add bias, apply activation functions, so we assume that it can be applied on the whole matrix and it will just do what it should.
+Then we get the output layer in the same way, so we could formally expand it, so we would really have one formula which tells you exactly how to compute the full output, but mostly we will think about it more in this incremental or iterative way.
+Now when we are computing the or I have a picture here, right, so even if normally what you do is you draw the picture on the left from the point of the of the framework, the things about the neural network in this way, right, so from the point of the forward propagation vector propagation algorithms.
+The computation graph which we have is we start with the batch of inputs and take the weight matrix, then we do the matrix multiplication, I use add sign because that way how Python do it, right, then we add bias, apply activation function.
+So now we got here, right, we have the values on the on the in layer, then we again multiply and add the weight on the biases of the second layer, so after computing the this activation we are here, and because we want to minimize the loss during training, we'll embed or add the loss to the network computation as well.
+So we add the node for computing the loss using the the outputs and and the gold prediction of the true values, right, so it's not not not visible here, but you can imagine.
+And so this graph on the right that will be the one where we will actually be running the back propagation algorithm.
+The total means that the the operations which we have there like like this this multiplication are not just get one scalar on the input and produce scalar outputs like get the whole matrix of examples or matrix on the input like a row of examples and so on, so once we compute the derivatives they are kind of more higher order.
+In a send that if we have a function which gets a vector produces a vector, then there are a lot of derivatives each output could be differentiated with respect to each input, so even if I am like yeah the derivatives are just nice numbers there could be matrices, which are called Jacobians or they could be even higher order, but apart from the math getting complicated.
+It doesn't change anything on the nature of the algorithm or on on the back propagation algorithm, it's still very the same, it's just that when you do the derivative it has it can the all the partial derivatives can have kind of higher dimensions.
+So now I want to talk slightly about how to design a neural network now this will not be a full full introduction or something is just like our initial attempt at discussing that but you will be improving your skills in actually solving some unknown elements in problems for the whole course.
+But anyway, when you are designing and training a network, it's not like you will do it correctly for the first time, so it's not expected from you to come to an assignment and then come up with a neural network, train it and then obtain perfect results and then go home.
+Generally when you want to train a network it's a iterative process, so you are expected to actually do if you experiment and hopefully that will improve your results.
+So what you should learn at least at the end of the course is that you should run an experiment and you should look at what's happening and you should get an idea of what you could change so that your results would improve.
+So right now what we can do already is we need to verify that our model under either under fits or over fits and if it does what we can do to improve the situation.
+So under fits means that our performance on the training data isn't good, so you can see this usually just by well o-gling at the training curves and if you are training accuracy is 100% and you are not under fitting because you are able to learn the data nicely but if it's a 90% it's like maybe it's difficult or maybe I am really under fitting so what you can do is just try to make your model stronger and see whether it helps.
+Right now when I say stronger you could add more neurons to your in layer for example that will make your model larger and it's capacity better.
+Also training longer can help your capacity because if you train for just a small time you have little chance of really getting everything from from the data so that's that are the two.
+Basic steps that you can try and if such a model gets a better training accuracy then well you are preventing under fitting because you're able to improve your performance.
+With a neural network this is usually not an issue because neural networks are so good that they can remember all the data you provide them so this is usually not not a large problem the other problem of course is is over fitting and to see that over fitting is happening first you can look at the difference between the training and the developments at performance.
+So if you've got 100% of training data and 90% on the development data well then something is also you could try improving your generalization performance by regularization right now we don't know any regularization methods but we will spend a good part of the today's lecture to actually discuss them.
+So the other way how you can see that over fitting is happening is that when you look at your tray development performance there is a chance that it will look like this so let's say that this is accuracy.
+On the development set right so the training one should look like straightforwardly in a sense that maybe I should start higher.
+And it should like just go up to near to these 100% and then on the validation set it will probably increase and then either it can go down or it could like continue just straight or it might be doing like.
+This kind of things so if you are seeing an obvious personating then you can visually see that you are over so the over fitting but generally even this this difference is important and.
+Even if I either even if you are seeing this obviously or not what you generally want to try is to try plug in more regularization technique so so make that regularizations stronger playing the model again and see whether that will help you or not because in the end.
+It might not be simple to just say from the graphs whether it's happening but if you just try preventing it.
+And it won't help then you say okay so this is the best what we can do but even if your curves don't see they are going down.
+Still it makes sense to try increasing the regularization and then you will see whether it will actually help you or not like right now it's kind of abstract but.
+Oops hopefully.
+I'm probably jumping to watch.
+But hopefully it will get into your blood after solving a lot of assignments.
+So there are various hyper parameters which in which you need to set first.
+So when you are starting just use either with a default learning crate so you don't have to think about that.
+You need to set the length of the training to sum to some value.
+So you need to make sure that you are not under fittings.
+So generally if you look at your training performance it should get to the situation where it doesn't improve anymore.
+So this is like a reasonable length for training probably right.
+If your training curve looks looks like this and then you stop training then you are probably training too little because it seems that it was still improving so you are still under fitting on the other hand if your training looks like this.
+And you are probably training for too long because most of the training your performance on that on the train set didn't really improve right so just looking at the curves you can somehow guess what the good idea is.
+For the length of the training because you should hit the best performance on the train set and then wait for five ten more episodes that should be it.
+And then we have the batch size which is again a technical hyper parameter.
+So if you want to set it somehow then the zero rule is just to set it to 64 which kind of seem to work most of the time.
+But there are various influences how batch size influences the training time and generalization so there are various effects which are not unfortunately that straight forward but generally the idea is that you want the large enough batch size for your for your gradients to be reasonably good.
+But not such a large batch size that it would slow you down during the training too much.
+Now sometimes if a very large model like a pretty trained one and then you'll be limited by the memory capacity of your GPU so you can fit a big size of eight and ten that will happen later during the course.
+So then you have no choice you just try to use as large as big size as possible.
+But if you really have a choice then the like zero guidance or rule is that large tens is something you want to start with and then you can try doubling it and see whether whether it will improve or not.
+But if you want to start somewhere then these numbers are something increasingly.
+So this is just some initial heads up when you try to train your networks and we will be improving the the recipe gradually during the course.
+So here is an overview of all the components which we need to train your network and we have some kind of very high level comparison of what people ate.
+These for the years ago right and what's happening in deep learning.
+Now regarding the architecture originally it was like a single input player single output player in the single hidden layer right.
+So in theory when we have a deep learning you can imagine that we will have a lot of a lot of players so that the model is the but the effect is that just stacking many fully connected layers doesn't do much.
+So that's not really how we are going to create deep on us instead we will discuss some specific architectures for specific circumstances.
+So we will talk about convolutional neural networks.
+And so on and so on so all these built models which are somehow deep but they have some some assumptions over the data where this approach could help we actually spent the most of the whole course by by discussing this part.
+So nowadays or today we will deal with most of the other entries in the table and we will start attacking the tackling the architectures from from the to the from the next lecture on work.
+So regarding the activation functions people originally used to go out even for the hidden layer right then they realize that they can use the the symmetrical version and sometimes later they realize they can even call it.
+Now days people start with RELO and there are variants of RELO which seems to prefer slightly better model difference is not very large so when you start with a neural network just saying fellow is is a very very good default and we will discuss these modifications when we when we see them or encounter them during our architecture.
+The exploration or discovery.
+So the other functions are straightforward but it took people sometimes to realize that softmax is the correct activation function for multi class classification.
+Regarding the loss functions while MSE was used even originally or even for binary classification it was used a lot.
+Nowadays we just use losses based on negative or percentage of it.
+And nothing extra interesting will happen well we will see a focal loss so that that may be one small difference which is lost not really the right from the cross entropy but it contains one solution element to see.
+Regarding the optimization we have covered as gd and momentum even even aedum so we already know what people use in in deep learning and even the large models like language models or something they either use aedum or some small modification of that so that we have already done so the plan for the rest of the today's lecture is to talk about regularization.
+So originally people mostly use L1 and L2 regularization but many quite effective regularization techniques appeared in deep learning so we will talk about how to enable small thinking and these are nowadays like a standard thing to use and specifically for training deep neural networks they seem to help substantially.
+So let's test the plan and we will get there so before I will get to the promised regularization let's deal with some more detail regarding losses and measuring the performance of your model.
+So when you train a model you have seen that we can specify a loss and metrics so there is just a small difference between those two things because both concepts measure some kind of an error or success on your data but when we say loss we mean to think which we actually optimize during training and given that we are using gradient descent we will need it to be differentiable.
+On the other hand the metric can be any function which we use to evaluate the model so it will usually be not differentiable but the good thing is that usually it's much more interpretable.
+If you are in training you see that not training a training loss is 0.003 then you know very little if you see that the all training accuracy is 99.5% it's it's much easier to work with.
+So let's see it so when we are using those they are provided in keras in keras the closest and the correct metric modules so regarding the losses there are two ways how you can use it either either using like in class or object API.
+And in that case you just contract an instance of the loss which is subclass of keras dot losses dot loss that too many is easier.
+And when you specify the loss what you also need is to specify something called reduction because the thing is when you compute the loss you usually compute the whole batch of examples so you need to know how to combine the individual which examples together and sometimes even for single example you might train pre different binary classifications for example if you are solving pre tasks with with a single model.
+So the reductions are that there used to be a class and an enumeration but within you keras they opted just for strings reduction which I don't know it's kind of ugly but that's what they do.
+So the default one is a very convoluted way how to say average right some over batch size like you saw everything and divided batch size.
+But there is a reason why they don't call it average but it might seem country intuitive so by default it will do what we talked about but sometimes you want just to sum the losses.
+There are some technical reasons for that for example if you are training on multiple GPUs then the the batch of the data cannot get distributed evenly on the GPU so so physically the different GPUs will have different batch size so you don't want to average them.
+First you want to sum them first and then do the averaging later so that it's a reason why it's available and you can also see that you don't care about reductions and that means you will get just the whole tenser of losses which you do only when you want to do something very specific.
+So when you want to compute the value of the loss you will just say call that is this looks weird but if I would say MSE is this then I could just say MSE and just really like physically call it with parenthesis and then give it the true values for the goal data.
+And then the predictions of our model and then we can also specify sample weight.
+So the sample weight is also connected with reduction and it tells you what are the ways of the individual batch examples usually we want to consider all of them uniformly so we don't specify the sample weight and that means okay.
+All the individual batch examples have a weight one or something but sometimes you may want to say okay I if a data set and there are so little dogs in the data set.
+I will just make them more important or looking at the other side if a dead dog the data set and if you are a dog person you might say I don't care about the performance on the get so much but I want the model to work very very very well for the dogs so you could say.
+And the images with the dogs are five times more important than than the ket ones right and what this which do is that the gradient for each dog would be multiplied by five so that the model would strongly prefer to improve its performance.
+So on that one class while for the cats you would you would get something smaller.
+I'm discussing it right now because we will use this sample weight for various things and various tricks during the training because it will it will be useful and if you imagine that.
+You have for example inputs where you only want to change some of the outputs for example you go to the center the sentence can it for different playing so on the output.
+The sentences are smaller some are larger so to make sure that just the correct sentence length or just the valid words are being killed this is one way how you can achieve it.
+So with the means that it's simple and we have seen in the assignment that when we are discussing cross entrepates it's slightly more complicated because we need to tell the loss.
+What is exactly the distributions which which we are using in the loss so there are three versions of the of the cross entrepates the binary cross entrepates for doing binary classification.
+And then category because I'm preparing sparse categorical cross entropy for for doing classification in key classes and for the sparse categorical cross entrepates the difference is that the goal to date should not be really categorical distribution but just the index of this one specific class.
+And in that case the dimensionality of y-true is actually different than then y-pred like normally these these two things should be tensors of the same sizes right the data which we predict should get should be the same but in this case it's it's allowed for the y-true to be one less dimensional like smaller by one dimension.
+Now when we compute the loss we the loss is by default expect to really get the the distribution parameters so to get the probabilities but later today we will see that the loss.
+Like it's it's also possible to to compute the loss and it's derivative just for the logits like if you remember the logits are other things which we put into.
+So there is a way of training the new model by not including the activation functions to the network itself but instead moving them to the loss.
+And we could just always do no activation on the output and then just during the loss we could say and this are the logits for which a sigma activation should be computed there are some numerical reasons why this is more efficient.
+But the frameworks differ in whether they can like manually or somehow work around it so that's why there are these two ways.
+How we can achieve that for the time being we will just put the probabilities in and keep everything simple and then later you will see me.
+Also using the enjoying the possibility of not really computing the probabilities inside the model and when it happens I will tell you but I'm just giving you a heads up that it can.
+And so apart from these this is not the usual like the eye which you use but sometimes you just want to compute the loss without thinking about the reductions and sample rates or something so there are even functions like we are over case and came up.
+It's in case right so there are in snake case with the underscores before and between the letters we just compute the loss they don't be in reduction so they always generate a tensor with the output and sometimes we will use them as well.
+So on difference between the losses and the metrics were the differentiability but there is actually an other important reason between different between losses and the metrics and that's the fact that the metrics should have memory in a sense that when you compute the metric you don't care much about a metric for a single batch right and care for a metric on the whole data set.
+But even the validation and the tests set are processed by batches because for the larger data set we just might not be able to compute everything in one go so we are going to do it in the batched ways as well.
+So if you are competing accuracy we don't care about the accuracy of the individual batches we want to compute the accuracy of the whole data set.
+So the metrics will be stateful so they will remember everything they have seen from from some point in time.
+So how this is implemented is that when you have a metric object which is a subclass of charismatic metric then you can update the state so you can add some more results to the data set which is a metric as seen so far.
+It is the same parameters as the loss call just that instead of returning the results it's increased or updates it's internal state also include this batch in the whole data set results and you can call result to get the result of the whole data set and of course you also need to weigh how to reset things.
+This is probably because if you are evaluating the validation set for the second time you probably don't want to average over the first application as well so you can also say the set states and that's whatever it should do.
+So when you are using the high level methods like faith all of this get handled automatically but we will see how to change the individual bits of the overall training so at some point we will need to work manually with a metrics and the loss is as well.
+Now in spite of the fact that there are these stateful kind of things the usual way of computing a metric is still just use parentheses.
+And when you do that what happens is that the update state will be called and then the return of the result you will get so so the output of that call is the metric value computed from the whole data set which you have seen so far just what you are seeing when you are seeing the outputs during the like incremental computation right you are seeing for example the testing accuracy.
+So what you are seeing is the accuracy from the beginning of the training until that point which starts changing quickly at the beginning and then it doesn't change too much then you hit the end of the app or you see the final value and then you start again.
+Yep.
+So the metrics can also like every loss is the metric so.
+You will find the mean square error and cross entropy things here as well but they have a different implementation here because of the aggregation right so they just have or include the memory of story and call the quantities from the beginning of the training and then we also have well metric for computing mean but.
+That's not very interesting the interesting thing of course is for complementary accuracy so that's the percentage of examples which for which provided correct output.
+And when I say the correct output I mean that you will just do like an equally the test between the predictions and the goal data.
+However this doesn't work well in some of the cases if you imagine that the model is doing binary classification then it produces quantities like 0.8 which means I think on probability of 80% this is I don't know what dog.
+But in the goal data you have this is a gold dog like you have one there I like label so you cannot just compare it with equality what you need to do is you need to predict the most likely class and then compare those.
+So the accuracy is going to do this for you and but again they need to understand what the distribution they are working with so similarly to the losses there are three more versions of accuracy which are one for the binary case one for the categorical case and then stars categorical case were again the the goal data are seem to be just in these days.
+Now there is a heuristic in in Keras which when you just say accuracy like a string metric it will try to guess the correct of those you will see this in many tutorials but the thing is it sometimes does it badly.
+And in that case you will see weird results without getting an explicit warning or something so in my templates always be explicit and choose one of those.
+And but you are not really forced to do that but there will be even assignments where the automatic guessing of the correct accuracy does not work so.
+And it's it's tricky like it's slightly easier unless you are beaten by it when it's like.
+And silently computes and incorrect things also my my device is to explicitly always say what you what you are computing.
+Yes, the question.
+Well, the what the what heuristic it does.
+Is that.
+That with the binary accuracy you wanted to work.
+Even in the situation where you are actually producing two or three outputs so it's not as simple as saying if we have a single output it can be just binary accuracy so it looks also on the difference of dimensionality is between the true data and the goal data.
+And for some reason like so I don't remember exactly the specific case where it happened but.
+It's like the distinguishing between the binary accuracy and the category is it's kind of tricky.
+And you just cannot say this exactly so the heuristics mostly work.
+And I think they they are rely on the fact that if you are computing binary accuracy you want just a single output so the the prediction should actually always end with dimensionality one I think that's the thing but.
+And even if you are gold data are I don't know a vector of numbers and your predictions are a vector of numbers so that means it should be binary classification because it's a batch is and and then just scale or then I think in this case it will not say it's binary accuracy but it will compute.
+A categorical accuracy and just ignore the fact that there should be batches there I think that that's the thing which happens if only our prediction side you don't explicitly include one when you are doing binary binary prediction because if you imagine doing it in the neural network if you are doing for going for the binary accuracy you'll probably have a dense layer with one output right.
+So this will produce a tensor of size batch size and one.
+But in theory you could also just produce a vector of size batch size there are scalars but they are fine for for doing binary binary classification and this will make the heuristics to go haywire I think I reported it and I think they don't care.
+But it's difficult to do this correctly like the thing is you can not really say just from looking at the shapes of the value so to hence my advice so don't rely on that and just put explicitly there won't even if it's longer but once you know these things means I don't really think it's a problem and like it can even catch some some mistakes if you do it incorrectly right because it's auto checks or everything is fine.
+So if you do it some some some how incorrectly it might even help you to say it explicitly but I'm not sure if I know and practically example it's just my idea that it's a good idea to like document what you want to do and in my view like having the explicit metric gives a message to whoever is spreading the code including you what you are actually doing in the model.
+So that was the part where we discussed the guys and now is the part we will be doing some math because before we will start with the regularization so the idea now is to spend a bit time looking at the losses which we are using and what kind of gradients are they're going to provide to our model.
+So let's consider the situation where we have some input x then we have a model whatever number of layers and then it produces some output right then it's given to the loss we have some some why true.
+So what we'll be interested in is looking at the derivative of the loss with respect to the output of the model right so when you run the back propagation.
+This is the gradient which is going to be pushed through your neural network multiply by the derivatives of the individual nodes.
+So we will start simply when we have a mean square error loss then we have no activation and we just compute the the square of the difference between the predictions and the true output.
+So computing the derivative of the loss with respect to the output of the model.
+Well that's kind of simple so when you compute the derivative of the square it's two times the parenthesis and then it is times the derivative of the inside with respect to whatever we are computing derivative of.
+If we are computing the derivative of the output then this will be one and let's say it.
+So what does it mean that the gradient and the green point here or green line there is the generally computed by looking at the prediction of the model right I will say why Fred.
+Minus the the white true.
+So if we did the correct prediction this is going to be zero which is fine like we cannot minimize the the loss anymore so the gradient as well the function function locally the function doesn't change like the idea is that the loss is just a quadratic so if we got.
+Here item the derivative is really zero in a sense that on a very small neighborhood nothing would really what would really happen and then the larger error we make the larger the derivative will be.
+Right let's just because if we have the the quadratic function the derivative just looks like this price or zero in the in the vertex and then in this large and larger so.
+The kind of makes sense like in a sense that the larger error you make the larger the gradient is that as you should change or behavior and and really produce larger and larger or smaller or smaller lots.
+So people kind of lie this kind of the gradient because it makes sense on the other hand the problematic part here that it's unbounded.
+Right this this difference can in theory be very large.
+So it might happen that if you do a tragically large mistake the gradient could be 100 times the usual output which will create an extremely large vector for me to travel with.
+And the training can just be stopped because of that because you will make such a large update to the parameters which could cause some something terrible like when I say something terrible you can imagine our loss I don't know like this and then if you are unlucky.
+And then this point you are just seeing a large gradient which is the right and then you could start over and this one large update could.
+I read you or undo like hours of work or something so sometimes we will somehow defend against that but a part of that this is kind of simple right even if all the normal distributions and and allies or something all of that was in still the gradient which we sent to the network is this kind of state forward.
+So let's have a look what will happen when instead of the means where error will go for classification.
+So we are in the situation where again we started with some eggs the option it's the bad eggs.
+Then we passed it through our model and then we want to lose of factivation so here I have the noted sets the input to the softmax and as the output of the model right that's why it's all.
+So the this the output of the softmax these all are being computed from the z by the softmax formula so that it's like that I output on on the softmax is the exponential of the corresponding input.
+But we also want the sum over all these outputs to be one so we normalize it by all of these intermediate values so we some all it was a chase here right and that's what I'm trying to slow myself down even if the formulas are there on the slide because otherwise I would just say it's obvious is there right so think about it.
+It's me slowing down but you have a more readable formula there as well yes the question.
+Yeah definitely it's a good idea for for this e to be the base of the logarithm which we are using because then when they play with each other it will cancel out.
+Cancel out kind of nicely so so yes.
+When I said the softmax is a good activation function it.
+Yeah it is true but.
+Specifically in the case where we are actually thinking about using MLE so if we say okay in the in the MLE we will use binary logarithms and then you would redo the way of constructing this function for example from the maximum entropy principle you would really get these these two there or something so that's that's the finish later case.
+So now let's look at what the loss actually is so we know that the loss is well in this case negative look likelihood yeah we you see that in this case we have just the the index of the goal output right so we have what I don't know for output and one of them is is the true class right the gold one.
+So in that case the loss is negative look likelihood so here we have the probability of the gold class.
+So where to get this this probability well for for categorical distribution it's it's simple it's just one of the outputs right because all these owes here are just the probability of the old one is the probability of the first class old to the probability of the second class so if we.
+One the probability of the gold class we just take whatever all is the one corresponding to the gold class or here in the formula I say all gold.
+It might seem country into it if that we are just using one of the outputs to compute the loss we actually are using use all the other outputs on the other hand this output is computed from all the logic so.
+We will get the gradients for all the logic because one way how to increase this output is to increase all the other classes right because if we are decreasing all the other classes this thing will get smaller which means the output will get larger.
+So now let's think about the about the derivative but the tricky thing is that we will not compute it or Michael Michael.
+A country into a thing might be that we are not competing the derivative with respect to these owes but we will compute the derivative with respect to the logic and reason for that is that it will be somehow nice and simpler.
+And once you will see the output you will see why well you will see that it's true and you will see why even even before.
+So let's say that we want to do that so what we want to compute is again the derivative of the loss so that's minus number in.
+The derivative respect to that so let's consider one specific that that I don't worry what am I writing is is going to be there also print it I'm just making it interactive.
+And slowing myself down so here we have minus logarithm of all gold.
+So this is all gold what it is it's e to z gold divided by the sum over all j's of e to z j.
+So now we will we have a fraction there so we will separate it into two parts so first we have a logarithm of the denominator so the logarithm of the denominator is simple because we will just cancel the logarithm and the e so we will just get minus z gold.
+Then we have the logarithm of the denominator it should be there with minus but that minus will cancel with this minus so it will be plus.
+And yeah and now we have the logarithm of the sum over j is a j.
+So now I was.
+Two optimistic and the sizes so now let's have a look here.
+So the derivative of the z gold with respect to z i is the first thing and then the derivative of this part with respect to z i is the second thing so this is this part right.
+Now it will be kind of simpler at this point so here we have one of the z's and we are completing the derivative with respect to i.
+So that's either zero if we have a different z in the denominator than in the denominator or it will be one if it is the z i in the denominator and in the denominator.
+So what I will say is I will say gold equals i right this is the I verson bracket notation you can think about it as a cast from a bull to an integer right so if a condition is true you get one it's for zero sometimes useful.
+And then here the derivative what it is well the derivative of the logarithm of something is one over that something one over the sum of j e to the j times the logarithm times the derivative of the inside of the denominator.
+So now we have a sum of many e to z j with respect to z i so we actually don't care about most of the terms apart from the one where we have both e to z i right the the one term containing the z i and very about it of e to z i is e to z i actually.
+Right.
+And now we are nearly done the last thing to realize is that this is actually o i right by the definition of softmax this is just the i output so we can say that the output is all i will write it in the opposite order.
+And now we can write that back in the vector notation for all of the sets which we have there so what we will get is that the derivative of the loss with respect to the logic is a is a vector where we have the prediction of the model.
+Right all the o i's on the individual position so the o and then we have here this this part it will be zero almost everywhere.
+Apart from this one index gold where it will be one so just one hundred representation of the of the of the gold data so that's what I mean when I say one gold.
+I that it was defined on the first lecture just means one other presentation not of zero's and one one on the position indicated by this index.
+So when you look at it this is actually the same or very analogous thing which we had in the mean square error the derivative is the predictions of the model minus the true data if we did it correctly we would get zero.
+And larger error we make the larger the the gradient is so if you consider the gold distribution one hot in this case and then the model distribution then the derivative.
+Will be.
+Like negative just for for increasing the correct class when I say negative I mean that that will actually improve the loss if we increase the logic corresponding to the to the gold output and then for all the other class classes we will just try to put them to zero this kind of state for what if I want it if I like ask you what the network should do you could say yeah we want to increase this and decrease that.
+But it's not just it's intuitively good solution it is actually like the best in a sense that the memory is optimal in some sense so it's not just a good idea it's from some point of view is the best idea of what you can do and nobody is going to come and say I have a much smarter way of doing that because.
+And then all of your empty choose wouldn't really hold.
+And compared to the to the mean square error the gradients are always bounded here because the probabilities are one at most so this is not going to be larger than one in the absolute value for all the pages.
+So the the problem which I discussed within a sea with a gradient could be very large it does not happen in this case so it will everything be very nice and chiming.
+So we might happen that the growth data are not actually one hot I can theory if you see data like this.
+You could say okay it's it's a three I don't know with 70% probability and then it's eight with I don't know 30% probability or something.
+So in this case you can also use the categorical cross entropy to compute the loss.
+But the the G is then the roof of the full whole goal distribution with possibly many non non zero elements.
+So in the case we have really the the cross entropy loss which looks like this writes a sum over I and here is the GI and here is the OI.
+And in the previous case all of these GIs were zero apart from one which was one so only one of these logarithms what was kept there right that what happened for now we have several of them.
+But we actually know what would be the derivative if we just consider this minus logarithm of OI that exactly what we computed before so the right now the output is just weighted.
+Combination of the outputs which we would get right so for each GI that if we consider the derivative of the minus logarithm of OI respect to that the output would be all minus one GI.
+So when we do a weighted combination of those the O's will stay the same because well whatever combination of O's will do you just get no because it's the same in all of those and then what we do is we do a weighted combination where we get one on the position I with probability GI.
+Well that's just G like with the the goal distribution so the output is exactly as you would expect output as of the predictions minus the two values.
+And well surprise surprise for sigmoid is the same thing so again the gradient is kind of nice so yeah two things so first we are not going to prove it for sigmoid directly because you know sigmoid is in fact just a special case of softmax can I make sense that the binary classification would be a special case of K class classification right so consider softmax.
+Where we have got two inputs zero and X right here we have softmax.
+And let's consider this output so this output the value of that is the E to X divided by the sum over all the inputs of sum of E to zero plus E to X.
+And now let's multiply it by E to minus X both in the denominator and in the denominator.
+So what will happen is that we will get E to zero in the denominator and in the denominator we will get E to minus X plus E to zero all these E to zero are actually ones.
+And we get this one over one plus E to minus X which we know is the sigmoid formula right so the sigmoid is just a special case because when we are doing classification into two classes we don't need the model to produce two outputs.
+We know that the probabilities have the property that if we have fun probability the other was not being one minus the first.
+So we can actually make the model to produce just one output and we can say the other could be zero problem.
+And then we would still get a nice probability and the other value here would be just one minus the first one.
+That's what the sigmoid is for it's really just a special case we're in the binary classification it's enough for us to do just one out to.
+So that's one thing that works for sigmoid the other thing is that.
+All the derivatives of the model are also of the loss with respect to logits ended up the same both in or in the MSE and all the cross entropy so that cannot be a coincidence.
+And it is not a coincidence in a sense that this happens exactly for using sigmoid and sofmax activations one way how you could actually get the formulas of sigmoid and sofmax is to say.
+I like the gradients from the MSE so give me activation functions which would give me the same simple straight over formula for the derivative respect to sigmoid which would just be the predictions minus the true output and if you do that and do some math you will end up exactly with these formulas so.
+If they are somehow optimal and one of the senses in their optimal is that we will produce we will get very simple gradients with respect to the logits this is also the reason why it makes sense to compute the losses from logits.
+Right because when you are competing the derivative of the loss you can easily skip or compute the derivative of the loss with respect to the logits because it's also nice and simple.
+So that's why I said it's numerical stable because you don't need to explicitly compute the derivative of a logarithm and divide by one over over something you can really just compute this straightforward quantitative immediately and especially in the SGD manual let's make things easier.
+Yeah so there is just an image showing what the gradient looks like well you just always try to produce the correct probability from the goal distribution instant from the one we are producing but previously we were always going to the one or distribution and now we are just going to the goal distribution which might not be one odd but well nothing entirely surprising here.
+So this was the map part some questions ideas comment.
+Doose or something yes.
+Great idea sorry sorry I didn't I didn't solve a thumb yes.
+So the question is whether in practice we could actually get non one odd distribution for the goal data.
+So when the data are you annotated it could happen if you have for example multiple writers so if every example is traded by three people and they don't agree then you could compute the average of the ball things.
+So usually that's when this happens when you somehow compute the labels with an average so it is actually kind of common to use multiple writers if you want your data set to be really clean because.
+If you are paying for the annotation people can make mistakes so if you are using mechanical territory or some online service to do that like getting at least three annotations is just a common way of doing this so you will actually get those sometimes you also use model predictions for for that.
+So if you imagine that you have a 10 models you will look at the predictions of these 10 models and then every of them out then you will get the dense distribution later today you will see why it's a good idea to combine model outputs as well and we will also discuss a regularization technique which uses gold distributions which are again non non one odd so there are cases where this happens but.
+Not cases where I think people would look at the image and then they would say 70% that that's a dog and 30% that's a cat so this kind of thing I don't think people are doing because at the tip of.
+But if you have 10 writers and seven say that and three say that.
+Yeah, so so the question is all examples right now just contained one obvious mode which was the most likely but maybe it could look like this where we have like several water and tapes or something.
+So that this can also happen when we have multiple.
+Go labels right it could happen that on the on the input we could have such classes that an input image could be both.
+The dog and the cat because it contains both a dog and a cat for example.
+Especially when you are really thinking about it with like multiple labels in mind if they're like I don't know out of the ten labels five of them are correct it might seem like counter intuitive that.
+The correct labels will get 20% just 20% and the remaining will get zero in some sense I would like to say 100% to all of these correct labels and then zero to the remaining ones but because this is the distribution you cannot really do it.
+So that might seems weird like if you are imagine data were really multiple classes can be true that if there is just one it get 100% but if there are five correct labels they just get 20 on the other hand when you look at it from the gradient point of view.
+Then then it's kind of fine because the gradient in that case is still the output minus gold so what you want.
+So for when you want to the model to predict this data you just want some set of logits to be very high the one which corresponds to all the gold classes and then a set of logits which are there are all which will be the logits corresponding to the other ones and the this 20% and 100% will go away the optimization goal will be just make this higher and make this slower so from this point of view the the 20% is just away how we.
+like it's described this situation and because we want to sum to 100 they they just are numerically seem to be smaller but when we are maximizing this it's all about the relationship of the of the probability so this in some sense is.
+This five times 100% so it's perfectly fine if many of them are very similar because the model will try to generate logits which are well the same but it doesn't really.
+It doesn't really matter well which what value these need to have like that's one of the thing which the softmax that the softmax because of the normalization because we are dividing.
+the sums here then the the logits themselves don't mean anything if you have a model which is doesn't that which is a classification and we know that the first.
+the output gives us a logit of 3 then this doesn't tell us anything whether it will be large probability or small probability because if all the other logits are 0 0 0 0 0 then it will be very large but if the others would be 10 10 10 10 10 then the three would be small so the.
+There is no difference in in 20 and 100% in a sense that we don't care about the absolute value we just care about the logits for the gold classes to be the same and large compared to the remaining ones.
+Yeah, okay so.
+When we are considering the softmax distribution.
+of these sets right which will produce those then the the logits are sets and we can actually compute their value and.
+I will write down the output and then we can think about how to get it so what about will hold is that the Z i will be the logarithm of the O i.
+plus some constant and this constant will be the same for for all the logits.
+So the logits are actually roughly the logarithms of the of the probability is but offset it by some unknown unknown quantity but this quantity is the same for for all of the logits in this one example.
+So to derive this all what we would do is we would say okay so.
+So right down the formula so we will say O i is e to that i divided by the sum of e to that j.
+And we could say okay so let's denote this thing c.
+Or I don't know I was call it c one and then from here you could get the you would compete the logarithm of that so what would happen is you would get log O i is that i minus the logarithm of this c one whatever it is and then it can can be moved to the other side right so this there is nothing.
+And nothing magical about that it's just there so what does this mean is that when you are if you had two logits and the one would be for and the other would be free then the difference between them is one which means the probabilities will differ by a factor of e to one so this is first.
+Logiate will generate the probability which is 2.72 times larger than the other one and the absolute value would be set so that they they sum sum to one so from this point of view you can see something from the relation between the logits right so if one logit is 10 is 10.
+Plus like larger than another logit by 10 then that's great difference because e to 10 would be very large like if the difference is one then it's still nearly three times more likely but everything works just in the relation to each other but the absolute values don't really matter.
+Yes, the terminology is the whole force of facts and for sigmoid but it's customary to call the outputs of the neural network logits like like you could imagine somebody said call the outputs of the network logits even if they are doing quick regression.
+Then it doesn't make sense it's not a logic it's really already the mean of the distribution but somehow.
+Because people are doing a lot of platifications they sometimes we see use it and and use it also in the other cases but formally yes it could be should be used only with the sigmoid and sofmax.
+Like this thing no I think this is just a consequence of the formula it's more like the formula like this this part.
+It comes out from either the maximum entropy or something so it's like this formula which is a consequence of some choices and we will see on the practical some some other ways how really we could end up with this but once you have it then you can derive this really just by inverting the formula right because what we are seeing is really just the inversion.
+Sofmax is something then the logic is like like the reversal of that and the other thing also is the name so if you know about exponential family distribution that will be a link function.
+But it has a name also like the going going the other way but as we look at it it's just a consequence of having the activation formula.
+We can also do this for the sigmoid for sigmoid we know that the like if this is z and this is all like the final probability with the same notation as before then if you want to see what the logic is.
+It would be all times one plus e to minus z then we would move out to the other side so one over all one plus e to minus z then this one will be moved to the left side so we would set minus all and then we would complete the logarithm of that so we would get.
+That the logarithm of one minus all over all is minus z so now I will.
+use the minus to swap this order so it will be all over one minus all this is said so for the sigmoid case it's slightly different.
+And then the logic is exactly the logarithm of one over all one minus all you might have seen p over one minus p so these these numbers they are like the log of in the English terminology they are like the ratio of the probability sometimes you say it's three times more likely that I will win and then you will that's what this number is like how many times.
+p like the outcome connected with t is this is likely the other thing and then you will compute the logarithm of that again so if the logic is one in the case of binary classification again it means that the probability of one of the outcomes is e times larger than the probability of the other one so from this point of view the interpretation is still kind of similar right.
+this number is the logarithm of the like multiplied difference between the output probabilities.
+But here there is no offset as in the soft marks and that's because we have fixed the first input to zero right because I said the sigmoid.
+is a soft marks where we fix one of the inputs and this this part where we fix one of the it will we get rate of the constant like the thing is if you want to distribution over two numbers right just one number is enough because the the second one is one minus that if you want to distribution over four numbers.
+again just three numbers would be enough because the last one would be one minus all of those but for soft marks we just put four numbers in so we overparameterize the water so it has got like one more degree of freedom.
+and that manifests in the fact that the absolute value of logic doesn't mean anything in theory we could do it like ignore this and just made the model to generate the outputs.
+but it's for deep learning it's never really done people just use that many probabilities numerically the results are are very similar so there is no reason to go either way but it's like a standard way of actually producing all of those so we will be overparameterized and that's for for soft marks we cannot really say what the logic means in an absolute sense while we could have.
+if we didn't overparameterize it because the not overparameterization would force the sea to have some specific value but it's not done in practice so we are doing it in the same way as everybody else.
+great so let's put them up behind us for a bit let's talk about regularization so regularization will that anything which will improve our generalization capability so our performance on on the validation data will generally be called regularization.
+the idea is that the regularization doesn't help us during training but it's somehow wants to change the training procedure or something so that whatever the model can be like it's more useful or more successful when applied on unseen data the data not used during training.
+but we will discuss several possibilities one thing how to improve regularization we mentioned on the previous lecture and that's to have more data.
+if you have more data you need to process each example less and if you have so much data that you would process each example once then your training performance and your validation performance shouldn't you differ.
+if you measure your training performance by looking what the model does on the example before training on it which is what the matrix would compute for you automatically then it should be the same thing because we always try to classify and unseen.
+but the thing is while this can happen in some cases when you download the whole web and train an English chatbot that the usual volume is 6 trillion birds for English for example so you will not encounter any example many times during training so while there are some cases mostly you will be in a situation where you will generate the data set or you will pay somebody to generate the data set.
+so you will have you won't have enough data so this is not a solution of saying get more data well it is but it is costly so it will be your job to like make your models were great even without additional data.
+so one thing which we can do and which is kind of straightforward but I still call it regularization is to do a less stopping.
+you have seen this you shaped curved kind of image like it doesn't seem to you shape but it goes slightly larger we have seen this on the first lecture but there the x axis was this virtual measure called capacity.
+I instead have the training time I have gone through the training but generally the shape stands to look similar in many cases so the training error goes down and the validation error goes down and then it either could be feeling around or here it is even slightly increasing which means we are over fitting.
+and what does it mean for us from the practical sense well it means that we actually wanted to we actually wanted to use that model.
+right because on the validation set it achieved the smallest loss or the smallest accuracy so it kind of makes sense to use that one right and when we do that in some case we limit the effective capacity of the model because by limiting the model to train for shorter time.
+it could not have memorized so many things on the train set so all the rules which the models created are still kind of general right because you haven't still seen the examples many times so you can just say I will identify this third training example by looking at this portion of the image or something and at point you still haven't done that.
+so your validation performance might be better because your rules are still I want banana and banana is yellow blob instead I want banana which are these 25,000 examples from the train set and I can identify each by looking at the second to last pixel on the last raw which is identical for like different for all these examples or something.
+and this is something which you can easily do you can just all go things in in tensorboard or anywhere and just say okay so I'm training to all so even if.
+you will be under fitting in a sense choosing this model makes your training class larger you don't care because we care about generalization so like this is a straightforward thing which I have given name and said that is a regularization technique but it's like the obvious thing what you do like.
+I've seen this best performance on my validation set so this is the model which I'm going to use now this is like a double edge to sort right because usually the curve like goes back and forth.
+if you were unlucky and would go down here you would have chosen that one and that could would not probably be the best thing.
+although on this set might look differently but if you are over fitting heavily then this is definitely definitely a good idea there are some cases where you can regularize your model.
+strongly so this thing will not really go down but it will be like fiddling around.
+and in that case you probably don't want to do early stopping because this I don't know this one point where the validation error was smaller.
+but really just be a chance of the specific validation set and not the general performance of your model so so we three like depends but if you are seeing like an obvious over fitting then it's definitely a good idea to do that.
+so this is nice and simple so yes yes so the questions whether we can like ask Keras to do this for us so the answer is we can the thing is when you say early stopping there are actually two meanings of the term.
+one is also to stop the training if the validation error has not improved for some time so when you say early stopping either you mean to use this best validation like the best effort where you achieve the best validation performance.
+the other thing which you could do is you could say okay so because I have been like the performance I've been decreasing for some number of episodes.
+let's stop the training there but it also then the early stopping code will make sense so and both of these are possible in the keras using the callback which is called keras dot callbacks dot early stopping.
+in class and when you read the documentation you can use both of these functionalities functionalities there right because there is this option.
+there is this patience which tells you how long you want to train even if you are not improving and then there is this restore best weights which tells you whether you will get back exactly the model which achieve the best performance on the validation set and you can see you can say what loss or what quantity you want to measure.
+whether you want to increase a decrease it and all things things can be said there and you just pass it as a callback to the fit method and it will do whatever you want.
+yes yes you can monitor anything you could it does not necessarily need to be an explicit metric you could compute it in your callback as well and then use this strategy to invite minimize when it's smaller or smaller something.
+I have already briefly skimped over the realization so let's give it a deeper dive so with or maybe you should have a break.
+so hopefully you are now full of energy and enthusiasm and everything to follow the rest of the lecture so let's get to it.
+now so the realization I've already mentioned that and it's an idea which people had for decades which might not seem very intuitive at the beginning but it's very simple to express it and so the idea is that we will try to prefer simpler models so that we avoid overpeating by generating simpler solution.
+by endorsing or preferring models with smaller weights so first I will tell you how and then I will get to why right so so how are we going to prefer models with smaller weights.
+well we will just add one more term to the loss which we have it's called L2 regularization term and it says okay I want to minimize also the the fetus.
+now these two two what does this mean it's like L2 norm of theta so the L2 norm would be something like this squared so this squared just means that this goes away so it's really just the sum of squares of the individual theta which we have there.
+when we have to objective which you want to minimize we need to guide the model to say which one of these is important to us right because the optimal to do these problems are kind of different.
+for the original loss you probably want to have some non zero weights so that you achieve zero training error from the L2 regularization part you would prefer weights of all zeroes that would minimize the L2 norm loss.
+so you want something in between you still want your loss to work well on your training data but ideally with weights which are not very large.
+so we can do that by specifying the strength of our L2 regularization term which is usually denoted the slum data half is there just for convenience and later it will somehow somehow cancel out so there are many names how this can be called and to regularization.
+or weight decay but with the weight decay it's tricky and you will get it later.
+By the way this regularization is usually not applied on biases just on the kernels just on the weights on the edges but I will never talk about it from now on I will always just write the formula so it seems that we are.
+we are helping normalizing everything that's how the notation is also in the other papers but very in mind that in fact here we want to consider only the weights so now let's get to why.
+so the idea is that simpler models are the ones which don't change rapidly but some what the models which change their output when the input is being changed only like moderately or something and.
+if you consider just a single single layer right for a connected one we multiply x times w and advice and if you compute the derivative of the output with respect to the input.
+then it's the derivative of x times w plus b with respect to x then it's going to be the weight matrix right so what this means is that the larger the weight matrix is the larger the change of this one one layer when you change the input.
+the biases no effect there that's why we don't regularize it but we regularize the weights so that the we limit or we try to minimize the changes the model will do when the inputs change slightly.
+so some there are some some examples here imagine that we are doing a simple simple regression and there are three solutions here one which is the best solution for.
+the quadratic polynomial and then two solutions for a polynomial of order of eight so there are nine points and we have model with large enough capacity the we can actually achieve zero training error.
+but if you look at the found polynomial it's really terrible because if you want to do the predictions here you will expect probably something like this but the polynomial goes down here so the prediction would be very off.
+compared to the neighbors right so the idea is why don't we want the model to change too much is that if you are doing predictions then you probably should generate similar outputs to to the inputs from the thing later which are also similar.
+so the L to normalization can be all to norm can be considered a way of evaluating the smoothness or sharpness of the predictions of your model in this case you can see the L to normalization is kind of large sorry and to norm of the weight vector is kind of large 32 by while here it's it's much smaller or we can look at this this classification example instead.
+so here we have a binary classification problem two dimensional input we predict either orange or blue and on the left side you can see what happens if we use the neural network with then.
+so this black part that are the decision boundary what the neural network predicts you can see that it's overfitting in a sense that here we have learned this one small island of orange exist and here there is an island of blue predictions and something.
+and these are the magnitudes of the of the weights right for the more intense color the larger the way if we instead.
+or additionally employ way decay then the predictions will look like that so our training error will go up that what happens when you use that to regularization you are preventing.
+you are most of the optimized because some of the directions of the gradients are in the in the chain or in the direction of small the weights on the other hand our testing error improves.
+so the size of the weights decreases well this is not surprising this is what we want it but it had this this this nice effect of actually improving.
+generalization because well we have somehow tried to smooth them out the the predictions of the model.
+so if we want small weights why to normal we could use a one or we could use a pretty we could use many other ways of doing that so let's now look at why a two is a reasonable choice.
+and what he will do is we will use Bayesian inference for that so right now we are training the model using the maximum likelihood estimation so we are choosing the fedas with which the training data will have largest likelihood it will be as much probability as it can.
+but we can look at it from some other way around so we could maximize the different criteria which is called maximum up posterior estimate.
+and we could say okay we won't pay us which have the maximum probability given the data right it is difficult to see the different between these two things.
+but both of them are kind of fine right either the parameters which make the data to be most likely or the parameters which are most likely given the data.
+so what is the practical difference between these two versions so if you have seen a base p or m thought the probability one or one or something if you haven't then don't worry about it much but you can swap.
+the order of the conditionals by multiplying and dividing it by the marginal probabilities so when we are maximizing this we are maximizing this.
+so we are finding theta which maximizes that so if we want to find theta which maximizes that we don't have to care about this part because that always the same for all the theta.
+so we just need to find theta maximizing this and now when you look at it it is actually very similar the only difference is this new element which is called a prior over the parameters right if we are to talk about the probability of the parameters we need to know how probable they are.
+when not considering the data at all like what is our prior preference for for the model parameters so that's what the maximum of posterior gives us.
+we can express our expectation of what weights we like you can say a priori I prefer these models to the other ones.
+so what kind of preference we should have well if you on small weights we could see okay our preference for the weights is to have a mean of zero probably reasonable choice and then maybe some some fixed variance.
+the variance the variance means that they won't be too much off from zero so what kind of distribution we could use right when we know that the mean is zero and we have some fixed variance well you are seeing the pattern I see when this moment.
+so using the maximum entropy principle we could say okay so let's use the normal distribution right so we could say our prior preference is for the final theta to actually be mean centered with some some some variance and the smaller the variance the the more we will prefer model with small weights.
+so now let's do the let's do the math let's plug it into the maximum posterior estimate so the interesting part is that now we also have the minus log of the probability of the parameters there now let's plug in that the formula for the density of the normal distribution so for this case it looks like one over square root of time.
+by sigma squared times e to minus sigma divided by two sorry two theta squared divided by two sigma squared yeah you don't really need to remember that but if you plug it in.
+then this part again will not be important no theta there right so you can formally compute it how it is but then we will just ignore it because no theta means no effect.
+so the interesting part which will be there will be the exponent with a plus sign because these two things cancel.
+so what we have there well that's exactly the L2 regularization term right but instead of the lambda being there so originally we had lambda over two and here we have one over two sigma squared so we express the strength differently because the exactly smaller the variance the stronger the regularization will be.
+and this somehow shows that L2 is from some point of view the best if you believe or accept the maximum entropy principle.
+so what actually happens when you are performing a two regularization let's think about the SGD update so in the SGD update we are subtracting the gradient of the of the loss so when you think about the gradient of our to regularization.
+like this right so so what happens well when you consider just one of those sigma theta I'm sorry one of those theta then the derivative of that is two times.
+the derivative of the inside so it will be two times lambda over two times theta I these two cancel out which is why it did it so the update will be this we subtract the learning create times lambda times the value of the of the theta I and we can write it in a vector notation as well.
+where we really just subtract a small quantity of theta so let's rewrite it and see something interesting right so we can take these things together.
+and you can say okay so we take the theta we multiply them by this this quantity is something slightly smaller than one probably because the lambda will be.
+and the learning create is 0. something something something so this this part you can think about it as I don't know 0.001 or something very small so physically what happens during training is that during training whenever you are updating theta then you are following the gradient.
+and you also make the theta smaller right you you scale it size to 99.999999% and you do this like every update so the algorithmization it's small force which.
+the pulse all theta is to zero so if you learn something from just one training example it pulls you somewhere and then the utilization is slowly like pushing you back to zero so generally you can remember things you can remember who's.
+if you are seeing them frequently enough in the data right because then this this gradient is pushing you in the direction and the algorithmization is pushing you back and then again.
+the gradient will push you so you will remember things which are frequent enough to be stronger than the algorithmization if you learn something from a single example you will learn it in one gradient.
+and then for the the remaining of the app of the algorithmization will like squeeze the information off from you so that's that's one way how you can think about it like what does this do well this makes sure that if you remember something you've seen it enough number of times in the data.
+while the things which are very specific can somehow be sometimes be lost to the algorithmization which seems to actually work somehow.
+so sometimes when you think about this specific step you call it a way decay because you are decaying the weights during the updates.
+now for SGD, algorithmization and way decay are the same thing it doesn't matter if I add the algorithmization to the loss or if I would explicitly do way decay they are just equivalent.
+on the other hand this is not true for the other algorithms for example for Adam it has taken people three years to like realize the problem that if you use Adam with altorecularization and what I mean is by adding the altorecularization term to the loss that if you do it.
+then this will mess up your estimates for the first and second moment of the gradient.
+I can happen that these are sometimes much smaller than the ones generated by the other algorithmization term and you will just lose them because it will be too strong.
+if for Adam the effect of adding the altorecularization term is more like it has more consequences than just doing the way decay it will also influence the internals of the algorithm.
+so in fact what we want to do is to do explicitly only the way decay instead of adding this to regularization term to the loss we want to just do the pushing of the theta's back back to zero.
+and so this algorithm is called Adam w, Adam w decay and it's like the correct way of using this kind of regularization with Adam with SGD doesn't matter and people prefer adding terms to the loss because that way they didn't have to modify the algorithm right the user could do it just by changing the loss.
+but for more interval algorithms like Adam that's no longer the case so that's why we need to actually provide the implementation with the way decay because the trick which people thought were clever does not longer apply to Adam.
+so nowadays if you want to do that to regularization of Adam just use Adam w it has like it's available in all the implementations of torches it has it.
+so that you are not surprised what happens when you see Adam w there also exist SGD w but for a Gd the difference is negligible because you can convert it with Gd and back.
+so I said that also other regularization there could be but for neural networks L2 seems to work the best for linear models you can also see L1 regularization which kind of seems to work for some cases but for neural networks that is very rarely the case.
+so this is the only time I'm talking about a regularization and generally we will just ignore it because empirically it works very badly and I know of no paper where people would train in neural network and L1 regularization would do something interesting for them so we are now.
+so now let's get to something easier than a lot of math when I try to convince you with complex formulas so.
+another way of doing regularization is to use something called data set augmentation so sometimes consider what images on the end when you have images on the input you can.
+you small changes to these images which show the theory preserve their labels if you have a picture of a dog you can.
+I know in decrease the brightness slightly and then say it's still dog or you could do it rotate it with like with one degree and say it's still dog probably is the case and even if the image is very similar it is actually way which can prevent over fitting non trivially right because when the network over fades or images if you really remember some some parts of the image.
+but if you imagine that in each time you throw a training example to the network you rotate it slightly then there won't be one specific pixel or just portion of the image which would always be the same.
+the same position of just remembering portions of the training data will no longer work because if you use some small random change to the training data every effort you are encountering them and use a different one.
+then the network cannot hold on to just remembering parts of the images needs to learn the rules because just remembering portions of inputs no longer works so if you have data which can be changed slightly you always want to do.
+this kind of thing the process of augmentation so you can do for images you can do translation as always on the flip scaling for patients coral color adjustments and many of them.
+there are even cases where you can combine two images together you can imagine that you will take an image of I don't know a person standing here and then in say 80% of that and then you will take 20% of an error plane going on.
+you will make it together so it will be the better plan about me or something and then you will say okay 80% is a human hopefully and 20% is an error plane right you can combine the labels that's another way how you can get one hot labels and even if this is very strange.
+it helps the model again because it generates much more versatile set of training data.
+you can even do this in a cut mix sense so you can imagine that if you have an image there could be I don't know I wanted to say a dog but let's make it a dinosaur that's more easy to do and then maybe like a motor cycle I don't know I can do a motor cycle
+whatever kind of thing and you can just say okay so this part of the image is a dinosaur is part of the image is a bicycle hopefully.
+so the goal goal table would be like 25% of a dinosaur and 75% of well I'm not sure if this is a bike but whatever.
+so these kind of things even if they are strange they kind of help a lot because they can generate a versatile set of training data which the new network just cannot memorize.
+this also works well for speech and for videos but if your input is discrete like text it might be much more difficult to do that because even changing a single letter on the input can change the meaning of the sentence.
+so for for discrete data some some care must be taken but for images if you are training without data set augmentation you are doing something wrong.
+this is cheap and like universally forks. Another thing which universally works but is not cheap is is unsampling.
+like a guaranteed way to improve your performance is not to train a single model back to train several modes right train several models and then average.
+and when I say average them I mean average their outputs luckily all the models we have described so marginally distributions distributions can be average easily you just average them so so we can do that all the time so why does this work so.
+I don't know imagine that there are like three statisticians going for a hunt for for a goose or something right so the first one comes and shoots below it the second one comes and shoots above it and the third throw away the gun and says hi in the average we have actually hit it right so that's exactly the basic idea of how does this work if you have several models and these models have.
+I'm correlated errors then if you average the output of several models the errors should just go away.
+so we can do this formally right so let's say that we have a model and I model will generate the true label plus some error.
+and we will now measure the mean square error and the mean square error well that's the mean of the squares and that's exactly the square of the errors right so that's if we have got one model and now imagine that we have several models so for the math to work we need to know how to how to deal with the variance and the sums and the scalars.
+so just a reminder if we have uncorrelated random variables if you don't know uncorrelated mean imagine independent random variables then the variance of the sum of the random variables is the sum of the variances if you know.
+how the correlations work if they are correlated there but also mean to be the core variances there in the formula but independent and uncorrelated don't need that and if you have a constant inside variance you can take it out but it's a square there.
+but it makes sense because if it's a variance it's to the power of two so when you take a constant outside it will have a square there and so now when we are measuring this error is it's in fact the variance of the model predictions so if we.
+the variance of the errors of the average model so here you can see that we'll be averaging the outputs and subtracting the the correct output so what we will get there is the average of the errors of the individual ones.
+so now this one over n can get out and it will become one over n squared and then this sum can go out of the variance without a problem.
+so we have got the variance here sum here and then we split this one over n into two parts here and here so this part there's the average of the variance so this is the average error of the individual models.
+and we can see that the ensemble should in theory decrease the the variance by the factor of one over n so the more errors we have the smaller the error should be.
+but really only if they the errors are independent so to see some practical demonstration imagine this image so here the red ones are the random generated dots on this on this board and the blue the blue.
+stars are the average of all the red dots which we have there right so after seven attempts you see that the red dots are everywhere but the the average is nicely in the middle so you can say a Mr. Strakap is just cheating they just chose a random see which is working so I chose another random see.
+you can see that the second random see this also working I have and then you can say okay two random seeds it's not simple it's simple to do so I generated many random seeds right and generally you can see that the the the ensembles like the blue ones really tends to get closer and closer to the middle.
+so that's that's that's something it's like simple is just costly on the performance you just need to train the models instead of one model right yes the question.
+yeah so yeah so the for this to work you need the models to behave differently so the question is how to achieve that and the good thing is for non linear models like neural networks.
+you get that kind of for free so the thing is the loss looks like like this so if you have several models there is a good chance that they will end up in in different parts of the loss landscape if you train five models with just different random initial stages start in a different place in the loss landscape.
+then even if you do training of these 10 models and even if the metrics looks very similar they seem to have similar to the accuracy.
+they generally do not behave the same way like I cannot prove this is just the empirical observation but it is really so so for neural network.
+so we the only thing we should do is we will use a different initialization yeah question.
+so the question is whether we could just use a single model and consider different time steps or different checkpoints of the model that also works if there are large enough.
+because this or or at the time ranges between the individual checkpoints so that the behavior of the model changed enough.
+so that this helps but it is also being done if for example the machine translation models are being trained which takes a month then it's common to take the checkpoints like an hour apart at the end of the training and take I don't know eight of them or something and it is also better than just take one.
+for the linear models the it is complicated because if you have a linear model it has got this convex loss so even if you start it with a different initialization.
+all the models would converge to the same optimum so they would tend to behave the same so for linear models there are various tricks like using different training data and something but really for the neural networks we don't mind.
+if you are doing augmentations you probably want to do different augmentations for the for the different model but usually that's covered by changing the random seed because the random seed usually also.
+and also you like when you train them you also you different shuffle shufflings of the data but technically you really just change the random seed and in practice that will give you really.
+good enough things I'm not saying you couldn't do better but even just the practical approach of just trying several times is it's good enough to improve your performance.
+and also I'm cheating when I am just showing you this this one loss right like there is some loss function but in each step you are just seeing like an approximation of the depending on the data which you have so the algorithm.
+it doesn't really see this it it sees losses which looks like kind of very different in each step but they they are all somehow approximations of the real one but they are so different that they don't guide you to a single point in the space they just guide you to some area of the space where everything works because you know our models usually are over parameterized like there are usually many combinations of parameters which achieve the same.
+so during optimization you usually wander around like these flat well valleys where the losses reasonably are low but you are like traveling around all the time and that's what makes the behavior of the models different even if numerically the losses and accuracy seems to be the same yet they are but you tend to do errors in different places.
+and again this is just no not provable theory but that's how things work at least how they worked for me for many years.
+yes the question.
+so the question is whether different activation functions add to this to this effect.
+I don't know that's a simple simple question simple answer from me my guess is that it doesn't influence it very much.
+because in theory all use activation functions should be strong enough for the models to actually work well and I don't know how effect what the effect would really be here.
+sorry no better answer from me yes.
+yeah so you will we will see how to do an sampling in keras in the assignments but what you can do is you can just construct the model from other models.
+when you are constructing we just see in a sequential model but we will see other ways of constructing models and the model is also a layer so you can construct larger models from smaller models.
+so it's a straightforward in a sense that if you have them you will just use all of them go do the average so it will really transfer to same thing but there is no one class which would say I am an ensemble you need to like manually do it but that it's several lines so it should be fine.
+and you have an assignment for that exactly.
+so two more regularization techniques to go.
+they are both deep learning kind of error already so first is is drop out.
+now the drop out they motivated in the paper by the following idea is that like if you want to construct a good gene it needs to work.
+well independently on others how to understand it is imagine that there is a gene for understanding deep learning but it only works.
+if you also have a gene for understanding linear algebra calculus, Python programming actually are interesting so some people can have all of these genes and they can be good in deep learning.
+then when they have offsprings they will transfer just half of these genes approximately to their offspring so the gene for understanding deep learning will be pretty much useless.
+if it's not combined with all the other prerequisites right ideally would win genes which work of the time independently on everything because they can manifest in many many individuals.
+they then they came up with a technique which should use the same idea so I will show you what they did and then you can tell me whether you think it's similar so what they did is the following.
+during computation we will perform drop out so drop out works as follows we will consider like every neuron on a hidden layer and independently for each of them with a small probability of p
+well doesn't need to be small so with a probability of 50% even we might decide to drop it when I say drop it I say you will imagine that it's not really in the network this time around.
+so you can imagine that we have constructed the network without it technically what it means is that we will just set the value zero and that will be the same as if it is not there.
+right we will do this with different random sampling for every batch and for every example.
+for example for every neuron or for the neurons on the layer where you apply drop out you will do this and that's it.
+so that's simple to say but now what it does and why does it help so one thing which we need to think about is that what we will do during inference.
+of course we want to do this only during training right during inference we want to use all the neuron because they all can be useful which is don't want us to shoot in the lag during inference
+we are just fine during it during training so during training we are dropping some neurons so on average we have dropped.
+p neurons so we are just one minus p of the remaining so we have like scaled down like the volume of the activations like the amount of the values which the neurons will generate will be smaller because if p is 50% we are just producing half of the out.
+then during inference if we didn't do anything special then our output would be unexpectedly large right because during training only some smaller volume is available.
+during inference it would be larger so to account for the missing things what we will do is we will scale the output of each neuron by one minus p.
+in training we kept them intact and throw away some of them in inference we will keep all of them but we will scale them down so that the overall area is the same.
+the bad thing about is that during inference you don't want to do that like it would be so so elegant if we didn't need to do anything during the inference.
+so people might throw about it as well and say okay so we will do it like this during training we will throw away some neurons and then we will scale up the remaining values so that the average volume being passed will be fine so we know that we are keeping only one over p of the activations so we will scale things up.
+that on average we are keeping the same volume and then during inference we don't need to do anything.
+so I will show you an implementation it's not like you need to implement it yourself in keras it's just to make this like a concrete algorithm so let's get some inputs let's get a dropout rate and the flag whether we are training.
+so this is the first layer which will behave differently during training in inference we will see more later so either we will do the inference regime which is just do nothing.
+or we will do the training regime so in the training regime for each input which we measure by looking at the shape of the input we generate around a number uniformly in this zero range more likely like this.
+then we will look where this probability is larger or equal the rate so if rate is zero it will be true everywhere which means we will keep everything and we will not drop anything.
+if p is zero point twenty five then we will keep seventy five percent and we will drop the rest so twenty five percent on average.
+this is a bull tensor so we convert it to whatever inputs and we multiply right so we keep the things which go the mask of one we throw away things which go the mask of zero and here is the normalization by dividing the one minus rate so that the volume would scale up.
+enough so that on average the.
+it would not be diminished by masking some of the.
+so what does this does in practice.
+so this is an example from the original paper so imagine that we are training.
+a model which looks like this.
+it gets an amnist image here so twenty eight times twenty eight pixels.
+and it should generate the same image on the output right so we we should just be an identity model like just copying things so what's the trick while the trick is that we will.
+make the model to use a hidden layer which is smaller right so instead of these seven hundred I don't know wait for how many is this.
+we will just use 256 neurons on the hidden layer with the relevant addition.
+so now that the model needs to like see some regularities in the data to be able to like represent as much as it can.
+using these 256 neurons.
+so what we will yeah and so we train it and when we train it without the dropout what happens is.
+the thing on the left so when I say what these things are right so I've got a lot of images here so this is.
+16 times 16 so this is 256 squares each square corresponds to a neuron on this on this hidden layer and the this neuron it has got.
+wait associated with it by the ones on the input and the ones on the out so the weights here that it's a vector.
+one value for each for each pixel on the out so we can draw the the weights as an 28 and 20 image.
+so you can think about it as a pattern which the neuron neuron for example produces on the out.
+and so what does this weird think means is that.
+even if it doesn't look like it there is a linear combination of these noises which will make up all the data and the mness data set so even if it looks like we are noises.
+there is a way how to cancel out.
+in a way that like a nice three with a completely black background will will appear and this can happen for all the training data.
+so we can reconstruct the training data very well probably with error very close to zero but if you are to if you should be able to process the data which are.
+different from the training set it's not for this whether it would work like like this neurons they work well only because they rely also on all the other neurons.
+there because they can be combined with them to produce the output or consume.
+so when you use drop out what happens is that the images changes so instead of similar random images which can be magically combined together so that the noise comes out.
+when we use drop out the neuron cannot really rely on its siblings to also be there so it needs to have.
+the value of its own it needs to work independently on whether his brothers or sisters are kept or dropped from the network so what happens is that now the neurons will each represent like a single dot on the image right so instead of a three being combined by magically disappearing.
+this noise is when you want to say three you will just combine it with neurons which each of them just describes one independent part of the image so from this point of view this is how the.
+gene theory comes in right we want features so in various of the neurons which do not rely on all the other ones in the layer they can be just useful of their own which might help during inference when it's being executed on a different data so so hoping that.
+something will hold let the or let the whole layer will be of some specific kind will no longer be true.
+yeah so I'm running a bit late so bear with me I will just go through the.
+last regularization technique which will be quick and we will be off.
+so the last thing which we will discuss today is labor smooth think now when you have an amelie loss one thing about is is that it's never satisfied imagine the training data and on the training data for 90% for for each training example you can say okay with 90%.
+the accuracy or with 90% probability I know that this is a dog right so if you have you are you can classify each example into the correct class with 90% probability.
+which would be great like the model is like I'm so good I classify every example well but then the loss comes up like ml like it is a weapon and just.
+like it's not enough like you need to say 100% for every example so you need to learn a bit far then when you say 99% probability to all the labels you can see now now I am happy and now the loss comes up.
+like still not enough you need to learn more you need to say 100% right so this is a way how to overfeed effectively right because you need to say that each label has 100% probability in the train set but if you imagine a label like this.
+like getting a label free it would be kind of reasonable if the model set okay it kind of looks also as 8 but the loss will never allow it to do that right it will obviously know this is 3 100% 3 you need to say 100% 3 so well your only choice to do that is to like specifically remember this example which kind of looks like 8 but somebody is forcing me to say 3 so I will say 3.
+if our labels would be better this would be of less problem but they are not in many cases so what we will do is we will do something very very crude like normally our distribution is like one hot in a sense that is 100% this and 0% that and we will smooth it out by taking away some volume here.
+10% is a good default and we will distribute it to all the classes so we will say okay you don't need to say 100% to this you can say 90% and then you can consider the possibilities of the other classes are collected as well ideally we would want the real distribution if we had it it would be better if we don't even this very lousy trick can make the models generalized better because we don't want to do it.
+We don't force them to learn by heart every weird example which doesn't necessarily obviously have the rule which the model would predict so that simple it can be implemented by real saying the loss.
+Yeah please add labels one thing for me there of course all the techniques we have seen we will you will implement in the assignment so you will see how it can be practically in the assignment that's what the assignments are for right so the last light I want to go over is default right when you want to start training what should we start with I've just given you my number of regularization techniques so.
+They the augmentation always if possible right then whenever you do a hidden layer just add drop out.
+Apart from the output layer read to do it you don't want to forget things on the output layer but apart from the output layer after every hidden then player just add.
+a good default surprisingly is 50% that's lot but in some sense it's like the the strongest regularization effect you can get from the power.
+Of course 50% drop out decreases capacity so it the drop out is kind of a thing which the like like in like makes your training loss versus so it might cost under the thing but on the other hand it decreases over fitting so it's like a trade off between these two right so using 50% rate.
+It makes the regularization to be the strongest but it might decrease the capacity so that's why for large models you might see even numbers like 10% or 30% you know if you are training Klamatu they train it on a 6000 GPU cards so if you say yeah we don't care about performance let's just use twice as many 12000 GPUs.
+Right so that's what not what you want to do so that's why you can also see them smaller one but if you don't care that much about performance.
+If you have a model double the number of neurons and use drop out of 50% this is the largest regularization effect drop out can give you this is not enough you need also to search for for other regularization techniques but that's the way how to use drop out right.
+You want to wait the case for convolution neural networks we will discuss that on the next lecture always use labels moving when we are doing classification just put it there with 10% that's a good thing to start and then you can see whether increasing or decreasing would help but just do it it costs you very little and if you don't care about computation power ensembling is your friend again it always works it just costs performance.
+Okay thank you very much for your attention the enjoy working on the assignments that is said online today there is also the consultation here and particularly tomorrow so see you there enjoy your week and have a nice time.

@@ -1,0 +1,1170 @@
+So, welcome, welcome everybody. My name is Melan Straca, and it's my pleasure to meet you
+as our course of deep learning. We'll be meeting for the whole semester for that. So,
+deep learning, that's a weird name, like what is so deep about the target, like in a deep
+thought about it, or are you training from the depth of your pool, or like what's happening?
+Well, deep learning is just like fake name, or like name meant to hide the fact that we are
+using deep neural networks for training, but because of the neural networks has some connotation
+which people were worried about when they started, they just call it deep learning, right?
+But you can imagine it's like deep neural networks training there.
+Now, originally, I had a few slides here trying to convince you that deep learning is great,
+but nowadays, the must media have done it for me already, probably because you can see the articles
+about the artificial intelligence being prepared to steal our jobs, because it will do everything
+better, better than us. So, I will really slide through it briefly. Deep learning is the technology
+which powers many applications which are using in their day-to-day lives, like machine
+translation, chat balls, including the communication, like voice communication with your computer,
+various image processing, video processing, OCR, music recognition, all these things are powered
+by neural networks nowadays. And apart from being able to mimic whatever some teacher or some
+human is able to do, the deep neural networks can also be combined with reinforcement learning,
+which allows them also to come up with a new previously unknown solutions to the given problems,
+so you can learn how to play, for example chess, or other board games, so that you are actually
+better than any teacher who could teach you because well you would just pass them and things like
+robot navigation or data-centered cooling and things like that are also possible. So, if I were to
+sum up the whole course, then the neural networks are even if it seems like there will be a lot
+of brain involved. They are in a sense just way how to describe computation. I can just a framework
+which allows us to say, okay, I will compute something in this way and this computation model
+has some good properties. One of them is that it can approximate any reasonable function,
+I don't know, continuous, or something like that. So, it's strong enough. On the other hand,
+it's not very large, it's reasonably compact, and it can be paralyzed effectively on various
+hardware accelerators, which we have for that, right? So, even if it seems like a brain will be there
+somewhere, it's just a way of how we can specify how to compute something which enjoys all these
+all these advantages. When you have a neural network, it takes some input and then it generates
+an output. The output is usually probability distribution which I will talk about later, but generally
+in the end, we are just most interested in the most probable class which will be there. And the main
+punchline is that nowadays, if you have got enough data, that's a big if neural networks or
+deep neural networks are like V model, V best model, which can process high dimensional data,
+and by that, I mean images, videos, speech and text. Like the high dimensional mean that on the
+input, we have got a lot of features, like a lot of audio samples, a lot of pixels, and things like
+that, which all together mean something. By the way, the other possibility compared to high-dimensional
+data is something which is called tabular data. If you have, I don't know, records of the
+patients with some names, and then I've five columns with like five numeric values. That's
+that's the data which is not high dimensional. And in this case, there exists one other model
+than neural networks, which can also also be the useful. So, I'm not saying that neural networks
+are great for everything, but they are definitely great for this. So, that was the small
+commercial, and now let me get to organization for a bit. This year, this course has a new code,
+which well, you know, because you are sitting here, but if you want to find some material as
+the information from the previous years of this course, you will have to find the previous one.
+I believe you'll be able to do it. So, what source of information do we have for the current course?
+First, we have got the course website, which will contain the slides, which we are seeing,
+although the recordings both the lecture and the practicals are going to be recorded, and will
+be available there. You are not forced to come if for some reason, you enjoy watching the
+records more, recording more. It will not be held against you. It's perfectly fine,
+but of course, it's perfectly fine to come here and enjoy me jumping here in front of you.
+Then there will be the assignments and the exam questions. We also have a GitHub repository,
+which will contain well the templates for the assignments, and also the sources for the slides,
+which are written in a way that it should be easy to modify them. So, we have a chance of
+fixing all the bugs, which I have done there, and even if for some years the slides has been
+continuously fixed by students, there are still many possibilities and many room for improvement.
+Until now, you probably have used many different applications for communicating with your
+TAs or teachers or something, and I will add yet another application to the collection of
+possibilities, and we will use Piazza, and the reason for that is that it has got some properties
+which I like, and I couldn't find them by the anywhere. So, for the communication between us,
+we will use Piazza, you will get the invite link to that earlier today, in the evening,
+for not so close after the lecture, and what you can do, well, first you can ask for help
+of any instructor. We have there will be like four of us answering the questions,
+so you can just have a question, and some of us will take care of it and give you the answer,
+and that happens, of course, privately, so the other students can see that. But then you can
+also ask the other students publicly, which is probably can work on questions like, I don't know,
+this Visual Studio Code is not performing code completion for me, what can I do, or I try to
+install this on Mac, and it gives this weird error, which is not mentioned anywhere, and these
+kind of things the other students probably can help you solve more quickly than us, and the only
+only I think is please don't send full source codes or even snippets of the source code publicly
+to others, because you would rob them of the enjoyment of solving the past themselves, right?
+And please use it for our communications with us, because it allows us to move the
+clicks at the other communications in the easiest way. So let's do three things already, so now
+our records, the records is a system, which we will be using to automatically evaluate your
+solutions, if you are from a MFFF, you have definitely met it. If not, it's just a website where
+you throw your source add, and it will give you a green thumb, if you did it correctly, and maybe
+not so green thumb up, if something is wrong, but it will allow you to immediately get the
+information of whether you have solved the assignments correctly or not. We won't be reviewing the
+source code too closely, so you don't have to worry about us saying that the force cycle should
+be written slightly somehow differently. It's not because I think it wouldn't be interesting,
+it's just that we don't have the manpower to do it with the total sum of the assignments and
+and you. So if you are feeling worried that the force code is not that great,
+well don't worry, we won't know either. Yeah, so ideally you would be able to log in into
+the records automatically using your credentials from the student information system. If you are
+from another faculty university, or you are not as a university at all or something, then
+it will require some special attention to do that. So in that case, on Piazza you will see
+the instructions of what you should do. Most late means writing us an old on Piazza, but the
+set of information which we require might be different, so well you will see there, and hopefully
+we will be able to get there. The group in the context is still not up, it will, I will create it
+later today. So apart from obtaining a large amount of knowledge and practical experience,
+you might want also to get the credits for for passing the course. So in order to do that,
+you will need two things, one is to pass the practicals and then to pass the exam.
+Regarding the practicals, there will be regular assignments every week, but I don't know,
+roughly two to three on on every practicals, and they will have a two week deadline.
+The idea is that I want you to very gradually during the semester because
+I firmly believe that you can get the most out of it if you do a lot of
+assignments like ring lot of things by yourself is I think the most interesting thing. So that's
+why they have this short deadlines. There is an automatic fail save or second deadline, which is
+one week later, but you will get less points for some meeting after the first deadline.
+The idea of the deadlines is not to punish you that you are able to find the back in the
+last minute. So if you are working on the assignment and everything seems to be nearly done,
+then the first deadline is approaching. Then it's perfectly fine for us to write and ask
+about some problem. And if you do it before the deadline, we are perfectly happy giving you
+the full points, because you try working on it. It's not like, we say, oh, one minute late,
+you will get less points. Let's not the point of that. The point is to make you work
+regularly. So feel free to ask for help. Also, I said that I want you to do a lot of assignments
+that is true, but I don't want you to suffer by sitting in front of the computer and saying,
+I don't know what to do. So if you are working on the assignment and you are stuck,
+either because you don't know what to do, how to do the instructions or it should work and it's
+not working, right? It's fine to ask for help and that's what we have to ask for, right? So that
+you can get relatively interactive answer in a day or two to the problem which you are having.
+So once you succeed in solving the assignment, you will get points. And the points are
+to kind. There are like boring regular points which you get. There's like a fixed amount of them.
+You will know how many of them you will get and then you can get also bonus points. For those
+boring points, you need to get 80 of the boring points to pass the practicals. There will be assignments
+for 120 points, so you need to do two thirds of the if you submit them on time.
+So what about the other points, right? Well, whatever you get above the 80 points, be it, bonus,
+or non bonus points, like whatever is about 80, you can automatically, or it will automatically
+be transferred to the exam and make your exam easier, right? The idea is to motivate you to sort
+of more than just the two thirds of the assignments, right? But instead ideally, many of them.
+And as a further incentive, there is actually a possibility to avoid the exam at all
+by solving all the assignments. Now the students have reported in these
+questionaries about the subject. Some of them feel that this is a trap, right? And the reason for
+that is that they fail that solving all the assignments, like the two one thirds of the most
+difficult assignments, is more time consuming than actually learning for the exam, right? So
+with maybe it's a trap, but it's a public one, right? Because I have told you so.
+But the effect is that something like half of the student last year pass the course by solving
+all the assignments. So it's not something of privileged 5% of the students can do, it is actually
+doable, but it is likely that it requires more time than just solving the two thirds of the
+easiest assignments and then learning for the exam. But it's totally up to you to decide which way,
+which way you prefer. Yep. So that was the practicals and then the exam. So if you do not solve
+all the assignments, then you will also have to pass an exam. The exam is a written one. And
+the questions are all available on the course website. They will appear gradually as the slides
+will appear every week. And it's like a knowledge-based exam. It's not like you won't get some
+surprising task and then you will have to think up for like a novel solution to it.
+It's not that kind of an exam. Because you will be doing this on the practicals every week.
+So the exam is like really just knowledge-like. You just have to learn how this disemount of things.
+That's why the questions can be made available before or beforehand. So some boring
+numerical details, you can get 100 points from the exam itself. Then you get some number of
+points, which you can transfer from the practicals, which can be up to 70 or something. And then
+you can get 10 points for a community work. So a community work that's something which you do,
+and it will make the life of your fellow classmates easier. So the mostly that means fixing slides,
+fixing templates, dealing with problems which I have created for during the task evolutions or
+something. So the idea is to motivate you to report weird things. I've got sometimes people just
+see something and then say, yeah, it's obviously an early, it should have been different.
+And then you just just go further. But some people might not realize that this is the case.
+And if you would have told me so, it would have been better for them. So that's why we have
+used this explicit incentive of giving you points for affordable doing that. On the other hand,
+there is a limit there because you shouldn't probably pass the exam by fixing all the errors,
+which I've made in the slides. So that's why it's just a gradient, but just a small one.
+And then there are some pre-determined thresholds which you need to pass in order to get the required
+grades. Yep. So as I said, both lectures and the practicals will be recorded, but not
+like in the official schedule, we have got two practicals, right? The one on Tuesday and the one on
+Wednesday. And the idea behind those is that I wanted the students to get more credits for this
+course than they'd last year because I think the amount of work they have to do was larger than
+for the credits. And in order to get more credits, the only thing that you can do is you can increase
+the amount of like visible work, which the students have to do. So that's why we have got
+two practicals. But the Tuesday ones, the one later today, is really just a regular yet
+completely voluntary consultation, right? It's there is in the schedule so that you can get
+one more credit for the course. But there will be no additional content or anything which will
+be discussed. There is really just about talking with whoever comes, solving the problems
+with assignments or talking about any questions which they might want. This means that it
+also won't be recorded because, well, it will be just really the individual questions which
+will be there. And the today's consultation will not take place because, well, we have still
+nothing to consult without any assignment or anything else.
+So I'm going to repeat the questions so that they are on the recording because otherwise they
+won't get there. So the question is whether there could be a fixed schedule of like that you
+could know when the recordings will be out. That's definitely a valid concern especially when the
+practicals are already tomorrow. So the idea is that I will upload them immediately after the
+lecture, so it takes 25 minutes to do the encoding or something, but they will appear there. So
+if you want a specific time then I'm just thinking when we end. So at half past three they will
+be there. And I perfectly understand the motivation for that. So by the way, please do ask questions
+anytime you have a question. For myself, I try to teach you as much as I can, but apart from that
+I'm happy in a sense that I can go here and do the lecture and everything, but for you it probably
+could be better also to learn something. And I try to make it also possible not just to be the
+cloud in front of you, but if you don't understand something which can happen very frequently
+because I'm not saying it correctly, definitely, then please do ask. I'm happy to answer
+to answer any questions. Like if you don't know something then probably half of the people around
+you are also puzzled or lost or something. So if you ask, they will like you because you ask,
+then it will allow them to actually learn something. So don't hesitate to do it. We have
+various ways where you can overflow if it is needed. So it's definitely better to ask, then
+to allow me to finish my sketch of to think exactly how I envision it. Yeah, yeah, definitely can,
+but probably we can talk about this on the consultations or something. Like at this point
+I'm not sure I have anything interesting to tell to everybody regarding this. But I would
+think about it and maybe I can edit after pre-mediating on that because right now it will be a mess.
+Okay, so let's get to the lecture. Now today the lecture will be as fancy as the other times
+because we will not even learn how to train your first neural network on the course,
+but bear with me and we need to start and find some common grounds which will allow us to
+describe the more interesting models later. Even if it seems that there will be some mud here,
+you don't have to worry much. The good thing is that about like you cannot actually prove
+many facts about the deep neural networks. So we will barely do a proof in the lecture at all.
+On the other hand we will need the notation or way of how can speak about the models
+and we will use a lot of probability theory to talk about distributions and things like that.
+So most the largest part of today's lecture is actually to get you on speed with the
+notation and concepts which we will be using on the other lectures. It might be
+something which we have already heard, so in that case I'm sorry, but some people haven't
+and hopefully you won't be too bored to hearing some things again.
+But we will get to the machine learning and the neural networks even today don't worry.
+Let's start with the notation and when I say notation, I usually mean how things are being
+created in the deep learning papers. One of the important goals of the course is to allow you to
+be able to actually read the neural literature in the area. With deep learning, it's not like
+you learn how to do the model and then for 30 years you'll like spend every week training
+in your model. Things will definitely change and they will change quickly because right now the whole
+area is evolving rapidly. So being able to read the new stuff is definitely a different
+important. So the whole idea about this notation is that it's the common and the usual one
+which is being used by the papers. So one thing which people do here is that they distinguish
+the dimensionality of data, right? So the scalars and the vectors are written in a different way.
+So just looking at the equation, you can say at any time what is the dimensionality of what?
+And they use this, this approach that like a ball, it's a regular, it's a scalar, small ball,
+an italic is a vector, then if you make it capital, it's a matrix and then if you want even
+higher dimensional objects, well there are less phones for that. So people usually use this weird
+kind of, I don't know how it is even called. We won't be seeing too many three dimensional
+and higher patterns or so we don't have to worry about it. Now there are three ways how we can
+multiply things, right? One thing which we can do is we can just do a scalar multiplication,
+which is the usual usual dot. Then if you have got two vectors or two matrices of the same size,
+you can multiply things element twice, which means it just just element with the corresponding
+element multiplied. And then you also have matrix multiplication, right where you take two matrices
+and then you take this one matrix, second matrix and the result is here, right where each element is a
+scalar, a scalar product of this usable row and columns. So all vectors are always column vectors.
+Even if you take a row from a matrix, by making it a column it says somehow,
+gotten gotten straight, but the transpose is transition does change this. So a transpose vector
+is a line vector. This means that all together when we want to write a scalar multiplication,
+we will just see say a transpose times b, like a matrix kind of multiplication. Now here on
+MFFVU or on the algebra class use the generic scalar product notation, right, but we will always use
+the usual one in the Euclidean space. So we will just really do that and that's how things are
+denoted in the papers. Yeah, then we can compute the L2 Euclidean norm, it's just there for completeness.
+We will be using a lot of probability theory for reasons I will talk about soon,
+but that means that we will have a lot of random variables and the random variables
+also a different font, which is not italics, which can be used sometimes,
+but it's generally a bit tricky to distinguish between random variables and usual variables
+at some places. So even if I try to be as consistent as possible in the slides,
+I bet you could find places for it's not really obvious. Anyway, I will get to the random variables
+on the next slide and we will talk about them for quite some time. So if you haven't met them,
+don't worry. We will also need one small part of calculus here and that will be the derivations
+differentials, partial derivatives, derivatives, that's the verb, I'm sorry, so many similar words.
+I don't really need you to be able to compute the derivative of every function, which I show you
+in the middle of the night, but the idea of what the derivative is is something we will use,
+right in a sense, that it just allows you to quantify how a function change if you fiddle with it in
+puts a bit. We will be using functions of multiple variables, in a sense that we will
+have, like our neural network models, for example, will take an image and then image is like a
+three-dimensional thing, right, because it has got the height with, in some number of channels.
+So our functions will be multivariate in a sense that there will be multiple scalars put inside,
+and if you have such a function, then there are several derivatives, which you can compute and we will
+you universally use the partial derivatives and the partial derivative means that we will keep all
+the input variables fixed apart from one, right, which we will increase or decrease, and then we will
+see what the effect will be on the output, so that's it's a partial derivative, because only one of
+these input variables will be changed, and it also means that we have a Spanish partial variables,
+as there are input variables of the function, which we are computing the derivative off, and
+because there are several of them, we are using this notation of saying this weird symbol,
+like a partial derivative of a with respect to x, because if f has got multiple variables, then
+then we need to say what is the variable, which we are computing for the derivative,
+two, with four, but normally here on the calculus course, you would just say f prime x,
+and if there is a single variable, they are the same things, but if there are multiple, it's
+getting more and more. And because there are many of these variable partial derivatives,
+if you take all of them and collect them to one long vector, it is the name, like the list of all
+partial derivatives, and it's called a gradient. You can easily forget that right now, and we will
+get to it on the next lecture, where we will use it, and it will play a crucial role in training
+our neural networks. Yeah, so random variables, random variable by itself is
+way of having like stochasticity in your formulas, right? So if I, if I would take a coin and
+I would do a coin flip, it could either fall down as a heads or tails, but that you don't know
+the upfront, which of that will it will be. So the, like the result of this experiment,
+that's random variable, right? It can, it can obtain multiple values, and you don't know
+upfront, which one it will be. So that's, that's random variable. And the interesting
+property of random variable is, it's probability distribution. Like the random variable, it's
+just say, they're less okay. I'm random variable. I'm not a fixed, somebody will fix
+me later when they do some experiment. And the probability distribution tells you what values
+with what probability will the random variable update. So if I have a perfect coin, then the probability
+distribution would say, okay, you will get heads with 50% chance and tails with 50% chance.
+Now in the discrete case, where the random variable just obtains one of the set of the discrete
+values, this probability distribution is exactly what what you have imagine since you were
+year old and you were explained that the area of probability, right? It's really just a list of
+probabilities telling you for each class how likely is this class to be the outcome of the
+random experiment. The probabilities are known, they are known, a non-negative, and they
+they sum to one, it's like the usual usual part. For continuous random variable, so if your experiments
+can generate infinitely many results, usual in the form of real numbers, either like with any size,
+or in some fixed interval, things are a bit more tricky, right? Because if you imagine that,
+I don't know, let's say that we will generate numbers between 0 and 10, like uniformly randomly.
+So, the chance that we will generate one specific number out of the infinitely many others in
+this range is infinitely small, it's like zero, right? Because, well, the chances that you will
+just hit one specifically infinitely, not not wide, but infinitely, I don't know,
+I don't know why the column is, I'm talking about rational numbers at this point,
+but even for the, yeah, I'm saying, I'm saying the real, I'm saying the real numbers, right?
+That's the, our think. So, I'm saying this, that's the real, I think, anyway.
+So, how it works in this case, is that instead of probability, we will specify something which
+is called probability density. And it will work like this, it will be a function
+where the area under the curve will, will some, or in this case, integral, or to integrate
+one, right? So, you can think about it when you generate the random numbers, we are like throwing
+darts to some random space in this area of the curve. And so, that means that if you want to
+know what is the chance to generate a number between zero and one, is you can just compute
+this, this area, it is this interval, right? So, the density is not really probability, but,
+but it acts like a probability, once you compute the integral on some, on some fixed,
+or on some, on some given range. This also shows why you need to have zero when
+you just take one specific point, right, because there is like a zero area actually, so the
+trend that you will hit it is, is this minute. So, why am I talking about it for a very, very long?
+Most of the time, we will just ignore the continuous random variables. And we will just say,
+okay, everything works nicely, we have just 10 possibilities and everything's our vectors and so on.
+And generally, things will work also in the continuous case, just when we replace the sum with
+an integral, but there will be cases where this is not the case, so I am starting to explain
+you already, why these two cases are different. One of the tricky thing is that the probability
+density can be larger than one, for example, right? If you imagine generating numbers between
+zero and zero point one, then, well, the probability density will need to be 10 on that interval,
+right, so that it integrates to one. And we will see later today why that might be a problem sometimes.
+Yep. So, now we have a quick primer to probability, because we will use it all the time. So,
+when you have two random variables, not just one, there are multiple things you might want to be
+able to express or quantify, right? So, let's say that I have got two coin slaves and I flip the
+both. And now the result of the experiment is actually like a Cartesian pro-dark between the
+outcomes of the first random variable and the second random variable. So, the joint probability
+is the probability where I care about the outcome of all the random variables there. And it
+really focuses, you would expect, you have got this this Cartesian pro-dark of many possibilities,
+each gets its own probability, which sums to one, if you go over all the possibilities which
+there are. Then sometimes you only care about one of the random variables, right? So, instead of saying
+specifying both x and y, you might want to say only, for example, I want to know what is the probability
+that the x or well attain the value x2. And in order to compute that, well, you can just sum
+over this column in this matrix, because you don't care about the value of y. So, you just
+consider all possibilities, which the y's might have. And this is called a marginal distribution.
+So, whenever you say marginal distribution, it means we have forgotten something which you don't
+care about and you forget it by summing over it, right? Then we can talk about conditional
+probability, right? When you have two random variables, and one of them has already been said
+because you either assume it or it has already happened. I then you might care about the probability
+for the other random variable, but this time with one of these fixed. So, in this case,
+what should happen? Well, when you fix y, then the possible outcomes for x should be the
+four distribution themselves. So, the conditional probabilities when y's fixed should be a distribution
+over the values of x, right? So, in this image, it corresponds to this first row. So,
+you have these four numbers, which were on the distribution before, and you want to make them
+in tourist distributions that they would sum to one. So, what you need to do is you need to make sure
+that they sum to one by scaling them appropriately, right? You want to multiply them by some constant
+larger than one, so that the sum of them will be one. Well, what is the constant? Well, the marginal
+probability for y being y1 gives you the sum of these numbers. So, when you divide by the sum,
+it means that after they will sum to one. So, this conditional distribution, you can get from
+from the joint distribution by appropriately normalizing it. You have probably heard it already
+in the case, you can feel a smug that you know what I'm talking about, which is which is great.
+And if you don't, then well, you know, there is nothing more about it than just a tool which
+allows you to fiddle with the random variables in all the places. And two random variables are
+independent. If you can consider them without considering the other, which means that the joint
+probability can be computed as a product of the marginal probabilities to use the notation,
+which I have thought about right now. And they are independent. If I would be throwing two coins,
+then that would be to independent trials if the coins didn't collide, midair, and influence each
+other or something, right? Because the probability of the wine conflict going fully shouldn't be
+influenced by the probability of the other, unless I have got fake thumbs and then all the coins
+come up somewhere, but mostly they would be. And we will always wish for the independent variables
+right, because that means we can just ignore the complicated joint probability and instant
+deal with the independent smaller single random variable probabilities. Yep. So when we have
+a random variable, while we cannot quantify something without knowing the outcome, we can compute
+the expectation. The expectation allows us to obtain something from a random variable by giving
+us the average value of some function. So let's say that I have a die and I want to play some board
+game and let's say that the die has got this one to six dots on the edges. And I would like to know
+what is the average number of steps, which I will do in every move, right? So what I want to do
+is I want to compute the expectation, like the average value of the dots when I throw it. So
+that thing I could write down as an expectation to say, okay, give me or tell me what is the
+expected number of x where x is the random variable, right? Generally, it doesn't have to be just
+x, you can compute the expectation of x squared, for example, if you want of any expression,
+like anything, which has the result of the random trial in it. And the expectation what it does
+is that it goes over all possible outcomes, which could have happened. For each of them, you will compute
+the function you are interested in and you will weigh all of these possibilities by the chance that
+this outcome will actually appear. Right? So by definition, the expectation is the weighted average
+of the very, you are interested in, in case of the continuous variables, it's really just an
+integral with that. Now, there are many things here, which need to be specified, because there
+what are random variable, which has some distribution. And there is some expression, which you
+want to compute the expectation of, that it can be just x or something more complex. We will
+use both. But if it is clear from context, we are free to ignore that, right? So just saying
+x is perfectly fine. If you believe that the reader or if I believe that you are reading the slides,
+know what is the random variable and what is the distribution we are computing code.
+The expectations has a nice property that they are being cleaner. Now, when I was sitting
+on the benches, I was really, I really didn't understand why the teachers are so happy about the
+expectation being cleaner. So I, I don't know of way how to make you enthusiastic about the
+expectations being cleaner right now. But during the course, we will use the property in so many
+places that I believe that after the course you will view enthusiastic about it being cleaner.
+But what I mean by saying that is cleaner, is that the expectation of some of things
+is just the sum of expectations, right? So it can, like, be separated on places that
+obvious from the from the definition, right? Because here, if instead of f you would say a x plus
+b x, then you can just distribute the, this sum over over the product and you will get two
+sums and the tarby definitions to expectations. So it's like completely trivial thing. But
+what it will be useful. Although if we have a constant there, which doesn't depend on x, we can take
+it out of the expectation, because well, that's that's the exactly thing which could happen like
+it. I would alpha times this year and it doesn't depend on x, I can easily, easily move it
+outside. So these are trivial things, but so useful. So one thing what the expectation also tells us
+is this, or which can be used to tell us the, the average value of random variable, right?
+If you imagine that we have got, uh, maybe I will create a new slide for that. So if, uh, we have
+a distribution, uh, it can, I don't know, look like this or like this. All right, and so the, the
+expectation, if you just compute e x gives you like the average value, which this are, which these
+distributions, which, uh, would have, uh, I try to draw them so that all of them would have the same
+same expectation. But they differ all of these, uh, all of the distributions in the, uh, like,
+amount of, of, of, of error of difference, which there is, if you would generate the values with
+respect to this distribution, like this blue things are kind of close to the, uh, to the, uh,
+expectation while, uh, for example, the orange one, uh, this, this kind of white. And it will be interesting
+for us to be able to, uh, to somehow see this, this, this average difference, what, uh, a random variable
+has with respect to this, uh, to this expectation, right? So you can think about it as an average
+error, which you would get if you would sample from the distribution, uh, and you would say,
+ha, I have now sample from the, from the, from the distribution. So I will consider this sample
+as an approximation of the mean, right? If I wanted to know the average height of all of you in the
+class, what I, what I could do is I could choose a random member of you measure their height,
+and on average, this is the average height for all the students here, right? Uh, but the question
+is how, uh, what will be the error when I, when I do, when I do this experiment, I can, all of you
+had the same height, the error would be zero because, well, anybody of you would be, uh, of the same
+height, but if the, the difference would be larger, like there would be a lot of small,
+and the large people here, then the error would be a large and larger, and this, this, this average
+error, uh, can be measured, uh, using the so-called variance, right? So the variance, uh, tells you
+what the expected square of the, uh, distances between, uh, random variable, and it's mean is,
+right? The square is there, in some sense, arbitrarily, we could have also measured the, uh,
+the absolute value of the difference, then it would be called mean absolute error, uh, but the,
+the square there is useful for, for some other, uh, other cases as well. Yeah, we will,
+ignore that, that's interesting. Um, so we will be using the, the variances and, uh, and the,
+and the means, uh, a lot, um, so I, I wanted to make sure that, that you know what I mean,
+where I, when I say variance of mean. So now before we will get to the machine learning,
+we need to do one last thing, and that's to, uh, talk about the, the probability distributions,
+which we will be a music. Now, uh, the reason why I am bothering you with so many distributions,
+is that the neural networks will always produce the distribution, or we can always
+interpret the output of the neural network as a distribution. Even if your neural network will try
+to predict whether there is a cat or dog on the photo, right? We will think about it as really
+specifying the probability distribution, 20% cat, 80% dog. Even if when you are showing the predictions
+to someone, you will just say, yeah, yeah, the neural network thinks it's a dog, and that's it,
+right? But, uh, internally, we will always, uh, return these, these fine probabilities, uh, because
+during training, they allow us to, to, to, to, to, to see how we are progressing, right? If you
+just say dog or cat, then if you, would, should say dog, then if you'd have provolated to the
+dog, it's larger, your model is improving, but it would seem on the outside, because it's always
+just saying dog, dog, dog, dog, dog, dog, dog, so that's why I am talking about this, this, for,
+for so long, but even the functions which we will be using, uh, in various neural network
+frameworks are somehow connected to the distributions and have, they have the distributions in
+their names, which is why, uh, why this. So, the, primarily easiest probability distribution,
+which exists, it's a distribution for a binary random variable, so let's say that I have got, uh,
+and, uh, some trial, which results in just two outcomes, right? I could throw the coin, and it could
+be, uh, heads or tails, or I can have a photo, and I can say where there is, or is not a notebook
+with, I don't know, mecoes running, uh, on it. Uh, so all these binary experiments, we need to somehow
+label it to outcomes, right? So, you kind of, like, we say, okay, the outcomes are 0 and 1, right?
+Because we need to give them some names. And in order to describe this distribution, well,
+we will just say what is the probability of one of these, uh, being the outcome. Usually,
+is the probability of one, like, that it's arbitrarily chosen, one of the, uh, one of the values.
+So, uh, even if this sounds trivial, like, I have just got the probability, and now I have spent
+five minutes talking about it. It's actually a distribution, like, like, it seems that it
+made things more, more complex, which is true in some sense, right? Instead of a number, I insist
+of it being a distribution. But many things, which we will talk about later, we just
+work for any distribution. So, they will automatically work for all the possible things, which
+the neural network can produce. So, uh, this, this distribution for the binary random variable,
+it's called a Bernoulli distribution. Like, many things are named by their proposer or inventor,
+or something. Uh, but if I should describe it by what it does, it would be a binary distribution,
+right, and that would describe it all. But it's a Bernoulli distribution, because Bernoulli
+had the courage to describe it in some paper or something. Uh, so it's specified by a single parameter,
+which is the probability of one of the classes, canonically, uh, the value one. Uh, and so the
+mean, so the expected value of the random variable. Well, they're just five, right, because
+well, by definition, this is five times one, plus y-min minus five times zero. So, well, and five.
+Uh, uh, and the, the probability of the outcome. So, we have got just two possible outcomes,
+right, either the outcome is zero or the outcome is one. And the probability of the outcome of
+one should be five by the definition, and that means that the probability of zero should be one minus
+five. And now we would like to find a way how this table can be written in a single formula.
+So, if we didn't use math, but Python, we would just say, I don't know, five, if x is one,
+else, one minus five, but we cannot do this in a single formula. So, what the people ended up with,
+is this maybe weird formula, but how does it work, right? So, when you have five to x,
+then if x is zero, then this is one and just not there, right? But if x is one, then this is five.
+The second part, one minus five to one minus x. So, if x is one, then this is one minus one.
+So, it's something to zero, so it's not there again, it's just one. But if x is zero,
+this one minus zero is one, so the outcome is one minus five, right? So, this weird thing is just
+like an if case, which allows us to generate these two numbers. It is kind of weird, but we will need
+to deal with it. So, that's the simplest case. Now, we will extend it to a distribution, which is still
+discrete, but can obtain some larger number of outcomes. So, let's say that we have
+around on variable with k possible outcomes, we will, you know, them from zero to two k minus one.
+And so, this is still trivial in a sense that this intuitive, it's how you normally, or how
+I normally think about probabilities, it's really just a vector probabilities, right? So,
+the distribution is described by a vector of length k of the individual probabilities,
+which need to be in a zero to one range, and they also need to sum to one.
+Now, when we talk about the values or the outcomes of this trial, the values of this are
+random variable, then quite often, we will represent them using the so-called one-hot
+encoding, just because it will be comfortable for us. So, if you know that, I don't know, we have
+this, this, this, this, die, you throw it in there like the, the outcome is is a free. Then you can
+either say outcome is free as a scalar number, or you can use the one-hot encoding, which is like the
+the unary encoding, in some sense, well, not really. So, one-hot encoding, and it works like
+it's a vector of six outputs, and then the first says it's not one, right? Then it says it's not
+two, then it says it's three, then it's not four, it's not five and six, like so, you can think
+about it as a lot of binary indicators, and only one of them is swan on the position, which corresponds
+to the outcome, which, which you want. We will use this one-hot encoding all the place
+in the new on networks, and we will go back and forth, because it will be, it will be required.
+So, I start talking about it earlier, and one of the reasons why it's comfortable to work with
+let's say that I want to write down what is the probability of some outcome. So, if we have this
+outcome in the one-hot encoding, we can just say that the resulting probability is the product of the
+probabilities of the individual outcomes to the power of the elements of the one-hot encoding,
+right? Because all of this will be zero, so the probabilities will not be there, because anything
+to zero is one. Apart from this one probability, which will be there to one, so it will just stay there.
+Right? So, this is a mathematical way of saying I want p indexed by x,
+which is how it is implemented actually. If x is not in the one-hot encoding, right?
+So, this was technical, but we have gone past it successfully, and now what we need to describe is
+we need to describe at least one distribution for continuous random variables. Right? Right?
+Now, we can generate just binary trials, or we can throw a die, but we cannot generate a real number.
+And we will do it, but in order to at least describe how the distribution works,
+I will do a sidestep, and talk about the information theory for a bit.
+We will use this information theory for two things in a deep learning. One is this to see why the
+distribution, the continuous distribution, which we all describe, is a reasonable idea,
+and the other is that the self-information theory will be used, although you are in training
+of the neural networks. What do we aim at is we aim to find a way, how to compare two distributions.
+So, imagine that I've got two distributions, you can think about one being the, like,
+output, which we want our model to predict. I don't know for an image. We will say, okay, this is a cucumber.
+And then there will be another distribution, and the other distribution will be
+what our model tells us, right? So, it will be cucumber has 20 percent, and I don't know,
+melon has as 40 percent and so on. And during training, what we will try to do is we will try to
+make these two distributions ideally, ideally identical, or at least close to each other as possible.
+And for that we need a way of quantifying the difference between two distributions. The way
+will end up being connected with the information theory, but it's not like I will talk about some
+definitions here, and they will end up in a way of measuring the difference between two probability
+distributions. But it won't be obvious why this is a good idea, right? On the next lecture,
+we will completely unrelatedly come up with a way how to train the neural networks,
+which will end up by being the same formula, which we will talk about today. So, we will then
+call the result by the name, which we will show you, but it's not like that it's obvious that
+this is the good idea, right? We will arrive at it through some different way, but the today's
+experiment will allow us to have a name for the resulting loss function. So, innovation theory
+is something what Claude Shannon came up with the 40s, maybe in 30s, I'm not really sure,
+and it's a theory which allows you to measure information. So, information is like a very overloaded
+word, but I will try to explain what I mean by that. When we have a random variable and
+one specific outcome of the random variable, then we can talk about the self-information or about
+surprise the same thing to different names of that outcome. So, imagine that I don't know you
+are playing lottery to have paid for a ticket. And then, next morning, you realize that you haven't
+won. Well, that's probably not very surprising because you kind of expected that you've
+worked right. On the other hand, if you had won, you would be surprised in a sense that it was an event
+which you didn't really expect, maybe hoped for, but realistically probably didn't expect.
+And so, it would have like a larger surprise and from our point of view, there would be more
+information in it because it's just more surprising. So, first, let's just talk about the surprise
+of the thing and then I will connect it to the information. So, how should this surprise work?
+Well, when you have an event with probability of form, something is guaranteed to happen,
+then you are probably not at all surprised that it happened, probably because, well,
+what could happen? It needs to happen. So, no, we'll also surprise there.
+And the less likely events are probably more surprising, as with a lottery, like the less you expect
+either the more surprising it will be. And then out of the blue, I have another condition here.
+And then the idea is that if you have good two independent events, so I am throwing,
+or you are playing the lottery for two times, right? You have paid for two tickets.
+Then, well, we will want that the surprise to be to be edited in a sense that you will take the
+amount of the surprise, which resulted from the first lottery ticket, plus the amount of the
+surprise, which resulted from the second lottery ticket. It's not obvious that this is the only
+possible way, it's just that this is a property which we like, so we say, okay, let's let's
+let the surprise follow this, this property. Now, the good thing about it is that right now,
+once we have said that we want all these three, there is a single way how we can write this mathematically,
+because this third part is very strong because it tells us that, however, we compute the surprise,
+it needs to convert product into somes, right? Because we want the joint probability of independent
+events to, like to, so that the resulting surprises are just the editions of those. So, we will
+need some lottery, and we have the other quantities which should hold, so the function which we
+really like is this one, right? So, it's like the lottery, but flip to the top, right? So, the
+for for outcome with probability one, there is no surprise or, and then the surprise is increased,
+and increased, and increased, when the probabilities get closer to zero. So, this can be written as
+minus logarithm of the probability or the logarithm of one of the probabilities the same thing.
+And so, when we have this information, it was defined for one outcome. So, we could also be interested
+in computing the expected surprise, which you would get for the whole distribution. So, this
+expected surprise has, and maybe unexpected surprising name, which is entropy, right? So,
+the entropy of a probability distribution is just an expectation of the self-information. So,
+numerically, it's the expectation of log px with a minus in front or I could say of logarithm
+of one over px. Now, this name is kind of weird. The name is called to Shannon, who
+has said at one point that he didn't know how to call the resulting quantity, and he was calling it
+like expected information for some time. And then he, he got a letter I think from for Neumann,
+that he should call it entropy, because the formula is exactly the one which the thermodynamic
+physicist came up with. There are different motivations for arriving in his formula,
+but mathematically it's the same. These collisions do happen. How many formulas are there with
+three symbols in it or something, right? And for Neumann told Shannon, you know, nobody did
+knows what entropy is, right? So, if you call it entropy, then you will, when every argument
+about it, because well, nobody will just be able to tell you otherwise. And so, it's called entropy,
+even if I'm not sure if this story is true, but you can look it up on a Wikipedia video. And so,
+what does this entropy measures? So, there is a nice interpretation, which we can give it
+to this quantity, and that was the one why Claude Shannon bothered with it in the first place.
+So, imagine that we have got some messages, which we want to send. These could be words in your
+messages or it could be, I don't know, we have just a weather forecast, and we have got 20 different
+forecast, and you only want to send one of those or something. So, let's say, time-sending messages,
+and these messages are composed of some symbols, right? So, let's say these are a dcd.
+These don't have to be letters right, they can be larger, but it's just the components of the
+message. Let's say that we all, we know the probabilities of how often we will use these symbols.
+So, let's say that a is a probability of one half, b of one four, c of one eight, and b of one eight.
+And the thing is, if you are sending messages with these distribution across some some communication
+channel, then whatever way you come up with of sending this information, you will always require
+at least the entropy number of bits for each of the, of the symbol, which we are transmitting.
+And you cannot do better by this one of the things, which is called, a proper, like, proved.
+And also, there actually are ways of how to either get exactly to this quantity. So, come
+up with a call to which allows you to actually use, on average, entropy bits per per character,
+or at least can get to it as close as possible. And from this point of view, it is information,
+right? Because if you are, if you have some some random variable, then the amount of information
+in eight, as measured by the entropy tells you what is the average number of bits, which you need
+to, to get that information through to somebody, right? So, the information is measured
+through the capacity of, like, communication medium, you have between you, that kind of makes sense.
+The units of that, I will, I will get later there, but the units of that are bits, right?
+Like, you are using them all the time, but this is the place where they define, as there's the
+units of the, of the information. Yeah. So, to compute the, the entropy of this distribution, right?
+What we would do, well, for, for the time being, let's assume that the logarithm is binary.
+Yeah, it's, it's, it's, it's only if the logarithm is binary. So, the logarithm of one half,
+and the minus of that, well, that's one, because it's two to minus one. The logarithm of four,
+it's two of eight is three and the use three. So, these are the surprises, self-informations,
+of these, of these events, and down to compute the expectation. So, we will have one times one half,
+plus two times one, four, plus three times one, eight, and I will say times two, because it happens
+both for C and D. Right? So, this is one, half, one, half, three, four, so one, and two, so that's,
+so on average, I will need one and three, fours of bits to transfer one of these.
+So, one of these outcomes to the other party, and that's, uh, for the entropy is, sorry,
+what if, yeah, so, so, this is the entropy, so that's the HP, yes, yeah, well,
+yeah, so, so this expectation, when I write it down, then it's the sum over all possible outcomes,
+and I have got there the px times the quantity which I am interested in, so it's the log,
+and what I will do is I will say one over px. And so, these logarithms, they are these numbers,
+right? Because here, I compute the logarithms of two, one over one half, so these things are
+these parts, I can use colors, and that's this, this, yeah, and then I need them in the probability
+same. Yeah, so, uh, I really cannot give you any other nicer interpretation than this one,
+right? So, I always think about it as the average number of bits to describe one of the,
+uh, one of the outcomes. Like, when I am talking about a trained model, which will tell me,
+what kind of class do I get for, uh, for, for the input, then I only, I would want it to be zero,
+because that means that the model is always predicting, just one of the class, hopefully, hopefully,
+the correct one. Also, for the classifier, we are usually competing cross entropy, which I will get to
+on next slide. So, one of the things which we can do, uh, to measure via entropy, is, uh,
+uh, how deterministic distribution is. If a random distribution is completely deterministic,
+it always returns one of the outputs, but then the entropy is zero, right? Because, well, if I
+am to tell somebody what is the outcome, I don't, I don't have to tell them they already know,
+because if one of the events has outcome of probability of one, no other possibilities are there.
+So, I don't need to send anything, because they know, it's like, if the outcome is
+sun will arise in the morning or sun won't rise in the morning, uh, right? I don't need to send
+anything, just because we assume that it will always rise up in the morning.
+Yeah, yeah, this would be a problem for us. It would be complicated if the probability would be larger
+than one, and the logarithm would be negative of that, and that would create negative entropy,
+which is something that will happen immediately. So, when the, uh, when the Shannon generalize this
+to the real, not of the continuous numbers, it just replace the sum with the integral, like,
+but I, I endorse that, that's an approach which I do, but it doesn't work out in, in many cases,
+and exactly, here in the continuous case, this quantity can easily be negative.
+Because the distribution, because the probability density is not a probability, so it can be
+very large, and that just means that for the continuous, uh, case, giving it the same interpretation
+is just possible, because it just means a different thing. Now,
+so, there are two, two views there. One is that, uh, if we want an entropy, we just
+a nice interpretation, uh, as measured by the amount of base, which we need to send it through.
+It's possible to come up with a different, uh, version of, of this quantity, which will have the
+nice, expected properties, and it's possible, but we will not do it. The other way, uh, how we
+can look at it is that even if this is not really entropy, it's kind of similar to entropy,
+it is a name, it's got a differential entropy, and still, uh, it enjoys some of the, of the
+interesting properties, uh, of, of the, uh, of the, of the discrete case, and they will be enough
+for, for our case actually. So we will arrive at some formulas, uh, on, on the next lecture,
+which will tell us that this, that computing this quantity is a good idea of both
+for the discrete and continuous case, and we will just call the result entropy, because we have now
+said that this, this piece of equation is entropy, even if it was mod if, uh, motivated by something
+completely different than how we will arrive at the same thing.
+Yes, yes, definitely. So, uh, if we have this, this, uh, let's say that we want to generate
+the numbers between 0 and 0.1, right? So the probability density for that will need to have
+a value of 10 so that this thing, uh, integrates to 1. And so if we compute the entropy of, of,
+of the distribution, in the continuous case, we will get a negative output, because, uh, what we will
+have there is the minus logarithm of 10, right, this is positive, and this will make it negative.
+If these are really probabilities, right, then then this is always negative so this minus will
+will turn it into positive and everything is fine, but, uh, for the densities, it's not.
+But even to mind, and we will just use the same formula, because we will arrive at it from a
+different motivation than just the, uh, the information content, kind of. That is one tricky case,
+which can happen here, and that's the probability can be 0, right, if we imagine where we are
+able to outcome the probability of 0, logarithm of 0 is not really defined very well,
+but luckily for us, we have their px times logarithm of px, so it's 0 times logarithm of something
+which gets called to 0, and this limit is 0, so we will just, uh, by definition, consider that to be 0,
+so we can just ignore all the events with the probability, because they will not influence the
+entropy. It kind of makes sense. We don't care how many events you can think up with, which
+of 0 probability you will never have to transfer them or communicate them to the other part,
+so it's fine, that they don't influence the entropy at all. So until now, I was, uh, kind of making
+the show of saying that we have put these b's, and we are sending things through a channel,
+but from now on, all the logaritms will be natural logaritms, so they'll use the base E, right?
+In check me sometimes, mark them as Ln, but in the, in the papers, they are really just logs,
+so from now on, if it's log, it is, uh, it's a natural logarithm. So now I will get to the part,
+which we will actually want to use, uh, for our machine learning later, uh, and that will be
+cross entropy. Uh, so to continue with the interpretation of the, of the amount of, of information
+in the distributions, uh, imagine that I'm actually sending the messages, right? But usually,
+you don't know exactly the correct distribution of the messages you will send, right? You can,
+I don't know, measure what you've sent in the last year and computer distribution out of that,
+but then when you send new messages, they are probably similar, but not with the exactly
+same distribution. So, uh, in order to, to measure, uh, how many bits we will need to transmit,
+we can compute the so-called cross entropy, which is also denoted as H, but these times with two inputs.
+And, uh, what we can do, or how we can interpret it is consider, uh, a Q, which will be
+a distribution of the messages, which we expect. So that's what we use to, to generate the code
+from the peculiar tell us how we will encode the outcomes. And then we will get the messages
+with the distribution P, and that's what we will send, right? So this expectation goes over P,
+right? So these are the things which we send out, and we represent each by the self-information
+in the curious division, so that's the amount of bits in the code, which we have constructed
+from, from Q. And this behaves as intuitive as you would expect. So, uh, your first
+observation, uh, if you have a cross entropy, P and P, these two things are the same,
+well, that's exactly entropy, right? Because then we had just one distribution. And if you consider
+entropy, and you consider other codes, uh, to, to use to send the messages, then, uh, that the
+entropy, uh, cannot improve, right? If you use a code for a different distribution that it
+kind of makes sense, that, well, it won't be as effective, so you will need to send more, uh,
+more bits to transfer the same message. Uh, and even so, uh, when the entropy and cross entropy are the same,
+the only thing how this can happen is that when the two distributions are actually the same,
+because if they are not the same, then there is at least one character where you can do
+verse when sending things in the you could just just send it and, and that will be bad.
+Uh, this can be proven. I have said that a little bit of a little bit of proof, so there is a little
+proof here, uh, but it's a standard one, so I will even not go, not go through it. Uh, this just
+is true. Um, this tells us, uh, one one interesting thing, uh, and that's that the entropy
+is actually limited, uh, uh, uh, by log n, so let's say I've got n things which I want to send,
+uh, then the entropy of that is at most log n, uh, and, uh, to show you, like, intuitively
+it works. Well, what we can always do is we could, uh, generate a code which would, like use,
+like a binary sequence is to number the n possible outcomes, right? In order to do that,
+these, uh, these vectors will need to contain log n bits because that would allow me to,
+to encode all the numbers between one to n, at this point I kind of hold that everything is
+divisible and something like just an idea. So if we consider that all these, uh, uh,
+uh, characters have like uniform distribution, we can create the same length code for all of them,
+and then just use it to send the messages like the, the asking coding is this, right? Every bite
+between zero and 225 is transformed via eight bits. Uh, so any code for transcending 256
+different symbols, uh, can be at least as this good, but maybe even better if, for example,
+you only use English letters or something. So this will give us some upper bound, uh, on the entropy
+which would be useful, uh, but generally the cross entropy is not symmetrical, uh, yeah.
+And so this allows us to do what I wanted at the, at the beginning, and that's to measure
+the distance between two distributions. How we will do that is, uh, that we will, when given
+to distributions, take the cross entropy, and subtract entropy from. So this quantity is called
+KL divergence, it's called the, uh, after two authors, cool back and library, but usually you
+just say KL divergence is shorter and many people don't remember the names. I only remember
+them because I, I read them from the slide, but other than it would just be KL divergence, right?
+And, uh, we know that this quantity is larger or equal to zero, because the cross entropy is
+larger or equal to the entropy. And it's zero only when these two distributions are the same,
+right? So it's a tool, which, which we will use to train our models by minimizing the KL divergence
+by to say, okay, okay, so let's make the difference between these two distributions as small as
+possible. And if we make them zero, the distributions will be the same and we will be super heavy.
+Yep. So as I said right now, it's not obvious why this is a good idea to use for model training.
+It's just that we have given it a name, uh, and it was like original motivation was to measure the number
+of bits in the channel. This can also be interpreted, uh, with a bits kind of thing, right? It's
+how many more bits on average will I need? If I send the messages with a distribution,
+be using the code for Q instead of using the correct one for P. And I have to say that when I
+interpret the cross entropy generated by the models or okay, leverages, I still look at it like that
+because that the only way I can, I can interpret these numbers even if it's kind of a stretch
+and not directly connected to the models at all. Oh, so this was a bit maybe confusing,
+but don't worry about it. Oh, it will get clearer. And you will be able to at least
+interpret the numbers that you will see when the models are being tracked. Yeah, we will just skip that.
+And the thing which I promised would be to come up with, uh, continuous distribution,
+uh, continuous probability distribution. So we will use thiscribe just one probability distribution
+and that will be the normal distribution or the Gaussian distribution. Uh, it's kind of
+irony that this is called the normal distribution because if you look at it at the formula of the
+probability density, it doesn't look and in order to me, I don't know. I think that
+somebody who came up with it has really a bad dream and then they walk in horse and they say,
+oh, I've seen the first equation in my life and then they wrote down this and they said,
+and from now on all the students will have to suffer this as well. And we will call this a normal
+distribution and it will be that, right? Uh, so this, this normal distribution, it's parameterized
+by two quantities, by mean and variance. All right, you know what both of these things are.
+So let's say that we will consider a distribution which will have to mean zero and the variance
+of one, let the standard normal distribution. And what does it do? It looks like this, it's like a
+hill or a bell which has the largest density in the mean and then it falls off. So this is a nicer
+picture. And so the mean just tells you where this maximum value are and the variance tells you the
+width of that. So the distributions with a very small variance would be like this while the
+distributions with a very large variance would be like this. So why normal distribution? So there
+are, I will offer you two ways how you could actually come up with a formula, right? Not just
+being the result of a bad dream, but what are the, like, assumptions which could lead to the same
+mathematical monstrosity I've shown you before. So one way is to use the so called centrally
+mid theorem. The centrally mid theorem is something what the statistics people use a lot. And it says
+quite surprising thing at least to me. And let's, let's say that I am doing many trials, right?
+So we have got some number of random variables. And if these random variables have the same distribution
+and they are independent, so I, I, D, identically, independent, identical distributed
+random variables. Then if you sum them, then this converges to normal distribution with some parameters
+I shouldn't say zero. So the more and more I have, the more and more the resulting distribution
+will be to some normal distribution with mutably chosen mean and variance. And this works for
+for any distribution which the origin of the variables had, even if it had, it had to have limited
+variance. So it means that if you are repeating some some kind of experiment, the results will
+tend to be normally distributed, whatever the individual experiments are. So you can actually
+find many of these examples in the nature because well that's what happened. So an example which
+I usually give to to show you that this is really normal distribution is the following. Like
+imagine that it's the evening, right? And you have been in a pub and now it's midnight and it's time
+to go home. So well the first number of your group gets out. But you know it's midnight,
+you have to drink something. So you get out and you are tired, right? So you just start to stumble
+a bit. So let's say that you have a stumber to the left or to the right or for some number of times.
+And then you are really tired and you just fall to the ground, well you are standing and you are
+resting there and sleeping come to the morning, right? So let's say it's a little weird. And now
+this continues so there is some number of people there. Everybody is doing this, right and then playing
+where they fell and then somebody is there. And now after some time people will start piling
+on top of each other because they ended up on the same place where the other ones. And so after
+a number of times when you come and look at the profile that these bodies are making, they will
+have a normal distribution, right? Because the random trial is the place where you land and after
+summing some number of them, you will just get the correct plan. And this happens even if the
+people don't know before you will afford a normal distribution, right? Even if they knew it wouldn't
+have them at the state probably, but it just happens. So that's one thing like normal distribution
+because this is perfect in our world, you can see the eaves of people lying in front of pops of the
+time. The other way, how you could arrive at the front and really like when you take this property
+and do some math, you can come up with the formula of a normal distribution from this property.
+And the other way, how we can get to the formula is to sometimes it happens that you have some
+fixed mean and you, so imagine that, I don't know, you need some measurement, I don't know,
+the length of some very small part. And use, use, they okay. So I have measured something but
+I know there is some error in the measurement and so you could say, okay, so I think that the
+mean value is whatever I have measured but there is some error which which could be there.
+And then you would say, okay, so I would be interested in finding a distribution which would be
+the most general with these properties. So it would have the fixed, the given mean and the given
+variance. So the question is, how does that look? So another way or another example is, let's say
+if I would have died and I know that I don't know, there is one for probability that I will
+get one and two and three. And now it's okay and now I would like to know like, what is the most
+general die which which would result in that? And if I ask you, I think you would say, okay,
+so let's take the remaining one for probability and just split it evenly between these outcomes,
+right? So it will be 1, 12 for 5, 4, 1, 12 for 5 and 12 for 6. And this in some sense is the most
+general solution because it doesn't like favor any of the specific alternatives. And one way
+how you can approach it is to say if you want to find an object or a distribution which is the
+most general, you will take the one which has the highest entropy. So the one which has the largest
+information. So in some sense it's the most generic one because it takes the longest time to describe
+it would be specific if it would just say okay just for nothing else, it would have a small
+entropy because well it would be easy to describe okay just for nothing else. So what I am saying
+is not a theorem, what I am saying is an axiom, right? Like we could say that from some sense the most
+general solution is the largest one and but largest measured by the amount of information in it.
+So in some sense it's the fetist distribution so it contains at least additional conditional
+our additional conditions as possible. And if you do that if you say okay I want to find the
+distribution which is continuous and it has got a given meaning variance than the result of that
+is again the normal distribution. This is not very difficult to compute so it's it's possible
+with some relatively straight forward math and if you do that you will come up with the same
+formula as well. And this is the point where we will we will get or why we are using normal distribution
+because sometimes you will know that you have an output, you have the mean of that and you have some
+idea what the actual error or what the average error of the measurement could be and then you would
+say okay and I would like a some distribution and so this the normal distribution is in some sense
+that the most general one and that's where this will appear in our neural networks. It's nice to
+know what properties are there like why the normal distribution because sometimes for example you can
+have a situation where you have some measurement but the error would not be the same in all the
+places as it is here but maybe the error for the larger measurements could be larger you would have
+a relative errors right plus minus 10 percent or something then that does not fulfill these
+conditions and actually a different distribution should be used to describe that so when we use the normal
+distribution it's perfectly fine if our errors are same everywhere if we have got fixed experience.
+Haha so now let's have a small break we will be doing breaks because well I just need it
+and we will continue in five minutes with actually machine learning and neural networks.
+So I hope you had a good break and you have a muster thing of energy so that you can live
+through the last of the lecture where I promise to you at least start doing machine learning.
+So when I say machine learning what I mean can be described with this definition it's from a book
+which you shouldn't read right now because it's totally very different from how things works but
+the definition is still true the machine learning is still the same so if we have got some task
+and there is some way how to evaluate how good we are at the task machine learning happens
+if you get better with the task more and more experience you get right so this is a very abstract
+definition but there are three important parts there which we will always have to deal about first
+you need to have some task which are working on. Simply task probably is a classification in
+classification the goal is to choose between some some labels so well you can get a photo
+from a Twitter and you could say whether there is a real human there or whether it's generated
+by a deep fake model for example by a binary classification. The classification can be into multiple
+classes well and apart from classification sometimes you want to generate a real number I don't know
+you see in picture and you would like to predict a number of millimeters which the person in the
+picture has for example. Now this task instead of being called a prediction or something is being
+called regression now the it doesn't really is connected with the meaning of the virtual regression
+because regression means something like it's smaller or something right which is not the case here
+it's just the name of the task we're creating the real values. The reason why it's called regression
+is that one of the first papers which actually used some basic machine learning was a paper
+which modeled what is the height of of descendants of large parents. If you have got large
+parents then on average their children will be smaller. Why it's that well if you have large
+parents and their height would be the same then the variance would also like go to the outside so
+if this repeated people would need to get larger and larger well they slightly get larger and larger
+but but not not too much so if you have extreme height then on average their children will be smaller
+and the paper was caught on the regression of heights of the children of large parents and that's
+why it's called regression right. If some other task would be measured this could have been called
+the progression instead but right now it's it's a it's a term so everybody's using it even
+if the original that the emoji is kind of weird and these are basic building blocks the classification
+regression or which we will build much more complex tasks like doing some structured prediction
+and then things like that. So we will get to the more advanced ones later right now we will
+mostly start with classification. Then we need to weigh how to measure our score or our efficiency
+in the task well for classification the straightforward measure is accuracy by the the probability
+that we generate the correct answer and we will describe the other other metrics when when we get there
+but the most interesting part actually here is how we can learn from from what kind of information
+we can actually learn. The most common way of what machine learning is the so-called supervised
+machine learning. In supervised machine learning you have someone who is able to do the task
+at hand so you can learn how to imitate somebody who can recognize whether there is a dog or a
+cat on a picture right so in check one of the translations of this is like learning with a teacher
+again a sense that you have somebody who can solve the task which means that for for some some
+input you also get the correct output right because somebody knows how to do that so so they will tell
+what the right output is. If you are driving a car then I don't know if you if you get to a
+crossing somebody would say it would tell you okay now you need to start pressing the break and
+proceed more and more forcefully and then less and less you just doesn't suddenly stop or something.
+So this is usually implemented not by real people sitting next to the computer and saying which
+would be correct but usually this supervision is generated beforehand right by creating a data set
+where for each input you also get the correct output that's if I didn't say you anything I think
+that's something you would expect how it works right somebody gives me one hundred pictures
+and tell me which of them are cats and which of them are dogs and that's mostly what we will
+be doing on this course. Then there also exist unsupervised learning but it's a bit tricky but generally
+if people didn't have to generate any manual labels then it's called unsupervised so if you learn
+from plain text which people write without anything else without they telling you any more details
+if you learn from images without getting any information about them then that would be called unsupervised.
+You still have some data but you don't have no you don't have the outputs which you would
+probably need right but it's a bit shady shady area because people also had to create the images in
+the first place and they had to correct the text in the first place but the idea is that they don't
+give you any outputs of your model and for input that's why and the other possibility or interesting
+possibility is the reinforcement learning which I already mentioned at the beginning which
+works as follows. Imagine that you are in this car that they are trying to learn how to
+drive the car. So in the supervised learning you are told what to do exactly at each time step.
+In unsupervised learning you just drive around the city and nobody tells you a thing and in
+reinforcement learning what you would do is you would take the car out start going out maybe you
+would I don't know crash some some some can maybe you would go on a red light but what you
+would still go and then you would arrive home and then you would get some some feedback for a signal
+for example the amount of what you have to pay for fines and the amount of what you have to pay
+for fixing the car and all the objects which which we have hit and that will be your feedback right
+and it would be your goal to come up with a way how to drive better but somebody has told you
+how well you did right so if you had to pay no fine it was probably fine if you had to pay very high
+fine you did something wrong but it's your responsibility to come up with a better solution next time.
+So the good thing about this is that nobody tells you the correct solution which just tells you
+how you did you need to come up with a good solution but the good thing is that you can come up with
+a solution nobody knew before right but of course it's much more difficult well we won't we will be
+talking about reinforcement learning on just one lecture so that you can get an idea of how it
+perks and we will use neural networks to do that but there is a whole parallel course by me
+shameless commercial which is running right now and it's also interesting so in any case
+supervised learning right that's the area which we are going to work on for the supervised learning
+we need a lot of datasets and well there are a lot of datasets already prepared for us so it
+makes sense to have some the idea of what that can be or what the previously used datasets are
+so from the image from originally a lot of machine learning was performed on mnaste which is the
+dataset with handwritten digits so really things like this just one single digit here each normal
+act and scale down to a very small small picture which contains 60,000 training examples
+and 10,000 testing examples and until I don't know to the beginning of the 2000 or something people
+used it a lot for showing that they're machine learning perks but this I don't know we're
+about 20 years ago the scores the accuracy has gotten so high that people have stopped taking it
+seriously but for very minor stuff you might still use it to see that your implementation works
+or something right then there are C far data sets which contains photos but very small ones
+32 times 32 pixels is really very small but there has to be an surprisingly useful dataset which
+we will talk about but from the image from one of the most useful datasets to train an
+evaluate is image net usually you just see image net but what people mean is one specific sub park
+of image net which is image net ILS the RCM sorry I can't say it in check but it's not an
+English but the what this means is image net large scale visual or recognition challenge is the
+name of competition where people try to come up with an algorithms for performing image classification
+and people have annotated 1.2 million images with the objects and their locations which are there
+so this is an example from the image net where we have a photo and there are some number of objects
+there including the rectangles of roughly where they are in the image so this dataset with 1.2 million
+images is something which is being used as the first dataset to show that your visual processing does
+something now sometimes the boundaries with the rectangle's are not enough so there is also
+X is the co-co-data set where apart from the object you also really have outlines drawn by people
+to show where exactly objects are now they are not perfect right because they were drawn with
+the mouse or something so it's not great but it's definitely better so that's something we will also
+also be seen so apart from the image datasets there are also textual dataset and voice datasets
+so because people do both like speech understanding and speech generation using deep neural
+adversity if you use the org google assistant of series or something then both of these ends
+are being powered by new on adverse and originally it was being used which was in the show only
+and recently there are several projects trying to create datasets in many languages one of them
+is common voice which is like crowdsourced in a sense that you can go to the domain and then
+listen to the recordings in your language and verify that the people actually said what they
+should or you can even record some sentences which are there and then you can download the dataset
+and they have got you know more than like several dozens of languages with many hours
+recorded for each of them and we will use that for so to overcome check or something and then
+there are some datasets for doing some analyzes of the input text so out of them you these
+probably one of the most frequently used because it offers the analyzes of input text in a sense
+that you know the part of speech of the words and lemma and there are syntactic positions or
+syntactic functions in the sentences and the same same annotation is used for 138 languages and
+this was a year ago so they have probably gotten to 150 or something like that so if you want to
+train some basic processing on many languages this is where you would go people also need to use a lot
+of parallel data for machine translation right to get all these translate google translates and
+details and all of these and incubates right you need a lot of parallel data which are being
+mined by various various approaches like translations of the subtitles and proceeding
+of the European Parliament and things like that and that's available in large quantities for many
+pairs in the order of billions of birds so I will do this so deep learning is actually a third
+reiteration of neural networks right in neural networks started in like 50s and it was one of
+the first approach where people came up with to be able to solve problem like like understand
+images or speech right because when the computers appeared people didn't know how to solve these
+problems right and they said okay okay so we don't know to do it ourselves we can not really
+write 20 ifs so we can understand the recorded audio but we know of an object which can do it
+right a human can do it and then they had this this simple idea of how their brain works of
+a human and they started to build first like like the very simple machines which were similar
+to a brain without even knowing how to train them but but because of that they recorded neural
+networks right because they were really motivated by by very cartoonish way of how brain actually
+works but then after some time people didn't know how to proceed and they didn't also have enough
+computation power to actually train these models effectively but still there were a lot of companies
+which believed it will work and they gathered a lot of money so when it crashed down in 1969 or
+something like that then people were very sad and a lot of people a lot of companies and bankrupt
+and that's why the neural networks have a bad connotation right because for the people who lived in
+the area when you said neural networks one of the things which people put their whole pain and then
+it failed so when the neural networks go back again the people try to avoid the name so that it
+wasn't connected with the unsuccessful and the story from past and with the deep learning it's
+like actually the third time when the neural networks have come around and one of the places or events
+which made people realize that neural networks are going to be good was this image that large scale
+visual recognition challenge a competition where you could 1 million training images and you should
+say for a given image well what kind of object is that it was difficult at the beginning so you could
+even predict 5 different objects and if one of them would be on the picture you would say great you
+have done it and right and this has been solved of course before the neural networks people
+trying to solve it so these are the scores from the 2010 and 2011 where the error rate was something
+like 25% so one fourth of the images you couldn't guess the correct label out of the five
+possibilities which you generate and then in 2012 the model came based on neural networks which
+well dominated of the other contestants by decreasing the errors by I don't know one third or something
+and this this got people thinking like this seems that it's real first not just people saying
+but here we really have a real practical model which which can do something so next year all the
+entries were already neural networks and people start making large progress so in something like
+five years they were able to reuse the number of errors in the models by 210 or something like that
+right so in these 2012 13 even the large companies and and like many people have started taking
+the learning seriously and from that time it has been dominating every um or many many areas by the way
+this is the performance of humans now the the question is how how humans cannot get zero right
+the thing is if you look at the image you probably know what's there but you also need to
+correctly specify the class in the hierarchy and in this 1000 object there are 130 different
+breeds of dogs right so it's not just enough to say dog you also have to say which one right so
+if you train for two weeks and you have an interface which allows you to browse through the hierarchy
+see the instances of the different images or something then you can get to something like five
+if you just try out front you will get something like 25 right so sometimes you will say that the
+models are better than than than people but we will always need to be careful about what it means
+right because in some sense the models are very dumb they don't understand anything but
+there are metrics where even if they don't understand anything can get better results because
+either people need to be paid for the virtual we just spend some time on it or they are
+they are tired or or something right so here we can say that the models are better than human
+in classifying images into the image net classes but that's not as important as actually understanding
+what is there on the image well after these five years people were like well we spend a lot of
+resources and work of intelligent people over the five years to to come up with better models
+maybe you can do it in some better way and people came up with neural networks which designed
+the neural networks to do the image recognition and then in this 2017 after something like 10 days
+of work on 100 GPUs this GPUs came up with net work which dominated all the models
+which people had published in the five years right so here you can see the computation requirements
+of the model here is the accuracy now at this time you can only generate one level because
+the task is now simple enough so it's just enough to do one and all these black dots are various
+models which people came up with and the red ones are the ones generated automatically by another
+neural network right and this discontinued so then next year after two years again these are
+the models generated by humans and these are the models generated by another neural network
+and they are usually 10 times as small and they require 10 times as less computation than
+then the human design ones while achieving the same or better accuracy so in many of these areas
+we are not really manually doing stuff because well when we have clever neural networks we can
+make them do it for us right so I said that the neural networks are already like a third iteration
+so the neural networks they are not new in a sense that somebody clever would come up in this
+to 2012 and would say I am creating a completely new area of machine learning and this is how it works
+now instead that I really build up on the work of the past decades they just just the
+progress has gone large enough so it works so when I said that the people have started with the
+simple models well the people started with in the 50s and 60s was a model which we would nowadays
+call a perceptron and so how does it work well assume that we have got some input right some number
+of numbers on input pixels I am pretty huge something right and we want to generate let's say
+one output let's say that there is an image on the input and we want to say whether it's called the
+dog or cat right so the neural network model works like this well we assume the varies
+an edge between all the input and all the output nodes and each of these edges like can or might not
+be there or might be stronger or or or or weaker because that's how it works in our brain like
+these connections just grow or or they I don't know disappear but here we don't want to
+them to dynamically be there or not be there so what we will do instead is that for each edge we will
+wait and to whenever there is some information which flows through the edge we will multiply it by
+by the way so if the way to zero it's as if the connection is not there if it's one then we
+just copy the information without any any any any difference or any change so when I draw
+this image on the right what I mean is I mean that I want to describe a computation which produces
+an output from the inputs which work as follows we will consider all the inputs we will multiply
+all the inputs by some way I shall be number and I will sum them up right that's what I mean if there
+are multiple inputs to a new run I will just sum them all up now if you imagine that you would
+like to do a classification what you would like to do is you would like to really just say
+get or talk like just produce two numbers right if instead we really just sum these values he
+would be producing any real number so what we will do is we will apply some I don't know step
+function you can image in a function which generates I don't know let's say zero for the negative
+values right that should be blue I don't like it very much I so imagine that okay I will
+I will draw it correctly zero this is one so my function option will generate zero and then it
+one from that time right so really just like a step function which will say either it's
+was smaller than zero or larger and this will just give me the two outputs right independently
+on the specific number so I might want to do that I might not want to do that so for the
+neuron we will also have something which will call an activation function so whenever we have some
+values which arrive at the neuron and we multiply them by the length and some of them we pass it
+through the activation function for example this step activation now in this step activation
+there is some some threshold where the step function will flip from zero to one it's not obvious
+where the the flip should be actually be at zero at one of minus three at the logarithm of
+by whatever so in order to allow the neural network to or the model to learn what it should be
+what we will do is for each neuron we will add another input which will always be there
+right there will be like an offset which is always added to the values on the input and this is
+called bias or an intercept in the context of neural network we usually say bias but the
+statistic of people use intercept quite a little as well and this is really just just like an offset
+like what does the neuron what does the neuron produce all the time if there's no input and for
+example connected with the step function the role of the bias is to decide where this threshold should
+right where should we say okay it was small enough so it's dark so it's large enough it's okay
+so when I draw the image on the right what I mean is this formula on the left
+right we take the inputs multiply them by the way some of them add bias and then take everything and
+pass it through some activation function now we can write it in a shorter way by using some
+some basic algebra so every these two vectors weights and inputs and I can just want to do a scalar
+product between them to remember it's X lying W standing scalar product and then then plus bias you can
+see that they are now bought because now they are vectors while here they are scalars the individual
+elements of vectors so these are the this is like the simple perceptron and the
+thing is that this model kind of works but if you consider the boundary like the place where you will
+swap from from 0 to 1 it is being specified by a linear function so it will always be something
+straight right it will be like a hyperplane in the in the place so in the 2D that's it's really
+aligned and 3D it is a plane like in 4D it would be like a three dimensional space but
+something straight which splits the space into two halves and you will get dogs in one and the
+cats in the other the bad thing about this is that it is straight right so if you want to handle
+data which cannot be separated by some straight object you have a bad luck that one
+luckily what's possible is that for any data which you have you can find like a larger place
+larger space where they can be split with a straight object so consider these dots on the left
+right let's say that there is a 0 0 here so I cannot even draw straight line which would separate the
+blue and red but if I would map them to a 3D dimension of a place space and the third dimension would be
+the distance of the point to 0 it would look like this and here you can do a straight thing to
+to separate the right to use the plane which back in the original space would just be a circle
+right so even if it's possible to use the perceptron algorithm to also handle the data which
+cannot be separated easily it's still requires some work and people weren't able to efficiently
+do it in the 50s and 60s and that's one of the reasons why they fight luckily in the 80s people
+came up with the way of how to approach this right and they say okay let's let's get rid of this
+problem once and for all and they did it by introducing more neurons more nodes to their neural networks
+and so so the architecture looked like this this is called an LP metal air perceptron
+we don't need to know the name it's just that it's been called like that we have what the input and the
+output layer they are defined in the sense that the input is defined by the input data and the output
+layer just produces the outputs which we have in the data so they are both defined and we will
+put a set of neurons or nodes in the middle and we will connect every input with every neuron
+in the hidden layer and every hidden layer in neuron with every outward neuron in the output layer
+it's got a hidden layer because it's not visible on the outside it doesn't influence the input
+it doesn't influence the output but the good thing is if this hidden layer uses some non-linear
+activation then it can be proven that this model can approximate any continues function to any
+precision right the the more neurons on the hidden layer you create the better your approximation will
+be where I will talk about it exactly on the practicals but the idea is that like introducing the
+non-linearity and layer there gives us enough computation or enough expressivity to be able to
+model whatever we like so that's that's the good thing and that's why the neural networks
+rose again at the end of the 80s and at the beginning of the 90s so from the mathematical point of
+view if I have such a model how does it work well I have a set of ways between the input and the
+hidden layers each edge has one way so I have a whole matrix of weights between the input and the
+hidden layer so it's called WH right and the size of that is the length of the input and then the
+length of the hidden layer on the other dimension the same thing I have for the between the hidden
+layer and the output layer and then I have biases right I have one bias for every neuron
+in the hidden layer and I have a bias for every neuron in the output and then the computation
+it still works as before right so I start with the input x and when I consider one of these hidden
+neurons I will take all the input neurons before it some them by multiplying them with a corresponding
+weight at bias and then this goes through the non or through the activation function which I have
+there on the hidden layer and then to get the output layer I'll do the same thing for each output
+neuron I will consider all the hidden neurons I will take the the product of the hidden
+neuron and the corresponding weight finally at bias pass it to the activation right if I want to
+avoid the sums it can actually be written like this like I have got the input vector x and then
+I have like even imagine x lying right and then I will have a lot of different vectors which will
+be standing I will multiply those and I will get the vector of the hidden neuron values
+so I can really just use this one multiplication to compute that many scalar products which
+mean for all the neurons from the hidden layer I will multiply the vector of the inputs with the
+vector of the weights I add the biases as a whole vector and I get the whole vector of the hidden
+layer so here I can describe the computation for the whole layer at once instead of looking at
+the individual nodes so what do I need to specify to train such a model well the input and the
+output layer depends on the data but I need the activation on the output layer I need the activation
+on the hidden layer and the size of the hidden layer if I had those I could I could have created the
+mode so let's start the activation on the output layer well that is actually given on the output
+layer we will not be choosing anything ourselves because it is prescribed by the output data right
+we want to generate exactly the output data which we are given so here the the output activation is
+not our choosing is just described by the data so if our output are just real values
+right if we are just doing a regression then we don't need any activation at all because
+well the value of the neuron can be an area number so so let's find we'll just keep it as a
+test and if we have it now when we want to do binary classification then what we want to do is
+we want the neuron network to generate a binary distribution right we want to generate a distribution
+of possible outcomes of two class or of two class classification so and we know that the
+binary distribution can be described by a single number right the probability of outcome one
+so we need a way of generating a probability out of the output neuron and so what we do is we take
+some function which given an area number will generate a probability so the probability needs to be
+between zero and one so let's take over the way how we can do it is to say okay so
+it should start around zero right it should end around one and we need to do something
+in between so the let's take over the place to say okay in zero the value will be one half right
+so the zero will be where the flip between the probability larger than one half is more than one
+half will be and then it will like like gradually go to zero and gradually go to one so one of
+such functions is a sigmoid function the formula that isn't very nice but it is exactly
+these properties it started zero and at once and gradually gradually increases while in theory
+there could be many other functions which which is this property this one is somehow the most
+interesting one there are several ways how you can arrive at this formula one of them is again
+to use the maximum entropy principle like you can stay a state of conditions and then you say
+and I want the the most general function which fulfills that and if you do the math you will get
+this quantity so that's one way how to arrive at that the other way how to arrive at that
+is to take the probability of the Bernoulli distribution is phi to x times one minus phi to one
+minus x and then do some suitable like math and if you do you will actually arrive exactly
+at the formula there so I will talk about it in a detail on a lecture or so but the the bottom line
+is that if you want to model a Bernoulli distribution then this is the activation which you want
+to use because in some sense it's the best activation and I will I will elaborate on in some sense
+in the future but nobody really challenges that if you do the binary classification you just
+put this activation there and you are done you can do the same thing for the multi-class classification
+and then you need to generate the whole distribution right so what we will do is we will have
+as many output neurons as there are classes and then we need to somehow like squash it into a
+distribution so what we will do is for other events we will compute the exponentiation of
+that then the good thing about computing the exponent is that or exponentiation of a black should
+say is that the resulting values will be non-negative or there will even be positive right so
+that's one thing which I need it to do I need it to get rate of the of the negative values but
+these to access they don't sum to one but I want them to sum to one because I want distribution
+so I will make sure they sum to one by dividing them by by their sum actually right so if I have the
+values I will do E to all of these values then I will sum them up to see okay they sum to 20 so
+I will divide each of these numbers by 20 and then they will sum to one so that's the formula
+which we have here right we take the input values to E to them and then we divide by the sum of
+all these values because then these numbers will sum to one so this is an activation function which
+is being used with a categorical distribution and again that the formula itself can be derived from
+various properties like saying I want to get the maximum entropy distribution which will feel
+something or saying well I want to find the nicest activation function when I get the formula
+for computing the probability of the categorical distribution both of these approaches kind of work
+yep so I've got three more minutes so let's talk about the activation on the
+inlayers and stop so on the inlayers things are much more interesting because we can choose
+the activation ourselves right the inlayer is not connected to the data at all it's just our way
+of making the models stronger first observation is that if we do no activation then we didn't get
+our models stronger only larger because if you imagine this one layer it was just a multiplication
+by weight metrics right this one layer just takes the input vector and multiplies it by this
+so that's a linear operation and if you compose two linear operations they are still linear
+right multiplying something by two matrices well you can multiply the matrices first and then multiply
+the input by them so this would not make our model stronger so we need to have some non-linearity the
+good thing is that nearly any any transformation can be used as an non-linearity what people
+started to use was sigma in just because it was some non-linearity they they derive it from the
+binary distribution but but why not let's let's let's use it right so we could do it and people
+didn't do it and in the 80s it was the most common activation on the inlayer but from the today's
+perspective it is not great the reason why it's not great is twofold first it's not symmetrical
+in a sense that if we start with zero and apply it multiple times the value will get larger and
+larger and it's kind of in practical so we will want the the function so that it generates zero
+out of zero to do that well that's not very difficult so we take the the sigma it function
+and we just scale it so it goes through zero right so we take two times the sigma it
+so it gets from zero to two and then we subtract one right so we get a function
+which goes from minus one to one and it's zero it crosses zero so I have it drawn more nicely here
+on the graph and that will get rid of that that one problem and the other problem
+which we have is that we want the derivative in zero to be one I will explain it on the next lecture
+why it's a good idea but we want it but this doesn't have the correct derivative it has only
+derivative of one half so what we will do is we will squash it from both sides so it gets steeper
+until the derivative there is really one it looks like an identity around zero and the resulting
+function is two times sigma into x this is two is the squishing thing minus one in papers in late 90s
+people were really describing this as a symmetrical sigmoid but then later some probably more
+math involved people say okay this is actually a hyperbolic tangent right and they started
+calling it a hyperbolic tangent not because we think the hyperbolic geometry is somehow a good
+activation just because it is the same name of the function and saying symmetric sigmoid is weird but
+saying hyperbolic tangent like that's sexy we train and you know it's an hyperbolic tangent so
+that's what people used for quite some time and it's definitely a better activation function
+but in 2012 or something people realized they can actually use even a more simple function
+and that's the relevant function I the relevant function is zero for negative inputs and then it's
+identity for for positive inputs it's really these things only their function just two
+linear segments and this one breaking the middle is enough for for the function to be non-linear
+enough so that the neural network with the activation on the hidden layer will be able to
+approximate anything it's very easy to compute one if right very easy to get a derivative of that
+well it's either zero or one so nowadays when you want an activation on the hidden layer
+the other relevant function is rectified linear units so it's like a linear unit but
+it is like cropped by zero and rectified like like made to do it pretty good or something
+linear units so that's something we would use nowadays without thinking they are slightly
+better functions people came up with later but this is the very good performing
+activation function now and I have to stop because I'm two minutes after after the end of my lecture
+so thank you very much for your attention I know that it wasn't very fancy today but don't worry
+it will get fancier fancier later and it will start working on some assignments or really
+this Wednesday so I'm looking forward to it see you there and enjoy the whole week
