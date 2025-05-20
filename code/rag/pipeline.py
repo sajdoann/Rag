@@ -19,8 +19,8 @@ def build_db(data_dir):
         chunks.extend(split_docs)
     embed_and_store(chunks)
 
-def query_rag_system(question):
-    docs, metadatas = retrieve_similar(question)
+def query_rag_system(question, top_k):
+    docs, metadatas = retrieve_similar(question,top_k=top_k)
     print("Docs:")
     for doc,meta in zip(docs,metadatas):
         print(doc)
