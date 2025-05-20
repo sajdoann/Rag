@@ -4,7 +4,8 @@ This project implements a **Retrieval-Augmented Generation (RAG)** pipeline for 
 
 Users can build a searchable vector database from lecture content and ask natural-language questions to receive answers grounded in the relevant documents.
 
-Example outputs located in: `example-outputs/`. They were geenrated with Ollama's `deepseek-r1:1.5b` model as is in `config.py`.
+Example outputs located in: `example-outputs/`. They were generated with Ollama's `deepseek-r1:1.5b` model as is in `config.py`. BERT question (`q_BERT`) answers based on retrieved context, `q_backpropagation` 
+provided formulas that are not in the retrieved documents. `q_visualization` retrieves good relevant documents and the answer is based on them.
 
 ---
 
