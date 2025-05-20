@@ -21,9 +21,9 @@ class Config:
             "llm": {
                 "provider": "ollama",  # huggingface, ollama
                 "api_key": os.environ.get("AZURE_GPT35_KEY", ""),  # OPENAI_API_KEY
-                "model_path": "deepseek-r1:1.5b", #"llama3.2:latest",
+                "model_path": "deepseek-r1:1.5b", #huggingface: "distilgpt2" (to small bad results, huggingface), #"deepseek-r1:1.5b" (ollama good results), #"llama3.2:latest" (ollama, good results if gpu)
                 "temperature": 0.7,
-                "max_tokens": 2000
+                "max_tokens": 200
             },
         }
 

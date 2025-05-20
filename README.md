@@ -83,7 +83,7 @@ pip install -r requirements.txt
 ### 0. Activate Environment
 
 ```bash
-source ~/virtualenvs/rag_env/bin/activate
+. ~/.virtualenvs/rag_new/bin/activate
 ```
 
 ### 1. Start the LLM Server
@@ -96,16 +96,16 @@ ollama serve
 
 ### 2. Build the Vector Database
 
-This loads and processes files from the `data/` directory:
+This loads and processes files from the `data/` directory run this in `code`. Be aware you have to build and ask questions with the same LLM (different tokenizer used for each LLM build with 1 LLM running with other might not work:)
 
 ```bash
-python main.py build
+python3 main.py --build
 ```
 
 ### 3. Ask Questions
 
 ```bash
-python main.py --query "What is the chain rule in backpropagation?"
+python3 main.py --query "What is the chain rule in backpropagation?"
 ```
 
 ---
@@ -124,8 +124,8 @@ I typically run 3–4 videos at a time, each taking ~20 minutes to transcribe.
 ## ⚠️ Limitations
 
 - Works great on CPU-only machines, but **LLM generation is slow** (~1 minute per answer).
-- On machines with a GPU, generation drops to just a few seconds.
-- **Retrieval is fast** (1–2 seconds) even without a GPU — showcasing the efficiency of the vector search!
+- On machines with a GPU, generation would drop to just a few seconds, but the aim was here that anyone can run this locally.
+- **Retrieval is fast** (1–2 seconds) even without a GPU — showcasing the efficiency of the vector search.
 
 > For real-time performance, I'd need better hardware or a cloud solution — but this system is intentionally designed for **fully local use**. ✅
 
@@ -133,12 +133,22 @@ I typically run 3–4 videos at a time, each taking ~20 minutes to transcribe.
 
 ## 💡 Improvement Ideas
 
+- add evaluation of LLM answer
+- add test cases (testing in general)
+- check if LLM really only nicely puts together what is in the searched data and does not go on its own
 - Extract slide change timestamps from the PDF (e.g. slides templated look at bottom-left page numbers change in video) to sync with transcripts.
 - Add **metadata filtering** (e.g., by lecture title, source).
 - Build a GUI like [chatpdf.com](https://www.chatpdf.com/).
 - Apply RAG to other domains: legal, medical, etc.
 - test if it would pass Milan Starka's publicly available questions for subjects:)
 ---
+
+#### Small remarks:
+- in future compare this RAG system on TREC dataset eval
+- geenration in future
+  - let LLM judge the quality of the answer
+  - query rewriting: generate synonyms, subquestions to obtan better result
+  - cos retrieval works badly on retrieval on specific things (fe all mentions about google pixel 6a) bm25 hybrid search is an industry standard.
 
 ## 📚 Sources & Inspiration
 
