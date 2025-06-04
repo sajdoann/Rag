@@ -1,10 +1,10 @@
 from abc import ABC, abstractmethod
-from typing import List, Dict, Any, Optional
+from typing import List, Any, Optional
 
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 import requests
-
+import sys
 
 class LLMInterface(ABC):
     """Abstract base class for LLM interfaces."""
@@ -99,7 +99,7 @@ class OllamaInterface(LLMInterface):
         self.model_name = model_name
         self.host = host
 
-    def generate_completion(self, prompt, max_tokens=1000, temperature=0.7):
+    def generate_completion(self, prompt: str, max_tokens: int = 1000, temperature: float = 0.7) -> str:
         payload = {
             "model": self.model_name,
             "prompt": prompt,
@@ -127,7 +127,7 @@ class HuggingFaceInterface(LLMInterface):
         self.model_name = model_name
         self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
 
-        print(f"Loading Hugging Face model '{model_name}' on '{self.device}'...")
+        print(f"Loading Hugging Face model '{model_name}' on '{self.device}'...", file=sys.stderr)
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
         self.model = AutoModelForCausalLM.from_pretrained(
             model_name,

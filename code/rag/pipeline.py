@@ -1,12 +1,12 @@
+from pathlib import Path
 from rag.loader import load_all_texts
 from rag.splitter import split_text
 from rag.embedder import embed_and_store
 from rag.retriever import retrieve_similar
 from rag.generator import generate_answer
 
-def build_db(data_dir):
-    raw_sources = load_all_texts(data_dir)
-    print(f"Found {len(raw_sources)} documents in {data_dir}")
+def build_db(data_dir: Path) -> None:
+    raw_sources = list(load_all_texts(data_dir))
     print("Document sources:")
     for src_name, _ in raw_sources:
         print("-", src_name)
@@ -19,7 +19,7 @@ def build_db(data_dir):
         chunks.extend(split_docs)
     embed_and_store(chunks)
 
-def query_rag_system(question, top_k):
+def query_rag_system(question: str, top_k: int) -> tuple[str, dict]:
     docs, metadatas = retrieve_similar(question,top_k=top_k)
     print("Docs:")
     for doc,meta in zip(docs,metadatas):

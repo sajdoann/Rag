@@ -1,4 +1,5 @@
 import argparse
+from pathlib import Path
 from rag.pipeline import build_db, query_rag_system
 
 if __name__ == "__main__":
@@ -10,7 +11,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.build:
-        build_db(args.data_dir)
+        build_db(Path(args.data_dir))
     elif args.query:
         answer, metadata = query_rag_system(args.query, top_k=args.top_k )
         print("Answer:\n", answer)

@@ -1,7 +1,12 @@
 import chromadb
 from sentence_transformers import SentenceTransformer
+from typing import List
 
-def embed_and_store(docs, db_path="./embeddings/chroma", collection_name="lecture_docs"):
+def embed_and_store(
+    docs: List[object],
+    db_path: str = "./embeddings/chroma",
+    collection_name: str = "lecture_docs"
+) -> None:
     chroma_client = chromadb.PersistentClient(path=db_path)
     collection = chroma_client.get_or_create_collection(name=collection_name)
 

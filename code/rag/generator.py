@@ -1,8 +1,9 @@
 from llm_interface import get_llm_interface
 from config import Config
+from typing import List
 
 
-def generate_answer(query, context_docs):
+def generate_answer(query: str, context_docs: List[str]) -> str:
     # use config to get provider and model_path
     config = Config()
 

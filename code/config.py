@@ -1,14 +1,18 @@
 import os
 import json
-from typing import Dict, Any, Optional
+from pathlib import Path
+from typing import Any, Optional
 
 from dotenv import load_dotenv
 
 
 class Config:
-    """Configuration management for the question generator system."""
+    """Configuration management for the question generator system.
+    It uses key value pairs to store settings, allowing for easy retrieval and modification.
+    Configuration can be loaded from a JSON file or environment variables.
+    """
 
-    def __init__(self, config_path: Optional[str] = None):
+    def __init__(self, config_path: Optional[Path] = None):
         """Initialize configuration, optionally from a file.
 
         Args:
@@ -30,23 +34,23 @@ class Config:
         if config_path:
             self.load_from_file(config_path)
 
-    def load_from_file(self, config_path: str) -> None:
+    def load_from_file(self, config_path: Path) -> None:
         """Load configuration from a JSON file.
 
         Args:
             config_path: Path to a JSON configuration file
         """
         try:
-            with open(config_path, 'r', encoding='utf-8') as file:
+            with config_path.open('r', encoding='utf-8') as file:
                 file_config = json.load(file)
 
-            # Merge with default config (only update specified values)
+            # Merge with config file (only update specified values)
             self._merge_configs(self._config, file_config)
 
         except Exception as e:
             print(f"Warning: Failed to load configuration from {config_path}: {str(e)}")
 
-    def _merge_configs(self, base: Dict[str, Any], override: Dict[str, Any]) -> None:
+    def _merge_configs(self, base: dict[str, Any], override: dict[str, Any]) -> None:
         """Recursively merge override config into base config.
 
         Args:
@@ -65,6 +69,8 @@ class Config:
         Args:
             section: Configuration section
             key: Optional key within the section
+                - if missing returns error
+                - if None, returns the entire section dictionary
 
         Returns:
             Configuration value or section dictionary
@@ -105,7 +111,7 @@ class Config:
         except Exception as e:
             raise Exception(f"Failed to save configuration to {config_path}: {str(e)}")
 
-    def as_dict(self) -> Dict[str, Any]:
+    def as_dict(self) -> dict[str, Any]:
         """Get a copy of the entire configuration as a dictionary.
 
         Returns:
@@ -117,7 +123,7 @@ class Config:
         """Reset configuration to default values."""
         self.__init__()
 
-    def update_from_dict(self, config_dict: Dict[str, Any]) -> None:
+    def update_from_dict(self, config_dict: dict[str, Any]) -> None:
         """Update configuration from a dictionary.
 
         Args:
@@ -125,7 +131,7 @@ class Config:
         """
         self._merge_configs(self._config, config_dict)
 
-    def get_llm_config(self) -> Dict[str, Any]:
+    def get_llm_config(self) -> dict[str, Any]:
         """Get LLM configuration for easy access.
 
         Returns:
