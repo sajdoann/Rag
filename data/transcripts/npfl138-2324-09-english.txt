@@ -1,0 +1,1561 @@
+Good afternoon, everybody.
+I am delighted.
+I can welcome you at yet another continuation
+of our deep learning course.
+So this time, it's lecture nine.
+And today's goal will be to talk about two topics.
+One will be structured prediction, which I will explain.
+What is energy fee.
+And then, we will talk again about how to represent verbs
+and how to do it somehow nicely.
+When we have access to a lot of raw texts.
+So first, I'm organizational remarks.
+I'm sorry that the assignments I published last week
+were published only on Sunday morning or something.
+But I have prevented me to reach sooner.
+So what happened is that the deadlines for the assignments
+are formally the same as usual, so in a week or something.
+But the points for the second deadlines are actually unchanged.
+So you can get full number of points, even when something
+before the second deadline to accommodate for the late release,
+with the one exception and the competition.
+Because the schedule of the competitions planned until the end of semester,
+so the tiger competition will be evaluated normally.
+And for the tiger competition, you will get to one less non-competition points,
+even.
+But for the tiger assignments and for the sequence classification,
+you can get full points, even later.
+So that's at least a way for you to somehow not be so much
+banished that I didn't publish things soon enough.
+And apart from that, does any of you have some questions or wish
+or anything?
+Okay, so structured prediction.
+At the end or on the previous lecture,
+we learned how to process sequences on the input
+and maybe generating sequences on the output,
+similar to what we do in the tiger assignments.
+Right?
+We can get a sequence like a sentence,
+and we might generate class for every of the input elements,
+for example, the part of speech decks.
+But sometimes we might want to generate,
+not just the collection of qualifications,
+but output with some kind of a structure.
+In a sense that we might want to generate a tree,
+or well-balanced sort of remphesis,
+or a graph or something,
+which will be composed of some small parts,
+but not any combination of these small parts would make
+a valid structure a valid out.
+So that's what structured prediction does,
+and we will consider still sequences as the simplest example.
+So let's say that we have got some input with an element,
+and we want to generate a sequence of outputs,
+but not every sequence might be valid.
+But until now, we will generate all these predictions,
+independently on each other,
+well, on this image it seems that Y2 is generated
+only from X2.
+So when we use some recurrent networks,
+the dependency is going to be on any of these input elements,
+but we still, right now,
+we predict these whites independently.
+So if not all combinations of these whites make sense,
+then it might happen that we will
+actually generate some in correcting ones.
+So this is all abstract like structure and validity.
+So let's talk about a specific example,
+so that we, you can say,
+an idea of what's going on,
+and let's consider,
+for example, name entity recognition.
+So name entities are names,
+or I have a single word,
+or sequences of words,
+which, you know, three word objects,
+like people, locations, places, events,
+dates, and things like that.
+So the common ones,
+as I said, are people,
+organizations, and locations,
+and compared to the part of speech tagging,
+this is a much more challenging task,
+because we don't need to classify
+just every word and just give one class to a word.
+We need to locate
+pens like continuous pieces of the text of any length.
+You can be a single word,
+you can be a multi-word,
+if you say Milan Strake,
+then that's probably one name entity
+composed of two words,
+unless there is two of me standing here, right?
+This also means that the evaluation
+is not a simple, right?
+Because in classification,
+you have some number of objects,
+and you just give one label to the object,
+but when it can happen that,
+for the input text,
+we would generate five,
+and entities, and they were only two,
+we need to deal with it.
+But right now,
+we will mostly be concerned
+about the fact
+that a multiple words
+could form just one entity, right?
+If you say a mathematical physical faculty,
+then that's one entity,
+an organization from this,
+or in this hierarchy,
+but it's composed of multiple words.
+So this,
+this kind of tasks are sometimes called
+Span labeling,
+because we don't give labels to the individual words,
+but to hold Spans of the input text.
+Also, for example,
+we need to do some kind of a dialogue system,
+where people,
+I don't know,
+want to buy,
+they're playing tickets,
+and talk to you by a phone,
+then you also need to identify
+this sense of input,
+like where are they flying from,
+how many people they want to buy the tickets for,
+and so on.
+So that's a Span labeling task,
+where we've got the sentence,
+and we give labels,
+not just to the individual elements,
+but to hold continuous spans.
+So how to solve such a task?
+Well, usually,
+we will just convert everything to the one case,
+which we can do, right?
+So we will somehow convert this
+into getting labels
+to the individual sequence elements.
+But we can do that,
+we can run the sequence
+through whatever neural network,
+and then just do one classification per element,
+and we can come up with a nice set of tags,
+which will allow us to actually reconstruct whole spans.
+So the problematic part is
+that when you have multiple neighboring elements,
+then if you say,
+I don't know,
+this is a person,
+a person,
+a person,
+we need to somehow distinguish
+between four main entities,
+each composed of a single word,
+or maybe just one main entity,
+which is very long,
+and is being composed of four words.
+So what we will do,
+is we will encode this information
+also to the class of the label,
+which we are predicting.
+So the common way,
+how to do it,
+this is the following.
+So we have a specific specific class,
+all, which means,
+outside,
+so this element is not part of any interesting spans.
+And then we have a beginning,
+B,
+which means,
+a new span is starting
+on this specific element.
+And then we let the continuation,
+so then we let the tag,
+which should be inside a person.
+So if we have three elements,
+and we want to say that this is all part of one entity,
+we would say,
+beginning inside,
+inside,
+and then this is just one span.
+If it should be three independent spans,
+we would say,
+beginning to everywhere.
+So what we have done is to the tag,
+to the class,
+which we have added a bit,
+which says either merge with the span,
+to the left,
+or keep,
+or create a new one.
+There are actually many schemes,
+how this can be done,
+but we'll be using this one,
+because it's simple.
+And it can describe any set of spans,
+if they are not overlapping,
+overlapping things,
+may make things difficult,
+but without overlapping,
+this is this is kind of fine.
+And so,
+the problem with the part is that,
+during prediction,
+if we generate them independently,
+we might generate invalid sequences.
+It's not so tragic,
+but it could happen that we will say,
+immediately inside,
+after an outside,
+which we shouldn't happen,
+or we might say,
+let's start a person here,
+and then let's continue with a location.
+So now it's not obvious what should happen.
+So,
+the structure,
+which we enforce here,
+is not very complex,
+we just want the spans,
+like the neighboring tags,
+to be a consistent,
+if we would want it also,
+and, for example,
+embedded entities,
+like if you could have,
+like hierarchy of those,
+we would need to generate even more complex,
+or complex text heads,
+and the structure would be more difficult.
+So,
+how to deal with the fact that,
+we might generate,
+some invalid sequences.
+Well, one way how to do it,
+is to come up with some,
+some heuristic,
+to be able to decold,
+even invalid sequence,
+into the structure,
+which we want.
+Right, we might say,
+okay,
+so inside at the beginning,
+well,
+we don't care,
+just means,
+the new one starts,
+it's not big enough from there,
+well, whatever.
+And then,
+when we see,
+like beginning,
+and then inside,
+and we can say again,
+well,
+this inside,
+let's just make it into a beginning,
+it's a different dive,
+so it will be fine.
+Like,
+we can do this,
+come up with some rules,
+and hope,
+that they are reasonable,
+and everything will work fine.
+But,
+from my attitude,
+you can,
+imagine that this is not going to be
+of our choice.
+So the other thing,
+what you could do,
+is that,
+we could train independently,
+so we would still generate,
+the text,
+not generate.
+We would train,
+really,
+by computing,
+cross entropy,
+for every decision,
+which we make,
+but then,
+when we want to run inference,
+we want to do the prediction,
+we might do some some magic,
+and produce,
+the most probable,
+valid structure,
+valid sequence,
+in this case.
+And,
+so this is,
+like,
+halfway,
+through,
+right in a sense,
+that,
+we will train independently,
+but,
+we will take some,
+some care,
+so that we only generate,
+reasonable outputs.
+And, of course,
+we might do all the way in,
+so in theory,
+we could also create loss,
+which could,
+include all this information in it,
+so we could say,
+we consider just the set of all the valid sequences,
+and we just try to increase the other probability,
+of,
+of the gold one,
+but,
+we wouldn't do it,
+by training independently,
+but really,
+by,
+by considering just the valid,
+just the valid sequence.
+So, let's start with,
+the decoding approach,
+right?
+So, let's say,
+that we are doing this spend labeling task,
+so we want to identify the whole,
+spends on the input and give them labels.
+We have gotten,
+the input elements,
+we want to produce the output sequence,
+and,
+this output sequence is,
+of,
+are these by all,
+text,
+you can get inside out,
+text,
+which will form the spends.
+So, we will assume that we also,
+already have a trained neural network,
+which can give us the probabilities,
+in every times that,
+right?
+So, we will assume that,
+the network can tell us that,
+at times,
+that t,
+so for the t,
+element,
+what is the distribution over the predicted passage,
+so specifically,
+gives us the probability over the cost,
+k,
+at that time.
+And now,
+the question is,
+how to describe this,
+this validity of this sequence,
+like,
+what are the structures,
+which we find valid?
+So,
+for the time being,
+let's assume,
+that we can express this,
+this validity,
+just by looking at the,
+at the neighboring elements.
+So, when we have this Y1,
+Y2,
+and so on,
+then,
+that,
+we will assume that,
+we can decide what's fine,
+just by considering,
+all neighboring pairs.
+That is enough,
+for the spend labeling task,
+because the only consistency,
+which we need to deal with,
+are the neighboring passes,
+but,
+of course,
+not necessarily,
+for all possible,
+of the structures.
+For example,
+if you want to generate well-balanced,
+set,
+parenthesis,
+then just,
+looking at the neighboring quans,
+which is not enough.
+On the other hand,
+when we want to do,
+do these,
+what we could do,
+is we could have tags,
+which would tell you,
+how many tags,
+sorry,
+how many parenthesis has already been opened,
+before the given one, right?
+So, we could say,
+zero at the beginning,
+before,
+and one,
+before this one,
+two,
+one,
+two,
+one,
+oops,
+so,
+no,
+it should be,
+three,
+two,
+one,
+and then zero at the end.
+When you do this,
+when you,
+when you have tags,
+you have to include the number of parenthesis,
+then it's actually enough to look,
+just at the neighboring elements,
+because you will be able to see,
+whether everything is valid,
+because,
+well,
+what cannot happen,
+that you will go below zero,
+and what should happen at the end,
+you should,
+and correctly,
+so,
+what you will do is,
+we will add a specific tag at the beginning,
+which says,
+okay,
+we need to,
+make sure that at this point,
+no parenthesis,
+are still open.
+So,
+even if it seems,
+just looking at the neighboring pairs,
+is not very,
+very strong,
+we can help it,
+and with for many problems,
+we can come up with nice tags,
+where just the,
+the,
+the neighboring,
+text are important.
+So,
+we will describe these,
+by having some kind of a transition matrix,
+right,
+of something,
+which will tell us,
+of these,
+of these text are fine,
+and which of them not.
+So, we could do it by really having to matrix,
+and there,
+that we,
+some class,
+why,
+and some class,
+why J,
+and so,
+either it will be fine or not.
+So, this is definitely fine,
+for describing the problem,
+and also for many others.
+And so, now the question is,
+how do we generate the sequence of the label,
+why,
+which is,
+valid as a whole,
+and has the maximum probability,
+as measured by these probabilities,
+of the individual outputs given to us,
+by some network.
+Well,
+when you have a,
+problem,
+to complete something,
+one approach,
+how to help to do it,
+is to give names to various intermediates results,
+and then at some point,
+you'll have many of them,
+each of them will be able to be,
+you'll be able to compute them,
+a component from the values which we,
+which we already have.
+So,
+what we will do,
+is that we will denote,
+some,
+some interesting quantity,
+and the interesting quantity is,
+the probability of the most probable output sequence,
+which has length D,
+so the first,
+it,
+it's like the first D elements,
+and the last one,
+is a class K, right?
+So, alpha T K,
+gives us,
+what's the best probability of the sequence of play,
+both of playing T,
+where the last one is K?
+It will actually be a logarithm of that,
+because,
+well,
+it will be better to work with the,
+with the logaritms.
+If we are,
+if you are able to compute it,
+right,
+then this alpha,
+and gives us the probabilities of,
+the full sequences of n classes,
+which ends with whatever class we want.
+So, if we had these alpha,
+we could look at,
+which one is the largest,
+among alpha n.
+And the one which is the largest,
+let's say this one,
+will tell us,
+that the last class,
+which we want to predict is 3,
+because out of all sequences,
+the one which ends with the class 3,
+as the largest probability compared to all of them,
+so the most likely sequence has a 3 at that point,
+and then we could go back for it,
+and produce the full sequence with this probability.
+So, the question is now,
+how to compute these quantities,
+and we will do it using a dynamic programming,
+right,
+I hope you are a fence of dynamic programming,
+if not,
+you will be friends with dynamic programming,
+after the day's lecture.
+But if you haven't never heard dynamic programming,
+don't don't worry,
+it won't be needed to solve the task.
+So, the question is,
+how to efficiently compute
+the most probability sequence,
+which has a length of t,
+and ends with k.
+Well,
+every such a sequence
+can be created by considering
+shorter sequence,
+like a prefix of length d minus 1,
+right,
+and then adding k k to it.
+And now,
+if the result should be valid,
+then this k,
+needs to be a neighbor of whatever class
+so that they can be combined together.
+So, we cannot consider just all shorter sequences
+of length d minus 1,
+we have to consider only such sequences
+where this combination jk is the valid one.
+Well, luckily,
+if we will compute this alpha's iteratively,
+then when we compute alpha t,
+we will already have alpha t minus 1,
+so we will already know
+the probability of the best sequences
+which are shorter,
+and with some specific prescribed combinations.
+So, what we could say is we could say,
+well,
+the thought probability
+can be computed as follows.
+First,
+the last class need to be k,
+from the definition of what alpha is,
+right,
+we need to generate k at the times t,
+because it just looked probability,
+I have a lot probability there,
+and then instead of multiplication of the probabilities,
+I'll be summing things.
+And then,
+what we will do is we will consider all possible prefixes.
+So, we will consider these prefixes
+by looking at all the tags,
+which can be there at the position t minus 1.
+And we will consider such ones,
+which are valid combination with the take k,
+which we have.
+So, we will go over j's,
+where the transition from j to k is valid.
+And out of these,
+well,
+we will just take the maximum probability.
+Any most probability prefix ending with a label,
+which can be extended by k,
+or which can stand in front of k.
+If you want to write it without the condition,
+what we could do is we could say,
+okay,
+let's compute the logarithmic of the transition probabilities.
+Yeah,
+the logarithmic of 0 there,
+which is a bit problematic.
+Let's define the logarithmic of that would be minus infinity.
+It's kind of the limit of that,
+so that you would be fine.
+And then,
+we can be write it by saying,
+okay,
+let's consider all possible tags here,
+and then just take the best probability
+of generating such a sequence,
+and then let's take the logarithmic of the transition way.
+So, this logarithmic is either 0,
+if it's valid,
+so then it won't influence anything,
+or it will be minus infinity,
+when it's invalid and this minus infinity,
+it will mean that if we have any other possibility of choosing j,
+which doesn't get minus infinity,
+then it will be larger,
+so that will be selected.
+Right, so sometimes you can look at,
+like that,
+that these A's are some ways of transitioning from j to k,
+and they are 0 for the invalid transition,
+so after logarithmic,
+minus infinity.
+It seems weird,
+but this is actually being used during implementation.
+Well, sometimes instead of minus infinity,
+you would just say,
+1 times,
+or minus 1,
+e i,
+or something like that,
+and that's like a practical infinity.
+Yes?
+So,
+yeah,
+so I'm sorry,
+that this should have been p,
+so I thought,
+I have regenerated it.
+It's already fixed on the slides,
+but I probably haven't regenerated the pdf for here.
+So that should have been the bike,
+we want the sequence of playing t,
+so here is the prefix,
+which is shorter by one take.
+So,
+we can write this down as a standard algorithm.
+This is a very natural estimate in the name,
+it's fairly standard,
+so either this can be seen as a vector-based algorithm,
+or you could just say dynamic programming,
+and we had it with it,
+or you could say that this is actually a way for searching
+for a maximum weight path in an acyclic graph.
+Right?
+Because we have this acyclic graph,
+and if you have an acyclic graph,
+then you can search for all the things
+which you are interested in for the shortest past,
+longest past, everything.
+There are no cycles there,
+so no problems with negative cycles.
+And when you have such an acyclic graph,
+then what you usually do is you will go
+through the nodes in the topological ordering,
+in the same way as in the forward and the backward target, anyway.
+And so whenever you process the node,
+you know that all the predecessors are already being processed,
+so you can just look at them and combine them together.
+What is the clue what we are doing here?
+Because the predecessors are the shortest sequences,
+so when you want to create a longer sequence,
+we would just consider all ways how it could have been created
+from a shortest sequence and just choose whatever you want and continue.
+So to write this down as an algorithm,
+let's say that we have got the input,
+we have got the probabilities,
+we have got the transition matrix,
+and we want to generate the most probabilistic ones.
+So we will go through the timestamps from the beginning,
+under the end,
+until you construct the alpha stream alpha 1 to alpha n.
+For each timestamp,
+we will consider all possible pegs,
+so let's say that there are y possible classes,
+and for every one of them we will just compute this formula,
+whatever form you decide.
+So we start by saying,
+okay, this block probability of this sequence,
+which has k on the position t,
+needs to have to include this block probability of a true generating it,
+and then if we have some predecessors,
+so if we are not a sequence of length 1,
+we will add the probability of the best possible sequence,
+which is shorter and consistent with the tag k.
+So here what you do is I explicitly store this previous tag,
+so let's find the tag,
+such that it's valid together with k,
+and it's the probability of any sequence,
+and one ending with k is the largest.
+We will give it a name,
+the beta is one very nice name.
+Sometimes it's called p,
+as a predecessor,
+but we use p as a probability,
+so I didn't want to go there.
+Some other algorithms call these quantities p and q,
+so that they didn't seem any better,
+so we are going to alpha and beta.
+And so after the algorithm finishes,
+we know what is the block probability of the most,
+likely, sequence,
+as well, it's the largest one amongst the alpha.
+Now when we have it,
+we can reconstruct the classes from the back to the beginning
+by using the information in beta,
+so if we know that the last class,
+I don't know, of k,
+then the previous class is hidden in beta,
+sorry, beta and k,
+because this is exactly the label which we used in the previous step.
+And then if you want the one before that,
+we could pass it again through beta,
+and this way we will go backwards,
+and reconstruct the set of choices,
+which was able to produce this maximum probable sequence.
+So the algorithm has a time complexity of n times y squared,
+because well, n is the number of elements here,
+and then for each label,
+we have to consider in theory all their predecessors.
+Sometimes the structure of a is somehow specific,
+so it could be better,
+but for a general set of transitions, this is what we can do.
+We said here at the beginning that we just want,
+oh, that we assume that we are able to describe the validity
+on the just using the neighboring classes.
+Sometimes you might want to consider not just pairs,
+but maybe triples of labels.
+But it might happen that you would say,
+well, in order to decide that everything is fine,
+I need to look at free neighboring classes.
+So what would happen if you wanted to do this?
+Well, when we would be expressing the sequence of lengthy,
+using the smaller one, shorter prefix,
+we would need to consider not just its last tag,
+but also its one-but-class tag.
+So that we have this tripler, which we can check,
+whether it's valid or not.
+So if we would be interested in triples,
+then this transition matrix would have to process triples.
+So there would be y to three.
+And then in this algorithm, when we would be searching
+for a used, the correct prefix,
+we would need to consider all pairs of the last two tags.
+So the complexity would go to pre-here.
+And generally, the more complex structure we will want,
+the more expensive the algorithm will be.
+Again, some sense, it's to be expected,
+because if you want to search for one valid sequence out of many,
+then you can consider this as a verification of the certificate
+in the non-deterministic during machine, right when you solve the empty class.
+What you need to do is, like, you can have a verification machine,
+which tells you whether some certificate is a solution to the problem,
+and your goal is to come up and create one.
+And that's what this algorithm would do, right?
+If you'd say the valid sequences are just the ones
+which are the solutions to the problems in the empty class,
+then this would solve them.
+So it's kind of makes sense that if we have no information about the structure,
+like, no simplification about the structure,
+just somehow magically along sequence could become valid out of nothing,
+then nobody can do this in a polynomial time, so it's fine.
+In the sense that nobody can do it better,
+and maybe somebody will prove in the future that it actually cannot be better.
+So it might seem, like, said that the complexity there grows,
+which with the complexity of how we describe the valid sequences,
+but in some sense, it can be avoided.
+In practice, we usually are interested just in these neighboring tags,
+because, well, this is high enough complexity of this,
+and usually we can generate specific tags, which allow us to express the validity just using the pairs,
+as I try to illustrate with this valid pre-tink example.
+So now we know how to generate the most likely sequence of the tags,
+so that the spend labeling, or that we can give a solution to the spend labeling program with a largest probability.
+So what are the other possibilities that could have done?
+People have been solving these for a few decades, so there are some approaches,
+but the first message is that if we have a strong enough model,
+like the neural network, which produces these probabilities, then it can actually capture
+a lot of the requirements of how the valid structures look inside itself,
+and train, or disable on these identities, you are always seeing the inside of a person following
+either the inside of a person or the beginning of the person, nothing else.
+So hopefully our model should actually be able to learn that this is the case,
+and when using the recurrent neural networks, for example, or transformers or something,
+we shouldn't generate, in fact, output, but it sometimes happens.
+But usually, like, connecting it afterwards with some kind of transcending coding,
+is in practice the only thing which we need to do for strong neural networks models.
+So the other approaches, which I will describe, are mostly not useful in a sense that they don't
+result in actually better models. But to have some idea of how it could work.
+So one thing what we could do is we could model the dependency of the label not just on the
+input sequence, but explicitly also on the probability of the previous label.
+So this way, we could explicitly say, okay, we will be willing to generate a specific label.
+But the probability of change depending on what we decided to do with the previous step,
+right, so then this Y2 would be influenced also by this Y1.
+This can be changed, straightforwardly, we just use the gold tag they are during training,
+and the same algorithm which performed dynamic that I did the coding on the previous slide,
+or very analogous algorithm can be used to generate the sequence of the most likely text also in this case.
+However, when we use a strong model here, right, then this, I don't know why I depends on all the sequence elements.
+So through this latent variables, the model has a good idea of roughly what will be generated in that position.
+Not necessarily exactly, but but kind of a good one.
+So this kind of dependence is a model automatically by the network, by considering all the previous exist,
+because that's what the network will do to actually predict the Y1 and Y1.
+So the other way what we could do is we could actually change the training of the model,
+so that it only considers the valid sequences from the beginning,
+not that it would generate something intelligent and then we will fix it,
+but we will allow it to generate all the valid sequences, also during training.
+So what I am describing is called or this like a specific approach based on the condition of random fields,
+so we will be talking about the linear chain random fields.
+So we will assume that these twice are dependent on the neighboring labels,
+like this linear chain, because they just depend on the neighbors.
+And overall, what does this do is that instead of predicting the individual labels,
+we will be predicting the whole sequence as a single element.
+You can think about it as no generating thing a lot of independent labels,
+but as a generating one single sequence.
+There are many of them, but let's not worry about it, right?
+So what we would do is we would start by assigning a score to a whole sequence when I was not Y1,
+but it's the whole set of flies, right?
+So how this score will be computed?
+Well, we will generate the individual labels, so this is the part which we have had there previously,
+as well, right?
+So we want to generate the individual wise on the corresponding position,
+but then we will also include this transition probability, right?
+So we'll allow the model to learn by itself how likely is it for the tags to appear next to each other,
+right?
+So instead of giving it a structure like a fixed one, we could just say,
+yeah, please learn these transition and now they are probabilities,
+transition probabilities from the data and the 2D.
+So this gives a score to a whole sequence,
+and then the probability of the sequence,
+so you will compute it, just using softmax.
+So we will say, okay, we have many possible sequences,
+but exponentially many, so rush.
+Number of them, but still we could say, okay,
+and the probability of the one sequence by can be computed by taking the score,
+considering it to be the logic of the whole sequence,
+and then just pass it through softmax, right?
+Then we can train such a model because the usual loss is negative for likelihood,
+so we could just say, okay, let's look at the probability of this whole sequence,
+and let's just maximize it, which means we will want the probability of this sequence to go up,
+and the probability of all other sequences to go down.
+The only problem is how to compute this softmax quickly,
+because there are exponentially many of these sequences,
+but luckily one can implement an algorithm similar to what we have seen,
+which should use the dynamic programming, and compute this sum of probability,
+or some of the logic of all possible valid sequences in a polynomial time.
+The good thing for you is that we are not going to do that,
+it's just an idea for you to know how this works.
+I actually was teaching this for a few years,
+but what happened is that with better and better models,
+specifying explicitly with this,
+the information about the validity of the sequences
+doesn't seem to be helpful anymore.
+In the past two years, we were unable to generate better models
+by using these kinds of losses compared to training them
+and they're like a lot of independent specifications.
+So I have decided to put this aside,
+because instead of having weaker models,
+and then having a super complex loss to add something to the model,
+seems not to be worth it compared to creating very strong models,
+and just letting them train in the usual way.
+What still helps though is doing the constraint decoding,
+so this part still helps, even with the strong models,
+it can sometimes happen that they want to generate
+outputs which are not valid,
+but during training, it's fine for them to try generating
+each element independently and then just fix it out.
+If you would be interested to know how these works,
+there is a reference to the slides,
+where the whole algorithm is described,
+and some other materials around it,
+but it seems that the machine learning or deep learning world
+has decided that this is not worth it,
+and instead just making the models stronger seems to be better
+than trying to somehow enhance,
+we can models with some additional complex.
+So that was spell labeling.
+We will implement the decoding algorithm on the practical,
+so you will get some practical experience with that as well,
+and now let's talk about our second structured prediction problem.
+What we will be now doing will be speech recognition.
+So how does it work with speech recognition?
+While we get some sequence on the input,
+that sequence might be the amplitudes of your
+drum, which is moving in response of what I am trying to produce here in front of the bar,
+so we have some usually fixed time step sequence.
+In practice, what we do is we don't consider all the amplitude changes,
+but we somehow generate fixed time representations of the sound,
+so we could take like 64 milliseconds,
+and then somehow describe the sound in these 64 milliseconds.
+So we will get the representations of the end.
+And now the output are the letters, words, phonemes,
+like what the speaker said in whatever format we will decide that would be useful.
+But generally the output sequence of whatever labels we can take about the characters of the words,
+which I said, then they are not aligned
+with the input.
+In a sense that you get like a 10 seconds of audio,
+and then somebody tells you that the goal sequence was the sound off.
+But they don't tell you, okay, and V was generated here,
+and H here, and S exactly at this millisecond.
+You just get the information that this is what the speaker said,
+but you don't know exactly where, you know that's somewhere.
+Another similar problem is imagine that we are doing a 10 OCR of the correct recognition,
+so we go to line, like an image, and there is some written text there, right?
+So maybe I don't know, some high probability sequence,
+like the learning is great, right?
+It's an in-capital.
+And our goal is to take this image and then produce the sequence of characters,
+which are written naturally there.
+And then again, the goal data would not include the information of where exactly,
+where exactly these letters appear,
+and some of them are narrower, some of them are wider, some of them are in-capital.
+So we only need to do something.
+So if we allow this cry, it's called CTC,
+the connection is temporary classification.
+And it's way how to deal with such a problem that we've got inputs and outputs.
+We believe that the outputs are generated from the inputs in the same order,
+in a sense that on the input we have the same words,
+in the same order as the labels in the output,
+but we don't know where exactly these labels are generated.
+So regarding the output elements for speech,
+originally people used phonemes, it's like letters for sound,
+like what we are saying.
+But then the phonemes need to be converted back into words and characters.
+So nowadays, the models will really generate the characters of the words,
+which we are saying,
+even if a single character might be pronounced in different ways in the input,
+but it seems easier to generate our,
+luckily the output which we care about,
+which is the words not just that pronunciation.
+So you can think of these words,
+these words are characters of the words which we are,
+which we want to recognize.
+So how to deal with this problem?
+Well, again, we will renew, say, to the case,
+which we already know, right?
+What we know is,
+how to generate outputs for every input element.
+So if you imagine that we have got these fixed time representations of the input,
+we will, again, use some recurrent,
+new model or some transform model later.
+And what we will do is,
+we will generate a label in every,
+for every input.
+The problematic part is though,
+maybe I will say that they are not the ones,
+which we want to predict,
+but they are just outputs for every time stem.
+So there is an, of them, the same number as there is the input element.
+But we actually have some other number of the output label,
+and we don't know where to generate them.
+So how we will deal with it,
+well, we will just consider all possible ways
+of where these correct labels could have been generated.
+We will just consider all possible elements,
+where if we generate things in the same result,
+and in the same resolution necessarily as the input,
+and then extracted the label from it,
+we would get the correct sequence.
+So in order to do that,
+what we need to do is we need to allow of saying the model,
+that, for example, in this first step,
+is not generating anything.
+All because, well, we probably don't want to generate a class
+on every part of the input,
+like in this speech or in this MAD OCR,
+there are probably places where there is no letter to be generated.
+We don't explicitly say this in the output labels,
+but of course during the prediction,
+we need to deal with it.
+So what we will do is we will generate
+an extended set of class,
+which we will actually use during the modeling,
+and we will call it an extended labeling.
+So the extended labeling will be
+in the same resolution as the very same input,
+and it will include an additional label,
+which we will call blank.
+And that means when we generate a blank,
+it means we actually don't want to generate
+any regular label.
+It's just nothing, whole, nada, nothing.
+So the extended labeling is the one
+which includes the blank,
+and it uses the resolution of the input sequence,
+while the regular labeling will be the original one,
+so in the speech recognition,
+the sequence of characters with the speaker set.
+And what we will do is we will have a transformation
+where the extended labeling can be transformed
+into a regular labeling.
+So if we predict things like a single extended label
+for every input element,
+we want to condense it back into the regular label.
+So what we will do first,
+when there are multiple laboring
+occurencies of the same symbol,
+we will merge it together into one.
+So if our model will say,
+yeah, we are generating a, a, a, a, a, a,
+then we say, okay, so all these are just
+just one A's on the output, right?
+So we will call up neighboring symbols to one,
+and then we'll remove the blank.
+So if we want to generate, for example, banana,
+there are multiple ways how the extended labeling
+could have looked like maybe B, B, B, B, A,
+and a, or it could be blank blank, B, B, B, blank blank, A,
+blank blank blank blank blank blank blank,
+and blank blank, A, blank blank, A, or is it?
+Right, so these are the extended labeling,
+and all of those two examples will,
+generate the same output, same regular labeling
+because after collapsing the neighboring letters,
+and removing the blanks, we get this.
+And so what we will want the model to do is,
+we will say, well, we don't care about which extended labeling
+you will do, just create any extended labeling,
+whose, which would reduce or which would be the extended
+labeling for the gold one, for the one,
+which we want to generate.
+Right, and we will just sum the probabilities
+of all these extended labeling.
+So we don't know where the values should be produced.
+So we say, then at the producer, whatever you want,
+I don't care, just do it in the way that the probabilities,
+of all the possibilities of these extended labeling
+is high enough.
+So how to do this, technically?
+Well, we will define another alpha,
+very much similar to the alpha which we described previously.
+So we are in the situation that we are processing the extended labeling,
+the one with the same resolution as the input.
+And what we will care about is the following.
+So let's consider the first t steps of the input.
+Right, so let's consider the extended labeling of length t.
+And we will consider such extended labeling,
+which corresponds to the first s characters of the regular labeling.
+And so to these are these two quantities,
+alpha t s describes extended labeling of length t
+corresponding to the regular labeling of length s.
+And this alpha t s is a sum of their probabilities.
+So all possible ways how to generate the first s labels
+of the gold sequence using extended labeling of length t.
+So we go over all these extended labeling and then
+compute the probability and the probability of an extended labeling.
+Well, that's just the pro-dark of the probabilities
+of the individual labels of this extended labeling.
+So in practice, this alpha t s is computed in logarithms.
+I don't have it there, but that's what need to happen.
+Otherwise, the numerical precision will blow into our faces
+and everything will be lost.
+But in the lecture, I am not including the logarithms
+because it makes the formula as much, much, much worse.
+So it's just a note that in practice,
+he will also need to deal with the logarithms,
+but I won't on the slides.
+And so now the goal will be to compute this alpha t s
+by starting at alpha 1 and then gradually progressing
+to alpha n. So considering the shortest extended labeling
+and then making them long, long, larger and large.
+But in order to do it, we will need one more more information.
+And that's when we talked about the extended labeling
+of length t, which describes first as labels from the regular label.
+We need to know whether these extended labeling and with a blank
+or not.
+The reason is that if you want to generate a a to a's,
+then if this a is being described by an extended labeling
+a blank blank, then we can just append a,
+and this is an extended labeling, which produces two a's.
+While if we instead have an extended labeling a a,
+which generates a, then if we then append a directly,
+we would still generate just a single a,
+because all the neighboring occurrences are emerged.
+So that's why we need to know whether the extended labeling
+ends with a blank or with something else.
+So instead of one alpha, we'll have two alpha,
+right, so this alpha t s is now sum of two possibilities
+of the extended labeling and with a blank a blank alpha
+blank or or and the extended labeling,
+which ends with something else than a blank.
+So these are alpha star.
+And so now with these two things separated,
+we can come up with the algorithm,
+which will actually compute the alpha.
+So compute the probability of all possible alignment or all
+possible ways how the given regular label can be generated
+with extended labeling.
+So here I will explain the illustration, right.
+So this will show the alpha's.
+The columns are the times steps.
+So the first column, it's alpha 1,
+alpha 2, alpha 3 until alpha t.
+So the idea is that the columns that view the probabilities
+of generating outputs by considering the first,
+for example, three time steps from the input,
+in this specific case.
+And so the rows correspond to what these extended
+labeling have already generated.
+So the first line here that will be alpha blank zero.
+That means we have generated zero label so far.
+And that can happen only when we have generated just blanks.
+If we generated something non-blank,
+we would have generated it on the output.
+So this second line corresponds to alpha star 1.
+So that means we have already generated one character,
+see, in this example.
+But the last label in the extended labeling is exactly
+c, not a blank.
+So we have still in the case that we are saying c, c, c, c, c, c.
+Now the line just below it, that's alpha blank 1.
+That means we have generated one label, one c.
+But we have already generated also a blank.
+So it was c, c, c, c, c, c, c, c, c, c, blank blank blank blank blank blank blank blank blank blank blank blank blank blank blank blank blank.
+Now we are somewhere there.
+Right, and then it proceeds, you would expect.
+This is alpha star 2.
+This is alpha blank and so on and so on.
+So all these blank lines corresponds to already generated a blank symbol
+and the white ones are the ones where we have.
+So at the beginning, we need to start with this alpha 1.
+So considering that we have seen one label of the extended labeling,
+what could happen?
+Either we have generated a blank symbol.
+Right.
+That means we are still here in the top left.
+So in other words, the alpha blank 1, 0.
+That means all the extended labeling of length 1,
+which generate zero regular labels and end with a blank.
+Well, that's just the probability of actual generating blank in the times that one.
+If we have generated something else at the end of blank,
+then we must have generated already the first class of the regular labeling.
+So the probability of generating this first label will be the alpha star 1 1.
+So we have a regular labeling with all the generated 1 symbol
+and we have ended with a non blank symbol.
+Well, because that's exactly the white one, the last symbol of the extended labels.
+And all the other alpha are zero,
+because there are no way other ways how to generate longer regular labeling.
+So no, no, extended one corresponds to them.
+So zero.
+And so now the goal is to describe how to do the induction step.
+So how to compute alpha t from the previous hours.
+So maybe I will start to show things only on the image.
+Right.
+So let's say that we want to compute, for example, this quantity.
+Right.
+So this means that we want to generate, let's say, S in our case 2,
+to regular labels.
+But the last extended labeling symbol should be blank.
+So how can that happen?
+Well, maybe this is, I will go for this one.
+So how can it happen?
+Well, either we have already generated the regular labels
+and the blank symbol in the previous step.
+Right.
+So we can look at alpha t minus one as blank,
+because here we have already generated the symbols in the previous times
+that we will just append another blank.
+The other possibility is that we have not yet generated a blank.
+So we might consider also using extended labeling which generated this one
+and adding a blank symbol to it.
+So we have also alpha minus one as which means we have in the previous step
+we have generated all as labels, but not yet with a blank symbol.
+And all these needs to be multiplied by the probability of generating blank
+in this time step, because well, that's what the alpha requires us to do.
+So that's the simple part.
+Now, let's think about how to compute alpha, which is not with a blank at the end.
+Right.
+So we want to generate S labels, regular labels using the extended labels
+and we should end with a non-blank symbol so that corresponds for example to this one.
+So what are our possibilities?
+One possibility is that we have already generated everything in the previous times step
+and we will just repeat that the symbol.
+So that corresponds to this transition.
+The other possibility is that I have not already generated these S regular labels,
+but instead I will be the one generating the first instance of that symbol.
+So that is described as this alpha switch of S minus one here.
+So in the previous times step I've described all the previous variables and now I want to create new one.
+And so this can happen in two ways either in the previous times step,
+the blank was already generated or not.
+So either we have already gone from the blank part or the non-blank part,
+but we will append the symbol YS and hopefully everything could be fine.
+So this is nearly the case, we just need to deal with one exception.
+And that one exception is exactly the case with all these A's.
+If the symbol, which we should have generated in the previous times step,
+is the same as this one.
+So if the YS minus one is the same,
+then we cannot immediately follow the sequences which generate the previous symbol
+and just say okay and now generate another one.
+So we cannot just take an extended labeling which had all these A's.
+Hope that they would generate A and then just append A and hopefully it would generate another A.
+It would not, it would merge together.
+So if we need to generate two neighboring same symbols,
+we can extend only a solution which already ends with a blank.
+So these two cases can be merged together by saying,
+well we always could have generated everything and just repeat the symbol.
+We always could have generated all but the last symbol,
+but there was a blank and so we just append the symbol.
+And we can change the symbol directly by following the previous symbol,
+the previous symbol in the regular labeling,
+but only when the symbols are different.
+So it's fine when we say banana for this end to directly follow A.
+But it would not be fine for this A to directly follow this one.
+Right.
+So this allows us to compute these alpha's column by column.
+And so what we care about at the end is computing this quantity, right?
+Because alpha and n tells us the sum of the probabilities of extended labelings of like n.
+So full extended labelings which can generate n regular label through the whole sequence.
+And during training, we want this number to be as large as possible ideally one.
+Right. So what we do is we use the minus logarithm of this as a loss.
+So during training, what the model does is that it runs,
+it runs with this RNN, RNN network at the beginning, right?
+And then it computes the alpha's by having this this matrix computation,
+which fills all these alpha's arriving in this last one and then saying minus logarithm of that is our loss.
+So then during training, like the important thing is that this algorithm, it is actually differentiable.
+Like what's there, multiplications and summations, that's everything, right?
+So the big prop algorithm will be able to actually back propagate the gradients through these computations and they will give gradients into the individual output.
+So the RNN and then they will go, right?
+The complexity of computing this CTC loss is n times m. So it's like the number, right?
+Because in every times that or in every of these elements will be do well, we consider at most three other predecessors combined together.
+So we just spent a constant time for for every element there.
+So the complexity is linear with the size size of these matrix.
+So that's kind of fine because if you consider doing a lot of independent softmaxes, for example,
+they would also have the complexity of n times n because we would do classification in, sorry, it wouldn't be n times m now.
+So it would be n times y the number of classes, right?
+And I said n times m, but that would be for one class, nope, it is n times m, sorry.
+So if we change a lot of independence of maxes, we would need to do n times y, where the i y is the number of labels, right?
+And now we have edit n times n to the complexity. In the worst case, this n is n.
+And because we can generate more elements than what we have on the input.
+So maybe we have slow things down a bit, but but usually it's variable.
+And specifically, okay, nothing.
+So what I wanted to say is that here when we have the RNNs, we have some dimensions there, like 256, 512.
+And we do n times d squared operations when computing the recurrent unit works.
+So this complexity is not really usually bad because the dd's ms here are not larger than d squared.
+So it should be fine.
+So such losses are available in all the frameworks you can probably think of.
+So there is PyTorch and ctc loss.
+There is also a ctc loss directly in the keras, but not yet documented, but the first part of the release of 3.1 keras.
+So there is well. So that's fine.
+Training is fine. Yes, a question.
+Yeah, yeah, yeah, yeah, yeah, spaces are just regular characters, exactly.
+Both in the OCR and in the say in the speech is just another character, which we pronounce by not saying anything, or just not writing anything on the paper, but it's fine.
+So what is more difficult is to in our impractical, not that much difficult is the inference.
+Because running inference in this ctc with the ctc loss is actually non trivial.
+In a sense that what we did stretch a prediction, we were able to generate the most likely valid sequence.
+But here, when training, we were also able to, in the polynomial time, consider the exponentially many extended labelings, which could generate the regular label.
+But during prediction, during prediction, we are in the situation where we would like to generate one of the possibly exponentially many regular labelings.
+But every of these regular labelings could be generated by exponentially many extended labelings.
+And these two steps makes the decoding difficult. So as far as I know, nobody knows about an polynomial algorithm, which would be able to generate the really most likely regular labeling.
+But we will be able to compute reasonable, reasonably good solution by using the so-called beam search.
+Like you've seen some beam search algorithms.
+But before I will get into a beam search, why is it difficult in the first place?
+Why couldn't we just, for example, in every time step, just generate the most likely label?
+Like we could have done it, we could have said, okay, we have got this extended labelings.
+So what the most likely extended labeling is, that's fine, we will just take arc marks in every time step.
+But this will not give us the most likely regular labelings.
+So consider this, this example with just two steps and just two classes of blank and A.
+So in both of these steps, the probability of blank is larger than A, so the most likely extended labeling is blank blank.
+However, when we think about regular labelings, then we have got two regular labelings, like either nothing is being generated, maybe I would say that is, or we generate A.
+So to generate nothing, we only have one extended labeling, blank blank.
+However, to generate A, they are not repossible regular labelings, to generate A.
+And that's A blank, blank, A and A A. All of these three together will, or any of them, will generate regular labeling A.
+And so when I look at the probability, the probability of generating blank blank is just well, and this image is 0.42.
+And the other three possibilities are the complement of this probability.
+So the sum of the probabilities of these three extended labelings is 0.6.
+So it is more likely to generate A, but we can do it by producing the most likely extended labelings.
+So what we will do is, as I promised, we will use a beam search.
+So beam search is like this, it's a technique which you have probably encountered, it's being used in many areas.
+And the idea is that if we want to generate the most likely sequence, we will generate it incrementally.
+And every time step, we will keep some fixed number, the K number of the best solutions so far.
+So we will start generating the output sequence, keeping only K best candidates at every time step.
+And then at the end, we will take the most likely ones out of this pool of candidates.
+But this might not generate a valid solution.
+If the optimum sequence is not among the K best, at some point in the past.
+But if the best solution is part of this K best candidates in every time step, then we will retrieve it.
+So we will generate solutions which are good at every time step in the history which is usually reasonable compromise.
+So what we will do in our beam search is that we will keep the K best regular labelings.
+Not extended, but the regular ones, right? So what we will do is we will go through the timestamps from T1 to Tn.
+And at every time step, we will keep the K best different decodings, or K best different regular label predictions, which we could have generated.
+So how are we going to going to do that? Well, when we have one regular labeling Y, so you can imagine that Y can be like, so I can be, let's say if we are generating barana, so the regular label can be B.
+And let's say that two timestamps has passed.
+That this regular label B could have been generated from multiple extended labelings, but all these are summed together.
+So what we will do is we will describe this probability of this regular labelings, again, using these alphas.
+Again, we will keep both alpha blank and the alpha non blank. So for this regular label B, we will have alpha blank to B, right, which will be the probability of this extended labeling, generating B and ending with a blank.
+And then we will have alpha to star B, so generating, generating B with an extended labeling of length to ending with a B, which will be the sum of these two ones.
+So now we have K of them, and let's say that we will go from times that T to the times that T plus 1.
+So we will take all the candidates which we have, and so for example, get this B, right, and we will consider taking the extended labelings for B and adding one more label, the one from the times that T plus 1.
+We will consider all possibilities. So we will get some quite large number of extended labelings, and we will merge them into regular labelings, right.
+So when we have this B, what happens is that we will take this B blank and then append, I don't know, let's say that blank and B, then we will take this one and append blank and B.
+And we will generate the regular labeling from them, right, so this part that we will give us B, this part will give us B, B, then there will be some just these for all the remaining ones, right.
+And we will merge the regular labelings together, right. So if different extended labelings generate the same regular label, we will just combine them together.
+So this way we will be able to see that this A can be generated from three, actually extended labels actually.
+So we have taken the cables, candidates, we have extended each of them with all possible labels, we have merged the extended labels in regular labelings, and then we will keep again just the k best regular labels after the merging, and then we are done, and then we repeat this.
+And in the end, we will just return the most likely candidate, which we have so far.
+So the specific rule of the merging, which I just kind of showed here roughly, are also explicitly written in the slides, but that's just the formalism, like ideologically, we just really take the candidates which we have.
+And one more symbol from the extended labeling, which could change the regular labeling, we merge all the candidates which have the same regular labelings, and then keep just the k best of them.
+This is CTC, the coding, luckily that has also been implemented for us, so we will be using the implementation from torture audio, when we are implementing some model using the CTC also on the practicals.
+So the good news is now that first we have a break, and then after the break, we will continue with something different, and we will start speaking about how to get our good representations of words from a lot of plain text, so we will be able to rest a bit from the dynamic programming algorithm, and instead we will be doing some representation.
+So let's help a five minute break, and then we will continue.
+So, hopefully we are now full of energy, I definitely am, so how to represent words.
+We talked about words from weddings on the previous lecture, and we'll be ended up with, it was distributed representation, where each word,
+was represented by some vector of dimensionality B, and the thought behind that was the individual dimensions in that space correspond to some common underlying vectors, and then instead of representing words as saying this is the word number 375,
+we said this word can be expressed in this common space by saying what kind of, or like the values of this individual feature for common vectors.
+So they could have been vectors for being an animal and having per, and needing rocket fuel to run, and so on, and every word we expressed by ways in these common vectors.
+We did it by training some specific task in a supervised way, for example, in the Tagore competition, you will end up with a verb and meeting matrix probably were for each verb in the training data, you will be able to say what the representation of that word is, but we need some supervised data to do that.
+One of the disadvantages was that we would not know what to do with the unknown words, and we had to collect the level of embeddings to help us with that, but we could also do it somehow differently, and that would be to train these embeddings on a larger data.
+Ideally, we would be able to train on any plane texts, because there are many of them, there are many of them probably, and there is no annotation effort to say what are now for something like people write text all the time, so it would probably be much easier to just get any data.
+Training from this broad data, sometimes you would call it un-supervised learning, in a sense that nobody explicitly gave us any labels saying this word is similar to this one or something, we just get a lot of text, but it's probably better to call these approaches self-supervised, in a sense that we will have some kind of loss to minimize.
+But we will come with a formulation of how this looks a lot of should look like, but it will not require any manually annotated data, so there is still some supervision, but not from the people saying this word is similar to this one, but by us cleverly thinking about about losses.
+And what we will do is we will use the so-called distribution on hypothesis, which says that the words which are used in the same context probably have similar meaning.
+When I say context, I really mean the neighboring words, so if you imagine a dog and a cat, then when they will appear in a sentence, they will share something together, I think it's like the family has bought something and the children are happy, and somebody is going on a walk with them and like all these sentences where the dogs and cats can appear will sometimes be similar.
+There will be differences, because it's like something is meowing, call the time, and it's probably not about dog unless it's a very weird dog.
+But still, cats and dogs will probably have very similar contexts compared, for example, to nuclear power plants.
+When you talk about a nuclear power plant, you probably don't hug it, you don't bite home, so even if the contexts are definitely not the same, work which are similar probably will have similar contexts.
+This hypothesis has this wording, which sounds you shall know over by a company it keeps, and this is something we can actually leverage during trading, so there have been several approaches how to do it, but a very useful one was described in a tool called word to wake, right?
+We take words and generate embeddings vectors.
+For them, the paper was released in 2013, so this is actually deep in the past, and how does it work?
+Well, they proposed two architectures of how to pre-train the verb embeddings using crotax.
+Apart from the paper, they also released an implementation of a program in C, which could run using multiple threads, and it was simple to download it and pre-compute your embedding.
+The impact of the paper or the reason why the paper is famous is also by large part because of the practical implementation.
+So what the program does or the paper describes are two ways how we could train the verb embeddings using the distribution of hypothesis.
+The first one, so continuous, back of words, and so the idea here is that when we have some verb, and the neighbouring words, so the ones pre- before it and the ones after it, we will take the context, so the words apart from the middle one, and we will try to predict what word is missing in the middle.
+Right, so you can think about it as a task, we have something something blank, something something, and your goal is to predict what the blank is.
+The model for doing the prediction will actually be very simple. We will just have a verb embedding matrix, that's the one which will be training.
+And we will embed all the words in the context through this matrix, the same one for all these positions. We will sum these values all together.
+Then we will apply no non-linearity anything, we will just take this as a value, and we will try to predict the verb in the middle, and we will do it by doing just the usual classification.
+Let's say that we have got V, I used V as the matrix, so we have got some number of words in the vocabulary, so we will just do an output layer, we will get logic for every of these class, we will apply softmax, and then we will say, and well during training, the correct output is this one verb in the middle.
+Actually, I tried using much more complex models, even using some recurrent neural networks or something, but the interesting point of this paper is that it's much more interesting to cover a large number of texts than to do some advanced processing.
+With this, they were able to train on billions of words in hours or in days, which was better than processing tens of millions of words in days or weeks, so the large success was mostly by being able to process a very large quantity of data.
+This is the continuous bit of words, there is also another view how we could do it, we could say okay, so let's start with the input word, the one in the middle, and from it, let's try to predict the neighbors, instead of predicting the verb from the context, let's predict the context from the middle.
+The architecture is still the same, and many matrix output matrix, the same one for all of these positions, so we don't know whether we are predicting the words which is before us or after us, it's just in the context, and again having a softmax for all of these possibilities.
+So what is so difficult in running such a model? Well, the problematic part is that here we just write it in the formula sprite, so when we have an embedding here and the output layer here, what we do is we embed the input word, so we take the row from the matrix V,
+then we multiply it or we just like when we care about one specific word on the output, right, then we will look at the logic it's produced for that specific specific word, so we'll get it by considering CU table, CU table, row or column in this verb matrix, W depending on how you formulate it, and we do scalar product between this,
+so that's the hidden layer, and then the corresponding part of the weight matrix which generates the logic for the words on the output, right, so that's why they just have the scalar product here,
+and then we pass it through a softmax activation so that we can get probabilities. We need this in order to train because the probabilities are part of the loss computation.
+And so this is the problematic part because this sum over all the word sets that's bad, because there can easily be a million words in the vocabulary, maybe for English 100,000 would be enough, but for morphological languages, you need to use quite large vocabularies, so processing just one word will mean to that I would generate one million logic, and then computing one softmax, and then I'll do one update.
+And then I just said that I want to process billions of words, so this doesn't seem that it's possible to do it in a straightforward way, and it's not.
+So what the people proposed in the paper are two ways how to avoid computing the million of logics for processing a single example.
+So the first one, the first approach is called hierarchical softmax, so if you imagine that we have got a lot of words, a million of them.
+And instead of computing probabilities for all of them, what we could do is we could just create a tree, like let's say that lucky and it's like perfect balance tree.
+And then when we want to say that the correct word is for example this one, instead of choosing that out of all the possibilities, we will predict the path which leads to this word.
+So instead of generating logics for all possible words, we will generate logics for every internal node in the tree.
+If we have got V, the words, we have V minus one and then low, so we still have the same number of outputs, but we will interpret them differently.
+We will say that there are logics for binary classifications of whether the predicted word is either in the left or in the right subtree.
+And when training this, what we will do is we will train just these, just these nodes.
+So just the nodes on the path from the root of the tree, sorry, put a target word.
+And then we will predict either 0 or 1 depending on whether we need to go to the left or to the right.
+The good thing is that the high of the tree is just the logarithm of the size of the vocabulary.
+So in our million vocabulary case, it's just 20.
+So instead of computing one million logics, we are just computing 20 of them.
+That's a good say.
+However, there are some troubles with this approach.
+One is how to actually construct the tree in a sense, like in which order are we going to put the words in the bottom level.
+Ideally, we would like to put similar words next to each other, but well, the whole point of computing the embedding is to come up with a result of which words are similar to wage.
+That's not really possible.
+So people came up with various jurisdictions, but maybe there are better ways of doing it.
+Of course, from the accuracy point of view, this approach is terrible compared to the users of Marx in a sense that if you want to predict, like which word is the most likely,
+then you need to do the correct decisions in all these internal nodes and the change that you will do it is probably not very large.
+Especially when the nodes, when the words in the sub trees are very much unrelated to each other, but still the gradient during training are correct.
+So even if the accuracy of the resulting model is usually quite bad, the quality of the embeddings themselves doesn't seem to suffer that much.
+Well, anyway, apart from the hierarchical softmax idea, the authors proposed another one.
+In the end, this another approach was the one which was used most of the time, and that's called negative sampling.
+So during training, when we have the softmax, we care only about the positive example.
+In a sense that we have got this output and we want to propagate and the loss is just the probability of this output.
+The problematic part is that in softmax, this depends also on all the other logic.
+So what we could do is, instead of doing one classification into k classes, it would be good to do a lot of independent classifications for each of the words separately.
+So we also did it in the writing on it, in fact, we predicted probabilities for the independent classes in the video classes.
+So in softmax, everything seems to sum to one with sigma, it doesn't, but we can have any probability for an effort on the output.
+So if we would be, when training with this binary classification, what we would do, we would say, okay, the goal output for the correct word should be one, and then the goal output for all the other words should be zero.
+So during training, we have got one so called positive example, right, and then we have 99999 negative examples.
+And so the area is that this ratio is so unbalanced that we have got this one positive and so many negative examples.
+So what we could have done is we could have sampled just some small number of the negative examples.
+So instead of training all negative examples, we would just take a small sample of the hence negative sampling, right, and then we will train only them.
+Because the sigma, it can be committed each of them independently, this could reduce the number of the logic between it to compute, and if we keep large enough negative sample, it was still be fine.
+In a sense that, I don't know, imagine that we keep like 20 negative samples, then when you look at it from the point of a single verb, then probabilities verb will be 20 times smaller negative example, then a positive one.
+So probably it would be trained reasonably because it will be a negative example, frequently enough so that it understands that it shouldn't be used everywhere.
+So that's what negative sampling does, right, we will train by always training the positive example and there so by by trying to predict one, and then we will look at the negative examples.
+The negative examples will be sampled from some distribution, so we will deal with how where they come from later, and we will want the probability predictions for them to be zero.
+So in practice, this number of negative samples is actually enough for it to be something like five and the quality doesn't improve even if we use more.
+So instead of our 20 logic in the hierarchy soft marks, we have reduced it again down to six, like one positive example, five negative examples.
+So next time you want to save the computation of 999,999 for negative examples, you can think about this and use a similar approach, similar approach to do it.
+So the last thing, what we will deal with is how to sample the negative examples.
+So I will have two propositions, one is we should use, or we should do it uniformly, right, so like completely completely random.
+Well, the idea is that we need to choose every sample to be a negative one once upon a time, so just randomly taking the words might make sense.
+However, we might look at it differently, we might say, well, you know, the words are being used as the positive example, not uniformly, but depending on how often they appear in the text, right, so maybe we should do it proportionally.
+To the number of occurrences.
+So I will call this UW, that means, unigramed probability of the word W.
+And that also makes sense because this is the distribution from which the positive examples are sample from the right, if you just randomly sample the word from the context, the most frequent word will be the positive example more frequently.
+So what shall we do? Well, we don't need to decide whether it will be uniform or proportional, right, we can find a way of how we could like interplay between these two possibilities.
+And we can do it, for example, by considering the uniform, sorry, the proportional distribution to some power of alpha.
+So when this alpha is zero, then this is the uniform distribution.
+When this alpha is one, it is proportional to the number of occurrences.
+And for alpha from zero to one, we are somewhere in the middle, so it's like we respect the original distribution, but we also give more power to the very low frequent words.
+So after running the experiments, the authors write at alpha of three over four.
+So the best results they achieve by doing this mixture or combination of the uniform and the unigramed distribution.
+They don't discuss it much in the paper, they just say, yeah, well, the better we could do with this and let's say it.
+But there were some other full of papers and they all arrived as a very, at a very simple explanation.
+So it seems that we mostly want to respect the uniform probabilities because that's what the positive examples are.
+But we slightly need to deal with the verse, which are very infrequent in the input text because otherwise they would probably not be negative examples, actually enough types.
+So this is how we are going to train it. So what do we get? Let's say that we will train for some number of times.
+They train it on 30 billion words for English. So here we can have a look at what the model does.
+So what the model can do is when you give it a word, you can find the closest words to it by finding the closest neighbors in the embedding space.
+So here they show their results. So the interesting client is the last one. The above ones are the existing approaches at that time.
+So when you have a word, I don't know, in Jutsu, then the most or the closest words are Ninja, Swordsman ship and they also include phrases. So they also identify frequently or appearing spans of text and then they consider them single words during the word to the computation. So they can also get phrases.
+So graffiti is spray paint, graffiti and taggers. So generally it seems that it works fine, have all gets well but revolution, red mongets, Microsoft.
+And when you look at all the other examples, they are kind of terrible. So that's one thing what we can do, right? We can find similar words.
+The interesting thing what they also showed in the paper is that it's not just about the representation of words but we actually can like compose the meanings of the words by really adding and subtracting vectors.
+So what I mean by that is that consider what happens when you take like a capital and like a country and a capital and then you subtract.
+So the representation of the capital minus the representation of the of the country. So the idea is that you will get a vector which is like capitalization of the given country.
+Right. Here they show like how these vectors look like in this one million one thousand dimensional spaces.
+When projected down to could I mention so it's not obvious how good this actually works but this kind of arithmetic can actually be evaluated.
+So what we can do is we could try to solve these task issues you sometimes see in some in some IQ tests it's like like Rome is to Italy like like what to German.
+We will do it by saying okay let's take the representation of Rome we will subtract the vector for Italy and it and we will add the representation for German it.
+So the idea is that this is the direction which points from a country to its capital we will take this and and apply it from from some other other country.
+So when we do that what happens is that we get this table.
+So this is the input right this also the input and then this is the answer of of the model.
+So it is surprisingly good in a sense that the model religious just by processing a lot of context it understands that the Rome is a capital of Italy even if it doesn't know what a capital is or something.
+It just knows that the Italy and Rome are in a similar relationship as France and Paris generally it works by 12 even if for example this big and bigger do small and larger that.
+It's difficult whether big and bigger means that you should start small and then do something bigger right and then when you start small you should do something larger or whether it means that this second word should just make the first one.
+More powerful so then probably small should generate smaller right but this can be evaluated with some specific metrics so they also created a data set where you get these relationships and predicted the most.
+The most relevant according to your model and then just complete the accuracy of these examples in the in the data set they actually use three examples on the input exactly to make this this big and bigger less ambiguous.
+Also like the what the model sees are not the letters or the words like for the model this is like word one thousand three hundred twenty one is in the relationship with a word one million three hundred twenty five.
+As the word word word this number to this number so even if it doesn't see for example that these words have capital letter at the beginning and they are short or something it kind of get an idea that they are somehow similar because they are used in similar context maybe or around other short words like this or explicitly maybe you have a sentence like like copper with the.
+I was caught in English abbreviation no words like like with abbreviation and then copy maybe the different virtual use right so these things are actually obviously.
+This coverable just just from the raw text well it's not perfect right you enable to tune in and but it does something.
+And the good thing compared to training the embeddings in the in the supervised way is that you have much more data like usually several orders of magnitude more data.
+It even somehow helps with the out of vocabulary problem because if you are vocabulary contains all the words sitting with Wikipedia for example then probably are not missing many interesting English words you are problem missing.
+Words with with mistakes or or something new words which appear since the the time we call it in the data but.
+The out of vocabulary problem gets gets how I like diminished when you need to it like this.
+Just for for comparison here what we see are the most similar words but computed by the the character level.
+The character level embedding so using the r and then.
+Plus character embeddings.
+Right that means that this word for example the representation is obtained by embedding r e the you see ED and then processing them in the forward direction processing them in the backward direction concatenating them together right so when we do it like that it's also way how to embed.
+So we can still do the same same task so for example for this word find down what other words are closest to it so it's closest from some dictionary because otherwise you could generate many many words.
+Because the CLE can be completed for whatever sequence of characters so.
+This is you just to show that even if we process the word letter by letter it's not like the representation would be based only on how the word looks like like on the surface of the word but also also on the meaning because the cre increased.
+It's close to reduce well again smaller and it's a larger but the word generally doesn't look the same by the way when you see this this kind of failure that increase gets you reduced.
+It's this doesn't mean that the model would not understand that one is larger and the one is smaller but what you are doing is that you have this disembedding space which have these many underlying factors and you just want to find a word which is.
+Closes to you independently on what these factors you think about so the words with opposite meanings actually tend to share many of these coordinates because well they they have very similar meaning only in some specific sense they are like opposites.
+And this information is still visible in the representation so if you use some supervised data and you would say this is large and this is small the model would be able to predict it it is somewhere there but this information is hidden only in some small number of these of these dimensions because most of the information are still shared if you have green and blue they still would share many of the underlying factors.
+So this does not necessarily mean the the model doesn't understand it it's just that the way how we evaluate it means that we just look at the overall similarity not at what we people think about similarity where the opposite meanings would be like like this is weird like.
+And even for names you can see that the cult is to John is not Johnny but instead James and Robert and Edward and you can also do things by by looking at the like here not existing words for example by so no a shyre.
+This was breaking by the PhD students of Noah right so it's like the shyre of their supervisor and so the closest to that are well.
+Is this a lot of the more shown return right when this is like a non existing place but it generates the other geographical.
+Shires and Bucharest in other places so the model like doesn't like just things that this is someplace right the representation of something which is not a bad idea.
+But it's difficult to say on GPS card and it does it have but well even people would probably have trouble answering the question or if you consider a very PhD ink.
+The model well doesn't understand much it could have been better like it could have been like race or change studying because slave ink I don't know whatever but things that they are just like random words so at least understands that this is.
+This is like specific form of a verb but it is no idea what actually.
+But still I wanted to show that even the generating the meanings from character themselves can work surprisingly well but the problematic part is how to how to create train it quickly because.
+Ideally would like to be able to to get embeddings of any verb on the input right not just the one which the verb to like was able to find even if.
+When we can process large plain text we would find a lot.
+The question is not how to do it the question is how to do it quickly because what we could have done is we just could say okay we will compute the word.
+The representation using the character of a word embeddings and then we will use the skip gram for example model and then train it in the same way as a verb to wake.
+The only problem is that gross the single single example will take too much time for us to be able to train on billions of birds so that the weaker models will still be better just because they can process and magnitude of more texts.
+So people want to ask the question in this way it's not very difficult to come up with the solution so it's an important time in the like in this was 2017 in the span of two or three months they were actually three papers with very similar idea and a very similar results and they.
+understand the verb to like model by adding some subvert information or subgrams or caragrams there are these different names which the different or the same way.
+So the idea is that if you have a word for example this phd then we will represent it using two sets or two sets of embeddings.
+So first we have the verb embeddings we have no for phd but we have one for cat probably right and then we have the I don't know character n grams.
+And when we want to generate the representation we will try to find the embedding and the verb embedding matrix but we will also generate all n grams so let's say that we will consider by grams.
+Right we will probably also have some specific character which means the beginning of the verb.
+And then we also try grams so we will have phd and g and g and we could have even four grams or something and then each of them will be located in this character embedding matrix.
+And then we will just sum all these things altogether.
+Right so the representation of the verb is well the representation of the verb itself plus the representations of all consecutive spans or parts of the verb and all these together.
+If you have an unknown verb you will still be able to represent it from the pieces which you can see or find in the words but the good thing is that this way you can still compute the embeddings very quickly.
+You will just compute the n grams and quickly index the the character grams and embedding matrix, some are some everything together so we will be able to train the usual verb to back model with just some slow down for for this character embeddings.
+When when working with these character embeddings either we can do it like this so normally when I would say this you probably do a hash map or something which would map the character n grams into the into this matrix that's what you do with the verb embeddings but we can make things faster actually what we can do is we can compute just hashes of these character n grams.
+And then just directly take whatever place you will get by computing hash function right so you could say I will have a million of these character embeddings that not much.
+And like you can compute these hashes quite quickly using some rolling hash and then you will just go there of course there will be collisions.
+But it doesn't matter so much so it's not like this one row in this matrix will be one specific n grams is representation shared with all n grams which have the same same hashing function.
+You can think about it as a good regularization right we induce noise into training deliberately so here when it's an isid effect of of of collisions of hashing function well why not.
+And then that's really quickly because the quick because you will just go to the verb letter by letter compute the rolling hash very quickly and just the index everything.
+So here are the examples from one of the one of the papers so this means gives gram so that the usual.
+Verb only a quote and this is subvert information skip gram and they show the closest words to words which are not completely all v because otherwise they couldn't compare with the skip but they take words which are very rare so they appear just a small number of times.
+In the training data. So for for example when you have tiling then when you also look at the subvert information you with tile flooring while the skip gram then give you book cases built in which neither of that seems very very good.
+So for tech rage you with technology heavy which is fine dot exits I don't know it doesn't seem very fine.
+While tech dominated and tech heavy is fine like so you can see that.
+It's not just a question about out of a keyboard it's also a question about words which appear rarely because there even if you have an embedding from board to deck the embedding is not very good.
+While if you also consider the subverts of or the subparts of the input it works quite well.
+So here they show the similarities of these character and grams.
+So for example you have both paving and as file takes so these are all the characters.
+Parts of paving so they are these paving, paving, paving parts here and here's as file takes all this as far as file and so on.
+So you can see that generally these subverts tend to have a similar representation to this paving and as far.
+While the as far take at the end this is nothing really by connected to the paving.
+Generally like two words will be considered similar if they consider a lot of parts which are themselves comes to the similar.
+So when you have like a chip and micro circuit you have got this micro and chip which goes together and then circuit and the chip which goes together or young can create a lesson you have got these young parts and other lesson part which again will will give you a nice.
+So practically speaking this word of a implementation including these subverts embedding is implemented in library which is called pastx which is still sometimes being used.
+It has got python wrappers so it's simple to do it and they also release pre trained embeddings for 12777 languages trained on a large quantities of text taken from Wikipedia and from web.
+They can be downloaded and they can give you an embedding of a very quickly.
+So for example if you would like to obtain high quality check embeddings for some unknown reasons then this is one way how how you could how you could do it.
+So this is all nice and fine and using for to like compare to not using anything was a very large large improvement but there are still some some problems and the problems are like that consider a sentence can you drink.
+Okay, so the embeddings given to you by by.
+This for embedding methods will give you the same embedding for these two words can and can because well they seem to be the same right but in some sense they are not the same because the context in which you use them.
+It means that they are actually a completely different words like one is a noun one is a verb and it's just a coincidence that they look at the same so how we deal with this well when we train some.
+downstream task like we'll use the embeddings for example to do part of speech taking right we need to somehow understand these first even if they seem the same they are different and how does this work is that when we use this supervised data and train.
+for example recurrent neural network to predict the correct part of the text then this.
+this part with this recurrent neural network will be in the task of of dealing with this to.
+Because the representation of the verse doesn't depend just on the verse themselves but also on the context in which you use them.
+So to this RNN here the responsibility of that will be to generate the meaning in the context of the surrounding words.
+Sometimes you can say that you will contextualize the meaning of the input words and hopefully this part we understand that this can at the beginning is a verb while this can here is a noun.
+but this part right in this contextualization is trained only on the supervised data so the idea is or the question is couldn't we.
+We train not just the individual verb embeddings but also this kind of contextualization on this large and large collection of plain.
+So after me asking like that there is just an obvious one answer right yes.
+It's not like the idea is novel people try to train these kinds of verb embeddings in the run in robotics already in 2010 way beyond the before micro but they just didn't have the computation power needed and word the way which was very fast was performing better just because it was very fast and could process a large quantities of text but.
+Now when the compute the computational resources go quickly or rise quickly in this area people started to playing with it so they did it already at the end of 2017 when there was a team around Peter's and.
+And then later in 2018 they they published a paper about pretending.
+The embeddings not just as vectors but pretending a function where which you give a sequence of words and it will give you sequence of embeddings where the each embedding or each representation is contextualized.
+In the context of the whole sentence right so they are sometimes called contextualized representations.
+And they are even better than the ones from virtue like because they already understand that the meaning of the word can depend on on on on the specific sentence where this used so how does it work well.
+We still need to use some some distribution hypothesis like a loss so what they did is they trained language model so they they process a sentence so so this can.
+And they they had this RNN and now at this point what they did is they tried to credit the following her.
+I so in this context what you would expect next so here it would try to say drink right then.
+For this this for this word it tried to.
+Try to credit A right so it for every prefix you try to credit the next one and you will do it both in the forward direction and in the backward.
+So after you train these language modeling RNNs they they use two layer LSTM models and these things trained for like two months.
+So I said that the compute was large but it was right on the edge of being able to do it but if you pretend it long enough for for months at that time.
+You are able to get representations which surpass even the ones from from the very to egg so how do the representations look like well when you train the models and you have a sentence right you will pass the sentence to the forward RNN.
+You will also pass it to the backward RNN and for some specific word you will take the representations of these two language models for daily concatenated it.
+And then either you could use the last layer or you could use the middle layer or they actually propose to learn weight it combination for the model can say I want 75% from the last layer 20% from the middle layer and 5% from the initial layer for example you can make this train level you can have three weights which will form a distribution and then the resulting distribution will be like weighted some of these levels.
+But if you don't want to deal with it you can just use the last layer and by using such such representations they were able to get city of the art results in many many NLP tasks.
+This is the place where people said okay the doing some contextualized kind of representation is a good idea and we will see even better and better ones later in in our lectures and all this like.
+Result date in these check activities and other other models which now you can use to do a lot of interesting and sometimes horrifying stuff.
+Okay that's what I had prepared for today thank you very much for your attention and I'm looking forward to tomorrow when we will be talking about the new assignments and also about the 3D recognition.
+By the way if I'm owning you chocolate you can are free to do to retrieve it on any lecture. Thank you very much.

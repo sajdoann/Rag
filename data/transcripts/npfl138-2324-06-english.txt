@@ -1,0 +1,1296 @@
+Hello, everybody. Good afternoon. Welcome to the next lecture of our course. Enjoy the meal.
+If you are having lunch. And we will get started. But be obligated, obligatory question first.
+Yes, a question.
+So the question is on the last practicals when there were the obligatory experiments.
+So it was some machine from our cluster. And we have survived the majority of all, like quite different
+machines. But they all have, I don't know, some normal CPU. And then the GPUs range from
+then 80, 80 GPUs over 80, 80, 80 GPUs, over 80, 80, 100, 3000, 90s, it's like a wide range of
+Nvidia GPUs. And I submit the task to the cluster without specifying which. So each of the lines
+could actually have run on a very different computer than the others. And I don't know the exact
+thing, but the times were actually generated using the TensorFlow backend.
+And the chaos free with PyTorch is definitely slower. So if you were seeing large numbers,
+then that's perfectly fine. Because that's one of the largest reasons. I would say,
+you can try just for fun. What would happen if you used the GPU like a TensorFlow backend
+instead of PyTorch backend, and that could help with running times. But there may be
+you'll do some other questions. If you are wondering why things are so slow for you, which I
+kind of thought might be one of the reasons why you are asking.
+Yeah, similar ones. Some of them have better GPUs, but some of them have comparable GPUs.
+So if you are seeing like three times as much as both there, then that's definitely too much.
+If you are seeing 50% more or something like that, then that can easily be cost just by using
+us with PyTorch a bit. Do you want a carrot? You can get healthy by asking questions.
+Okay, the other ones. Then it's going to be my turn. So in the last two lectures,
+we discussed architectures of convolutional neural networks, and the task which we performed
+was so called image classification. In a sense that we have gotten an image and produced
+class in whatever hierarchy we used. So now we will discuss some more advanced tasks,
+which we might want to perform when we are given an image. So the first thing is that
+wondering do you think is open to leave it open or should I make like semi-close or something?
+It's fine. Okay. To close it. And some of the things there should be. So let me make it half closed.
+You will see whether it's open. Nope, this one. We will see how it goes like it.
+So if we are given an image, then just doing image classification might not be enough because we just say,
+okay, I see your cat, but there might be five cats and two motorbikes and a number of mice running away from the cat.
+So maybe this or even more. Nobody knows. I will try it and we will see.
+So some opinions. Okay. I'll leave it like this. So when we want to find not just like the object on the photo,
+all the objects which are there, we thought about object detection. Right. So the output of that is zero to any number of interesting objects in the picture.
+And of course, usually including the location. So that's what we will be talking mostly today.
+When you are doing object detection, you can even provide not just the locations which are usually bounding boxes of the objects in the photo,
+but you can also provide the individual masks like pixelized masks, where the objects are, which is then called segmentation or instant segmentation.
+Finally, when you have humans in the picture, then not only you should provide bounding boxes and the segmentation,
+but maybe even also the local human post estimations. So these are the specifically predefined points like shoulders, heads, arms and legs,
+which should be pinpointed to the images, not really very, very visible, but you can see that they are like, you can't see, but there are interesting points like these arms and heads and so on,
+and that give you an idea where the person actually is in the image.
+So what we have done until now is we have done the image classification where we generate single label for the whole image.
+When we do that, we could do that also including the location, we could have also set the object as a cat and it's present on this coordinates,
+and all these are for single object, then we can at multiple objects so we can do object detection.
+And then when I discuss the segmentation, there are actually two kinds of segmentation we could consider.
+The easier one is so called, semantics segmentation and semantics segmentation, you just for each pixel say to which class it belongs.
+If there are five cats, it will just be okay, these are pixels of the cat, but well, there are five of them, well, well, why not.
+So that's something what we are doing in the text segmentation assignment, right, you just should classify every pixel as either a being background or belonging to the animal.
+But if you are doing object detection, then you might want to provide the segmentation for every object, which there is, so different cats would get different masks because they are different objects.
+And then that's usually called an instance segmentation because you provide a segmentation for every instance there is.
+So what we will start is we will start with the localization and then we will move to how the object detection could work.
+So if we were to generate also the coordinates of the object, what we could do is we could have just used the same approaches we did before, where we generated the classes, right, so we used some kind of a backbone generated a fixed size vector representing the image.
+And then we had this output layer.
+We could add another one.
+Once you have several output layers, sometimes they are also called heads, right, so what we would do is we would call this the classification head, which resulted in the distribution over the labels.
+And the other part we could call a bounding box regressor head that how usually it's called and that will produce the coordinates of the rectangle bounding box, where the object is.
+The ways how the bounding box could be represented in an image are our numerals and we will discuss how it should look like in a minute.
+So that's that's for a single object, right, but what should happen if we were to recognize all the objects which are there in the input image.
+So historically what people did is that they somehow generated the so-called regions of interest, so some places in the image, which hopefully could contain an object.
+And then they performed the image classification on the region of interest, right, so let's say that somebody was able to give us these regions of interest.
+And if you have a single region of interest, then deciding whether there is an object on it and where can be solved in the way how we have solved it until now.
+We could add one head, which would solve the classification problem, right, so for a one part of the image, we could turn the classification and we will add another class which will say nothing background, right, nothing interesting is here.
+So if we have got paid classes, we will do a classification into K plus one output actually with one of them saying yeah nothing interesting in this specific part of the image, right, then there will be the second output layer at the bounding box progression head, which predict where on this region of interest on this part of image the object actually is.
+And because we will have a multiple of these regions of interest and if we want to use the convolutional network, we will do is we will start by taking the regions of interest and scaling them to a common resolution usually two to four times two to four for the VGG, right, then we could turn the convolutional backbone and all of them and then finally generating these two.
+So this way we can still just be able to predict a single object in the single location because magically some one gave us a lot of interesting parts of the image which we might need to look at.
+Like eventually what we could do is we could consider all parts of the image the interesting ones, right, so in the end what we will do with you will consider.
+But nearly all the positions in the image and think about where there's something on that specific place, but at this point we will assume that somebody explicitly gave us these interesting creatures of how people did it before it had some.
+So if you can find clients which use some basic information like the some kind of edge detection and the changes in the color and also to generate what might be the interesting parts of the image.
+So it could definitely happen that the region of interest contains two objects and in that case you will try to do your best in the.
+In the training data we will probably be careful and select that they have there are not really two different objects in the region of interest, but even if it happens.
+Well we will somehow manage but we will try to make sure that there is one salient object like the prominent object on every region of interest that that's how we will actually generate the data so it's still still could be problematic but hopefully the network will predict the best.
+The most interesting object in the region of interest and we will hope that all the other one will also be covered by another region of interest.
+In the original implementations or architectures they generated 2,000 of these regions of interest per image so there will be an abundance of of those so we will not have to worry about it.
+But of course large regions of interest could still be a problem.
+So I will talk a lot about VGG in a sense that when people describe this the VGG was the state of the art neural network and some of the constants which are being used are dependent on it.
+So that's why you will be seeing a lot of VGGs and then at some point you will see the architectures switch to resonant because once resonant was out people did the swap quite quickly.
+So the thing which we now need to discuss is how to describe the location of the object on the input.
+So we need to produce some kind of coordinates which would identify the rectangular for simplicity part of the image where the object lies.
+One way how we could do it is we could represent the bounding box by its center and the size of the width and height.
+This is called by a weird name Cx, Cy with high that means center x, center y with and height.
+But of course some other like this is useful because this is the format in which the neural network will actually predict it.
+But when you have the data then usually you describe your bounding box is either by the left and bottom right corner.
+Or using the left side corner and the width and height.
+So I will be switching between these representations whenever it's convenient and you will also do it in the assignments.
+So to describe exactly what our network will predict we assume that we have the center coordinates and the way of the region of interest.
+So x, y are the center of the region of interest and we have the coordinates of the bounding box.
+So we have the region of interest and then the thing is for the conclusions at this point people needed to fix size inputs.
+So they they were scaled all the region of interest to the same same size so that they can pass them through it.
+Right it was DGG so at the end there was this fully connected layer and only work if you actually used the input of the same size.
+So that means that when you predict the position of a bounding box in a region of interest then you cannot do it in an absolute sense.
+Because the like how large it was in the image because it could have been scaled up or scaled down and then it took us no way of knowing.
+So what we need to do is we need to represent the coordinates of this bounding box relatively to the region of interest.
+So what we will do is we will represent it using the difference between the centers normalized by the size of the region of interest.
+So what I mean is that if the bounding box is in the middle really it will have coordinates zero zero which means no offsets to the centers.
+Right if the bounding box would be here then the coordinates would be zero point five and zero because.
+Because we have moved right by half of the the region of interest right if the center of the bounding box would be here it would be zero point five because the center has moved by.
+Half of the image to the right and half of the image to the bottom.
+So that's the offset.
+Well the offset of centers normalized to the size of the region of interest and then we will consider the height.
+And we again normalized by the size of the region of interest.
+But then we need to.
+We will be predicting these parameters using the neural network and the within the height it makes sense that it should be at least non-negative even if we allow zero but maybe even positive.
+So in order to do that.
+We need to somehow deal with with the negative values because otherwise the neural network would easily say minus three.
+So what we will do is we will let the neural network predict the logarithm of this normalized with and high.
+And the good thing about that is that if we predict the logarithms then the neural network can easily produce a negative number.
+Because if you compute the e to this this quantity the result will be non-negative right.
+So another way how you can look at it in your head is that we will use exponentiation as the activation function for this for this output.
+And that will make the prediction of the width and height of the neural network to be positive.
+So this are the four numbers which the neural network will predict and then we can easily transform them into the real coordinates which we can map back to the original image.
+So in order to train these normally we would use the mean square error but the mean square error has this this unbounded gradient which I mentioned by because if you remember.
+Very about the type of the mean square error is the prediction I don't know why minus the the goal target on my g.
+And so that's what the me the derivative looks like and the larger error we make the larger the gradient is and if we suddenly make a large error it could happen that the gradient will be very large and we.
+The training could diverge and we discussed the gradient clipping as a way how this could be prevented so here what we will do is we will actually design a lot which will.
+I have a bounded gradients but can be used for for regression and so how that is going to work well if you imagine the usual means for error.
+Let's make this zero one this is also one sorry for the scale so the the derivatives of that are.
+These linear functions right so the.
+These are the derivatives of the loss but but we will not be happy about the unbounded gradient so what we will do is we will clip.
+The the the gradients of the loss so we will come up with a new loss with a different one which will use.
+This and but then we will flip the loss at one so how the loss will look like where the loss will be means for error around zero.
+And then at some at that point it will be just a linear.
+Because that way we will get gradients clip to one so this kind of a loss which is written here another formula is called the decoded smooth at one loss in the paper but it actually had the name even at the time and it's usually called the whover loss in the.
+Framework APIs and so what it does is exactly it behaves like a means for error for.
+Close neighborhood of zero and then it is just a linear function so formally you can see that we need to make sure that these two points that these two parts are smooth they are just connected.
+To each other so usual way how to do it is to say one half of the means for error and then at one right.
+This will have a value of zero point five so then this linear function is to be upset it so that it really looks like this there is this means for error like the parable and then.
+The linear.
+So this is really just like a gradient clipping to apply directly to the means for error right and the good thing is that this makes the training more stable.
+Those are what they mentioned that networks train nicely without without disturbance of occasional March gradients.
+Sorry by not what.
+Yeah so yeah so the question is why we are not using just L1 loss well the problem with L1 loss is that.
+The gradient doesn't depend on the size so so around zero it might be difficult for for the optimization to happen because if you if you imagine that you are trying to reach minimum then.
+If we would use L1 loss so really just absolutely for example then.
+The size of the step doesn't depend on the proximity to zero right because the derivative is always one or minus one so whenever we are on the left we would always do like a constant.
+But that means that if you are getting close to the optimum you might not really converge because you have no way of scaling your steps down.
+The learning created decay could help but that would be the only way how you could actually get to the minimum right but with a mean square error these gradient gets smaller the closer to zero you get so you are actually able to do this.
+Even without the learning created.
+So that's why they want this behavior so that's why they keep it they just want to avoid the problems that losses very large they are not very frequent because all those values are.
+At least that the talk once are nicely clipped in I don't know minus one one range or something like that roughly with these logarithms would be a bit larger but still not very much so it doesn't happen too much that.
+So too much that you are outside of this closer to zero than one but but even a very low even if it happens occasionally it disturbs training so they kind of try to help it because also say that you just using the gradient clipping on the whole network but well this is the only thing causing problems.
+So instead of gradient clipping everything then just okay so let's just clip the loss beforehand and use the use of use for loss in the first place.
+So so the question is why these logs are here so the the reason why we do it is that.
+If we didn't use them then the neural network could easily predict minus three.
+And then that would mean that we would compute with which would be negative and we kind of want to avoid that.
+We could of whenever the network predict is negative value we could say yeah so it's a bad prediction I would just ignore it or something we could but usually people are happy when the networks can generate only the valid numbers right so instead.
+Or allowing it to generate whatever we will allow it to generate.
+Any real number right and then we'll use the logarithm to map it into into the zero to infinity range.
+I'll because the neural network can can produce whatever it wants right and then after applying the logarithm we will always.
+Map it into zero one range sorry yep so I'm applying the exponential function because I'm doing the other way around right but.
+We could have done it without it and it would work but the.
+The neural network could just like produce non-sensical outputs so we will just limit it to do the only well I could do the reasonable thinking the first place like this happens frequently when we want the network to generate an on negative number.
+Or even positive number that can happen if we want to predict one just with our height but also variances of various quantities so in that case.
+Just the usual regression without any activation function would just produce anything so what we do is we.
+Try to like interpret the the value in this range as just a positive number and for that the logarithm slash explanation is the only interesting thing right because even a property predict this number.
+And I will say e to this thing then it will be positive but that's probably the only reason why.
+Yep so the network can use anything so if it gave us minus three right so because it's a logarithm of something then the the value of that thing is e to the prediction and the e to the prediction is one over e to free which is zero one over eight.
+Nine I don't know something right but if the network predicts logarithm of some unknown x then this this x can be written as e to the network prediction.
+And then whatever the prediction even if it is negative then because the exponentiation function looks like this then after exponentiation the number will always be positive.
+Well what I draw drawn before was the logarithm function right so they are because they are inverse of each other then.
+Here in this mapping when I when at the network generates anything and any values.
+Then the exponentiation of the dispositive and will try draw before there was like a transpose so I imagine the network will produce and a number here and then I.
+Looked here so that's the the number like the logarithm of this number is this output.
+There are other ways how you can generate.
+Positive numbers like e to x is one possibility so if you have got like raw predictions and e to x is positive.
+But the exponentiation might or might not be useful like predicting to the order of things.
+But you could also do is you could come up with a function which would be like a soft fellow or something and use that as a transformation which would predict a positive number.
+The number from anything on the input and and this is called a soft class and the definition is the.
+So we already do it with a correctly logarithm of one plus e to x.
+But it behaves not exponentially when the input is large but it behaves kind of linearly when the input is large but it still monotonous and positive.
+It's like the second choice for how to generate how to generate positive output.
+It's not obvious which one of them is better and they just use the exclamation here.
+So the overall loss.
+Is a combination of the loss for the classification head.
+And let's just the in the negative of like the or the usual like the the usual loss for the classification and then we will have the smooth alarm or the Google loss for these four parameters.
+The parameters.
+But this.
+Bounding box prediction.
+It should happen only when there is actually something on the region of interest.
+So if the region of interest is empty it contains nothing then we don't want the numerator to train to predict where this nothing is right.
+That's why we have got this this element these are either some brackets so it's like zero if c is zero and one if it is larger than one so it's like switches off and on this loss depending on whether there is an object on the on the region of interest and then we have this lambda which.
+When we try to optimize two losses right then usually you can optimize either one or the other and sometimes it goes against each other so if you are get better optimizing one loss you might get worse for optimizing the the other one especially if your model has limited capacity so.
+Generally if thinking about balancing them for this lambda is there to just give us the possibility of saying and this this boundary prediction head will be twice as important to us than the classification loss.
+But after all that they just use one in the paper and it works fine so we just some these two losses for the two two heads and that will be.
+So the this is from 2013 already there are CNN architecture and it kind of works but the problem is that it is terribly slow and the reason why is it slow is that well we have to run our very deep neural network for.
+Every of the region of interest right so the in 2015 people try to improve it with kind of a simple idea right so.
+So if we have this the convolutional neural network for example like the GG right then one thing is that if we have these regions of interest we can.
+Generate their fixed size inputs and then pass each other through the network but what we could do instead is we could pass the whole image once through the convolutional neural network and then we would obtain.
+And like a feature representation which still has the spatial coordinate so we could generate the representation of these features of these regions of interest from this this representation given to us by the convolution so instead of.
+Like like cropping or or taking the the patches on the input of the image we could just take the features of the image and take the corresponding portion of them and then say this is the representation of the region of interest but this way we could pass the whole image just once.
+Through the whole convolutional backbone right so instead of passing every image independently through the network we could pass the whole image through the network and then just taking the corresponding part of the output of the convolution.
+So in order to do that what people propose is to use a layer which they called Roy pooling right because in the normal VGG that what they do is they obtain this 14 times 14 times some number of channels.
+And then there is the final max pooling which gives you 7 times 7 times some number of channels and then they will fully connected layers so they say okay so instead of this last max pooling.
+We will do different operation but it will have the same output size so when we have the input image and region of interest we will produce this 7 times 7 times some number of channels.
+So in the last final interval representation right so instead of representing the whole image with this operation we would use the Roy pooling so how does the Roy pooling work well.
+We have the region of interest which we want to represent and we want to represent it using 7 times 7 regions so you can imagine that.
+I will do 7 times 7 this is not probably 7 times 7 but roughly right and then we need to compute the representation of each of these.
+Well like regions or bins or how to how to describe them and each of them will correspond to some number of the.
+feature representation which we now have right we have this 14 times 14 resolution so every region will correspond to some number of them for example this one corresponds to this for right so we will do is we will just do the max pooling on all the.
+And we will do the max pooling and we will do the max pooling so it is exactly a max pooling layer but of course if the region will represent.
+Because if the region of interest is the whole image right then every of these 7 times 7 regions corresponds to for 14 times 14 regions to times 2 and we will do the max pooling so it is exactly a max pooling layer but of course if the region of interest is smaller we will.
+And then we will take the the use of only the corresponding regions of the underlying image so for me in the royal pooling what we do is for each of these 7 times 7 regions we will find it corresponding.
+Parts in the 14 times 14 image and do a max pooling operation and that will make the.
+And it's very much faster right because we will compute the the CNN only once.
+And then we will get the fixed size representations of every region of interest and then we can add the two heads.
+So the heads look like they do in in VGG right so once you run the home network through.
+And then we have a region of interest and the royal pooling player will give you this 7 times 7 times and 512.
+So then they added to fully connected layers this large ones with 4,096 units and then.
+So we have the output layer so this part like the fully connected layers and the output layer the classification of put layer that's exactly taken from GG of course once we will start using crescent and other networks we will adapt it appropriately and then there will be the bounding box digresser head.
+Which uses the same feature representation to it uses the same vector of.
+4,096 units and then we will just then fully connected layer with 4 outputs which will be the bounding box coordinates in the representation which we just described.
+Yes the question.
+So there are these weird as VMs there so these images were generated by me but somebody for their presentation at that point people actually used as VMs to run.
+So they had this pretrained without modifying at all.
+So instead of doing these networks they physically really run as VMs set that point to convert the features into the output so it's just that I was lazy to actually fix them.
+It's probably the summer on some other places as well but that's just because nobody did the better image and I was too lazy.
+So now let's think about how we would train and use such an architecture.
+So first what we need to do is we will need to be able to say how good to bounding boxes match.
+And what we will do is we will use the intersection over union the metric we described in the text segmentation assignment.
+So the intersection over union considers the intersection and divides it by the union so it's 100% if the two box overlapping exactly and then it's smaller.
+And generally what we will do is we will say that the two bounding boxes match if they have intersection over union or at least some quantity 50% 30% 70% depending depending on the context.
+So for training what we will do is we have a small number of images just two of them which we will pass through the convolutional backbone.
+But then we will consider some large number of regions of interest for each of them.
+So the idea is to take for 64 regions of interest for every one of them because that will give us the big size of 128 regions of interest which is kind of what we had before.
+And we will select these regions of interest carefully so that some number of them 25% are the positive examples so there will be the region of interest which actually contain some object.
+And the the others will be the negative example so the positive examples are the regions of interest which have an intersection over union with some ground to box of at least 50%.
+Right, so if we have an image there is an apple on it.
+Right, so it's not very red.
+Okay, it's a weird apple.
+So when we have like various regions of interest.
+What we will do is we will take those we do have intersection over union which is considerably large at least 50%.
+And then we will say the metric okay if you consider this region of interest you should try to predict the apple there right so you should say that it is centered here and it's.
+It has got this bounding box so you can see that the network might be maybe to predict the object slightly outside of the region of interest but because the convolutional features see some substantial part of the image then hopefully they will be able to do it.
+And then for the negative examples what we are using are the heart negative examples like in some sense if you have got like a blue sky right then it is kind of simple to say nothing nothing nothing right like saying that there is nothing interesting on the region of interest it's probably simple so what we will do is we will give it.
+The regions which contains small part of an object and we will want the neural network to say nothing there right so that should make the task difficult.
+So that the neural network will really deal with the ambiguous complex situations and the simple one through there nothing be there in the region of interest we will assume that neural network will train well.
+Which is kind of us. So that's what we do for training right we cannot train all the region of interest because there are so many of them like 2000 per per image so we just choose a subset.
+And we do it so that we balance the positive and negative examples.
+However during inference we will use all the region of interest which we have so we will ram the network to the convolutional backbone and then we will consider all those many region of interest that means that probably we will.
+Generate every object many times right because if we have some kind of transportation device and the image right it could happen easily that there are many regions of interest which which covering.
+So in most of them or in many of them the neural network say ah I can see it I can see it but unless you have just came up with an invention which would spontaneously duplicate all those objects which are there you need to say is there just once.
+So we somehow need to merge all those predictions into a single one and we will do it by the so called non maximum suppression that's just a fancy name of saying the best prediction wins.
+So how this non maximum suppression works well if we have got two predictions they have the same cost and they have the intersection over union which is large enough well they just use 30% which is not very large but large enough then we will merge them in a sense that the better prediction is retained.
+And the better we need to somehow define so we cannot use the bounding voice regression at far away because it just gave numbers but luckily the classification head gives us probabilities right it is okay I can see an apple with 30% I can see an apple with 35% so we will hope that the prediction with the largest probability from the classification is the best and that's what you review.
+So that's why non maximum suppression because if two predictions meet then the one which does not have the maximum probability or all the ones which don't have the maximum probability will not be return.
+So now our model would actually do something because it will be able to train it and to run it in the inference mode so what we need also is to evaluate so we need to come up with metric which could explain or describe the performance of our system.
+For the classification it will seem simple we could be just here a accuracy and we are fine.
+If you are doing location or localization itself then if you had just a single object you could also use accuracy in a sense that if the intersection over union with the ground position will be at least 50% you could say a great you did it and if not you would say nah but luck.
+And that's how this was done in the image in the data set because if you remember in some of the results you're also showing the localization accuracy.
+If there is a single object but if there are multiple objects in the images then the evaluation is not as simple.
+And the reason is that it's not even obvious how many objects you want your pipeline to generate in a sense that if you have an image.
+Then our model actually considers many possible objects which could be there and probably has many predictions but we only show those predictions where the probability of them are large enough in a sense that it's larger than the background probability.
+But in theory we could generate a small number of objects which have the probability of at least 60% or something or we could generate many of them you could say you would generate anything which has known background probability of at least 1% or something.
+And ideally we would like to evaluate the performance of our model in all these settings whatever if we had generated a lot of them or if we had generated just a small number of them.
+So in order to do that what we will do is we will use the so called average precision metric.
+So how does it work so let's say that we are working with a single class we will deal with multiple class later so we are dealing only for example with with person objects and we will assume that our system generated the outputs.
+Sort it according to it's some some kind of confidence in them or probability right we will use the probability from the classification head from it.
+So you can imagine that we have them so these are the objects.
+So it's like predictions and sorted by by the problem.
+So now the idea is that for like any number of these stop scoring objects we could have generated just them if the neural network would say okay I will only generate objects with this probability or higher.
+So we will consider all all the pretext is and we will compute the precision recall curve if you haven't heard about it don't worry I will explain it so this will be precision this will be recall so what precision is precision is the ratio of your predictions which are correct.
+Right so it's like how well I do when I actually say something so if I say this is the person how well I do.
+The recall on the other hand is the ratio of the all gold objects which I was able to predict right you can consider all the people which are there in the data set.
+And it recall is 30% it means I generated 30% of them.
+And so how do we generate this curve so we start from the top scoring prediction and look at it.
+So let's assume that it's correct to go change the call to one which we are most confident in right so if we did it correctly then the precision is one because 100% of our predictions are correct.
+And the recall is one over the number of all people in the data set because we have successfully recognized one.
+If there is a match then we will consider the gold object as a recognized and we will not use it in the later steps and then we will go on right and after every example we get a new point on this prediction recall curve so let's say at this point we will do a first step.
+We will do a first error so when this happens our precision has gone down now we have only predicted three out of four predictions correctly and the recall stays because well we still recognize just three people in the data set so it will go like here right then maybe it was correct then this this would go out again.
+And hopefully let's see how it could look.
+And so the idea is that in theory we could like generate any of those well the kind of interesting.
+Any of those points by choosing suitably the level of confidence which we would actually generate from the network so we are interested in seeing the performance for.
+A small number of objects and also for the relapse number of them by the way the ideal classify would look like this right the precision will be one hundred percent until we have generated just everything the best classify of course looks like this so the interesting part actually the area under this curve.
+So what you will do we will compute this quantity and say this is the average performance right that's average precision sorry.
+And this way we evaluate our system both in the like high confidence setting and also in the in the low confidence so you can have a look at the real precision recall curves from from a competition from very very long ago so here in the person category.
+Generally you can see that all the systems converge to this point where they have recall of one with the precision of roughly 40 percent so if you generally if you want to generate all the people in the images you need to generate roughly 2.5 times as many predictions so that you will you would actually cover cover all of them and the best system would be the blue one.
+Which achieve the largest recall or a given precision or larger largest precision for a given recall.
+For example both are much smaller than people in much more difficult to recognize so we can see it at the beginning the precision of mostly all systems decreased quickly and also the final precision for the recall of one was was much lower.
+So I said that we will compute the area under the curve so this is implemented somehow crudely so first we don't care about the decreases in the in the function so we will make it not decreasing which is fine and then.
+We will compute the area under the curve well not exactly even if we could have done it exactly but we will just sample the curve in 11 steps.
+So for zero ten twenty thirty percent one hundred percent and then just average them and views that as a very crude approximation of the area under the curve right so you can think about it is that we they compute like we compute in this area by considering.
+Then goes which are there like this okay I should have gone down now.
+All right so it's really just an approximation I'm not even sure why I didn't compute it exactly because they had the exact precision recall curve well that's that's what they did.
+And then finally if you have multiple classes like people and the bottles you will do the average of these average of mean of these average precision and then it's called mean average precision sometimes in the paper you can really see an AP but even if they just say AP is the average precision.
+So with computed over all the classes like competing the average over all the classes.
+So in the later they just said they slightly improve it is computation so first instead of very crudely computing the the area under the curve they sample the position for every percent.
+So recall so in much more steps so hopefully that's closer to the real real curve and also in the original metric right we consider fifty percent.
+Oh yeah I didn't probably say it explicitly right when we have a prediction and the gold object we say that it's correct if the intersection over union is at least fifty percent.
+So that was very crude right because even if your object is is an apple hopefully still a week one.
+Then fifty percent that could easily be this.
+And this was considered to be a correct prediction which well.
+That doesn't seem like a very good prediction but when this was defined it was like preneural times so people were like okay maybe fifty percent is enough but.
+So we should also look whether we could be more precise so in the in the results we'll also see things like AP fifty five or AP ninety five and that means average precision when the intersection over union is at least ninety five percent.
+So for the larger data set for the full call common object in context data set the final metric is actually the mean of these average precision from fifty percent to ninety five percent by by five percent.
+And they also have the average precision for small objects medium object and large objects to see what kind of these sizes are actually there.
+So all these many slides just to show you what these numbers are when we look at the results but yep it's needed.
+So there are some running times here which can show that the fast RCN is actually faster.
+So here we have what are CNN so the training of the RCN was like eighty four hours while the fast RCN was only eight point seven right so ten times faster and for the prediction it's like similar.
+It took a minute to do one prediction the RCN because we had to pass two thousand.
+A region of interest through a convolution on your network while for the fast RCN and the prediction takes something like 2.5 or 25.
+So we are here it's really fast but there is still this one issue and that's the this region of interest which we magically get from nowhere.
+So the same team which described fast RCN and described faster RCN and three months after after the first paper and they dealt with this issue so they actually generated these regions of interest by themselves.
+In a way that they were even much more accurate than the previous one so it was enough to generate just 300 of them instead of 2000 so how does it work well it works very much similarly.
+Yes in the fast RCN and itself because wood does fast RCN and do or I will show it here so this is the the path which we talked about now right so it gets region of interest right and then it generates the object.
+So we will use very similar thing very similar module and what it will get is it will get all possible.
+Then network or then decorate of image parts and then it will generate these regions of interest but in the context of this module we will call it proposals.
+So we will have a module that the module is called region proposal network and it will look everywhere in the image and it will produce the proposals of produce and regions which we will then use and pass them to whatever we had in the fast RCN and as the regions of interest and process them further.
+And if you look at it like that and these two modules they kind of are similarly like you get some kind of a set of interesting parts of the image and you filter them and generate a small number of the valid ones are correct ones on the output with with locations.
+So but because these these regions of interest or interesting parts of the image comes from different sources we have this weird terminology that the inputs to the past RCN and are called region of interest while the inputs to the region proposal networks have a different name and they are called anchors right so we will say okay anchors go here and propose us go out of there.
+So how are we going to do it well we will consider like many possible anchors we will consider you can imagine like I all the positions in the input image and for each position in input image we will say okay there either is or is not something interesting on the position.
+So to that end we will again use this 14 time 14 representation which we have from from the gg.
+Each of these representations actually correspond to some some region of the input image which originally was of size 16 times 16 because well we did for strides from from the input sizes to the 14 time for 14 which now which we now have.
+So what we will do is we will consider anchors which are centered on every of these 14 times 14 regions we have good 14 times 14 I don't know one hundred ninety six regions so we will consider anchors centered in each of them.
+And for each of these anchors we will say whether the it is interesting whether there is something foreground object or not background and if it is something interesting there we will specify the bounding works of where this interesting things lie.
+And that will be that will be the proposal right so that's what we will have we will consider every of these regions so there is dense grid of all these regions that are that are the anchors.
+When we compute the representation of the anchor right we could have just taken this this one region in this 14 times 14 representation.
+But maybe the receptive field of that would be too low so what we do actually is we will consider this one position and all its neighbors as well right so when we represent the anchor in this image we consider not just the center region but also all the eight ones.
+around that and this means that when we consider some anchor in this underlying image we consider some non trivially large part of the image for computing the features from which we will run the classification.
+So for each of these anchors we will compute their representation as a 256 dimensional vector so what we do is we.
+take all those three times three window concatenated or flatten it and then run fully connected layer into 256 outputs well actually what we do.
+is we just use a three time free convolution right because that's what you want the one representation of the position and it's it's neighborhood and we will get the representation of region.
+we have seen that there is an anchor centered in the center of the region and then we will add to heads which are very reminiscent to what we are doing in the usual past hours the entrance of the classification head.
+this time with just two classes which we will say foreground or background at this point we don't need to know whether there is an apple or person on the on the anchor we will just say something interesting.
+and then we will predict the coordinates of the bounding boxes in the same format as in the past are seen and so for numbers which are the of sets of the centers relative to the size of the anchor and the logarithm of the size of the bounding box relative to the size of the anchor.
+yes so we assume at this point that we have a data set which contains all the objects in the image so we assume that we have some number variable number of objects and for each of them we do have the bounding boxes so that's the data.
+which we have and we also evaluate using them because we then need to check whether when our network predicts something whether it actually matches to some underlying objects.
+so when we do these predictions when we compute the proposals one of the underlying issue is that if we know that there we want to find objects which will be centered at this location we need the anchor to have some some size.
+and then everything would be pretty it will be relative to the anchor but what size the anchor should have that's not really obvious right because my maybe might be large maybe small.
+actually depends because they are both large and small objects in the image so what we will do is we will in fact use just a single anchor in every of these so these regions but we will use multiple of them so we will consider.
+various sizes and aspect ratios for for every position so what I mean is that if we are now are predicting.
+some like objects centered at this point right so that means that there are these 16 times 16 regions here and after the convolution.
+one region which goes to this point then we will do the predictions with respect to nine anchors for example where we will consider three different sizes so we will consider small anchor middle sized anchor large anchor and then we will consider different aspect ratio so one times one two times one times two.
+and hopefully this should cover most of the shapes of the object between which we want to recognize.
+so.
+how are we going to train such a region proposal.
+during training we need to convert the gold objects from variable number of objects with their coordinates into the the labels for the region proposal network which means we need to decide which anchors will be used to predict what objects.
+so to find the positive anchors to find the anchors where we will actually be predicting an object then first.
+for for every example.
+sorry I.
+lost by the formulation I thought it would work differently give me 30 seconds.
+yeah that's that's how I meant I just meant do it incorrectly so if we have an object.
+then we need to make sure that we do predict at least somewhere so if you consider there are many possible anchors in the image.
+then we will take whatever of these anchors which has the largest intersection over union with our object so in our case that would probably be this one.
+right so for each object we make sure that at least one anchor will be generating it.
+on the other hand if we have a large object and there are many anchors on top of them then we will also predict it there so every anchor which is an intersection over union of at least 70% with an underlying object will also be considered a positive one so it also will be used to predict that object on it.
+so there are the positive examples either the best anchor for an object or an anchor which has a sufficiently large overlap.
+and the negative chaining examples will be the anchors which are either completely clear or contain some object but at most 30% of them.
+so here you can see that we have left the middle so the anchor which contains from 30 to 70% intersection over union.
+object are not trained neither to be positive or negatives we will just keep it to the net for to do something in the middle we just want to say if it's obvious then the proposal and at first needs to say there.
+if the intersection is very slow we will say I can see I can see anything any of the middle well the net for can do whatever it wants.
+during training we sample these examples such that the ratio is ideally up to 1 to 1.
+there are still many anchors right because you know that we have these 196 positions times 9 anchors so it's I don't know 1.8 or whatever 1000 of anchors which will be still too large.
+we still sample them and we sample them ideally so that the ratio of the positive and negative would be the same 1 to 1.
+but it is not possible we will just use less positive and more and more negatives.
+and then how are we going to use this during inference right so during inference our goal is to generate the proposal which will pass to the fast RCNN.
+we put all the anchors in it and for all the non-begramed regions so further for all the anchors where we said you really something is there.
+we will run the non-maximum suppression again because it might easily happen that the same object was predicted from from multiple anchors so we will use a maximum suppression this time with a much larger threshold.
+to filter out the duplicates.
+now we don't care that much if we predict the same object twice or three times because the fast RCN was still they care of it so that's why you can use something like 70% because that seems kind of kind of fair.
+any of there are multiple objects of the same kind I don't know like people standing next to each other we want to make sure that we don't miss out any of them.
+and after this non-maximum suppression we will take some fixed number of top scoring regions as measured by the classification head in the way that they use the 100,
+that is what we will send as the region of interests to the fast RCNNNNNNN.
+So now we can have a look at the first results.
+These are all evaluated on the Pascal VOC.
+So some kind of older data set.
+What we have here are these are all fast RCNNs.
+They just differ in a way how the regions are generated.
+So this selective search method was some old school classical vision pipeline,
+which needed to generate a large number of proposals for the results to be good.
+So when we instead consider faster RCNN,
+and actually in the image here I show you the regional proposal network and the past RCNNN they share?
+The convolutional bank vote,
+but it wasn't obvious at the beginning whether it is a good idea or not.
+In the evaluation,
+they actually do the measurement of whether it is a good idea or not,
+So this unshared means that each of these two modules
+had independent set of way to just train independently.
+And even if we use just 15% of the proposals,
+just 300 of them, then the results are a truly better.
+So we grind faster and better with the shared parameters
+if we actually use the same convolutional backbone
+for both modules.
+That the results are even considerably better.
+So not only we can share the parameters we should do it.
+It kind of makes sense because the features
+for doing both proposals and the objects
+probably need to generate very similar features.
+But if we share the weights, then we have like a
+richer set of data of the training signal
+so the results are actually even better.
+And on the other data set, the results are the same.
+So while keeping the smaller number of,
+while using the smaller number of regions,
+we have to include the results.
+But the question is, why we are doing it so weirdly?
+We start the anchors, we do the proposals,
+and then we use nearly the same module
+to take some regions of interest and generate the objects.
+This kind of approach is called two-stage detector,
+exactly because we are doing very similar things twice.
+So the question is, why couldn't we just
+do it once, to do some kind of single-stage detector?
+And the answer is, well, we can now,
+but at the point there were some obstacles
+in training the single-stage detector in a straightforward way,
+so for quite some years, these two-stage detectors
+were the state of the art.
+And the idea is that the first stage will be quick
+in a sense that we will just just crudely and quickly
+consider all the positions in the input image.
+And we will hopefully cover most of the interesting objects.
+And then we will have much smaller number of regions,
+which we can give to the fast RCNN,
+which can spend much more time on every single region of interest
+to generate the results which would be more more accurate.
+So you can think about it as really just the optimization
+in a sense that we couldn't have a fork to run a very large net
+for all of the possible positions.
+Well, that was only half of the problem,
+because actually training the single-stage detector was harder
+than it looked than it is taking people some time to actually
+be able to do it, but we will describe it shortly.
+But before we will do it, we will first extend the faster RCNN
+into a mask RCN.
+So mask RCN is an extension of what we just described
+in order to generate the instance segmentation as well.
+So we will generate not just objects and their bounding
+boxes, but also all these colorful masks,
+which you can see in the slides.
+And the mask RCN is kind of straightforward.
+Like it has two to the interesting improvements.
+The first one is to generate the representations
+of the objects from the convolutional features in a better way.
+Right now we use the row pooling player,
+and this is the row pooling player,
+because it just used this max pooling operation.
+It was very crude.
+Because for each region, each one of these 7-7 regions,
+it's directly like pixels in the feature representation.
+So it means that the coordinates were always rounded up
+to the closest 16 pixels or something, right?
+Because when we had this kind of representation,
+and then we wanted the representation of this image,
+what we did is we say, OK, so imagine that the region,
+which we have, has been coerced to the underlying resolution.
+Because we have just this 14-type protein pixels,
+and which is much potent, it means that we always
+like round it every region to these multiples of 16 pixels,
+which was very bad, especially when you want to say where
+an object is.
+And if you want to specifically draw a segmentation mask,
+then being off by 16 pixels is kind of a big deal.
+So they came up with a better way how to do that.
+And then, so the one addition and the second addition
+is a third head, which will generate, actually, the mask itself.
+So let's start with the representation of the objects.
+So we are in a situation where we have some kind of low resolution
+features in the feature space.
+And we would like to get a representation of an object,
+which has non-integral coordinates in this crate.
+So let's just do it more carefully.
+And what we will do is, first, each of the regions
+we will represent using, for, like, some pixels,
+or how to hold this eight times, for smaller regions.
+And each of them will be computed using by linear interpolation
+from the original image.
+So what that means is that when you have this center,
+then there are, like, four neighboring pixels
+for neighboring regions in the underlying image.
+So while in the mask pooling, we just take the closest one
+and say, we will take that properly.
+Then here what we do is we just do the way
+it's combination of all of them corresponding to our distance
+from the, right?
+So it's, like, by linear interpolation.
+And this way, the representation can get more,
+much more information about its position,
+because even moving it slightly by a single pixel,
+would result in a different representation,
+because we would get closer to some region that gets far away
+from the other ones, so it would be better.
+Actually, if I just asked you to do this,
+you had good, this lower resolution image,
+I don't know, in Photoshop or in game,
+that means that I want to get a piece of it,
+which has the coordinate, and you would probably go there,
+like, select it with the tool,
+and then just copy it, somewhere,
+and then just scale it to the correct size.
+And what you would get would actually be nearly this,
+right, because when you scale some part of the image,
+usually you do it by, by computing the interpolation
+of the neighboring pixel, because you don't always get
+the exact pixels where you want them,
+you just need to know the representation of an image,
+which is somewhere outside of the centers of the pixel.
+So, actually, this sounds all menacing and terrible,
+but this is like this, straightforward way of doing it, right?
+We have lower resolution image,
+we want to get some part of it, so well,
+we will just do it by not considering the individual pixels,
+but by interpolating the image in the lower resolution,
+and then just take the values of those interpolated pixels.
+So, this kind of representation or operation is called
+Roy Aline, because you can compute the positions,
+or the representation is more aligned
+with the position of the region of interest.
+So, that's, that was simple.
+And the second thing, what we will do is we will add
+the head for performing the masking,
+for performing the segmentation.
+So, what we will do is we will never use the,
+like flat representation or every representation,
+because, well, we need to generate
+an output with a spatial resolution, like with and high.
+So, here in the usual usual head,
+we have this, this, the global average pooling,
+or a flattening in the case of the VG,
+which gives us a vector, which we need to pass
+to these two heads, but the, the mask head,
+the head generating the segmentation,
+will take this non-everage representation,
+to be every, to the representation,
+including the spatial dimensions.
+And then, we will generate an output,
+and we usually want to hire a resolution.
+So, we will use some number of convolutions.
+Some of them will be the upscaling convolutions
+with the convolutions, which can use stride of 0.5,
+for example, the transpose convolutions
+with a stride of 2, which would generate
+the output with some resolution.
+And in their better version,
+they generate the masks, even with the larger resolution.
+So, these are the masks of the predicted object.
+So, if the object has some, some bounding box predicted,
+about the bounding box regression head,
+then this is the mask of the object inside
+that bounding box.
+It's fixed size, because of the video,
+we predict whether the mask in a fixed extrusion,
+and we then map this onto the predicted object.
+So, it's like here, right, where the mask has a fixed size,
+but we know where the object has been predicted.
+So, we will map it into the corresponding part of the image.
+Yeah.
+So, the contrary to the other masks,
+we always just use only convolutions
+so that we never lose the information about the positions
+and regarding the output channels, right.
+The thing is, if we have got 80 objects,
+that would be 80 is clear,
+we could either just produce the mask as like one mask,
+but if you have both, I don't know, cucumbers
+and also apples in the data set,
+then they look kind of different,
+they one is very long and the other is very round.
+So, maybe it could be difficult for the network
+to predict these different shapes on the same output.
+So, what we will do is we will actually predict
+the mask head to generate masks for every possible object.
+So, we will generate 80 masks for every object.
+If it was, and if it was cucumber,
+if it was all the object, which there are.
+But we, of course, consider only one of them,
+which was predicted by the classification head, right.
+So, we generate 80 channels,
+but only one of them is the one which we care about,
+well, that's the one channel corresponding
+to the predicted object.
+Also during training, we only train one of these channels.
+The channel, which correspond to the object,
+which is there in the gold data.
+And that makes the mask slightly better,
+because the different usual shapes
+can be learned by the different outputs
+by the different output channels.
+So, this all is from 2017,
+they have, and there hasn't been anything revolutionary
+in instance, segmentation since that,
+but some incremental improvements have been reported,
+but they are kind of what you would expect.
+So, all the conclusions there will be followed
+by the virtualization, except for the output one, of course.
+So, that's what you would expect,
+and then they use more layers,
+also in the classification and the bounding box regression head.
+But generally, people are like,
+this seems fine, we only know how to add more layers
+to face, but this is probably okay.
+So, let's have a look at some results,
+and then let's have a break.
+So, here we can see many, many tables.
+So, these are just the, or the evaluations
+of various backbones, right, of the connovolution,
+which we use to compute the features.
+So, well, using more layers is definitely the better.
+So, resonate with T and resonate 101,
+gives an improvement, well, we have seen this
+in many other places as well,
+and also using Resnext compared to Resnext,
+improved results, so let's put you would expect.
+Now, then we can compare the row you pooling
+in the row line layer, where the either we generate,
+the representations by this regarding the exec positions,
+or not.
+So, the differences are there.
+There are no very large or as you would expect.
+So, they provide an error table to show that it really helps.
+And now, the, here what we did is we run the Resnext,
+and we use the representation, which had the resolution,
+of, for 16, times 16, I'm thinking,
+do do do do do do do, yeah, I think, for 16, times 16.
+So, the,
+I think, I think, I'm thinking about the resolutions
+on the stage C for, right, so, I need to make sure
+I do it correctly do do do do do do do do.
+Because I think the last Resnext sizes A times A
+before we do the average pooling,
+that means it means to be 16, by 16.
+And so, when, when we do the representation at this point,
+then the rowing pooling lose something,
+but imagine that we did it on the, even smaller resolution
+on this A time A, which the Resnext generates,
+just before running the global average pooling.
+So, if we do that, right, if we do the rowing,
+the rowing pool, that, that lower resolution,
+the results would be even worse.
+But the features are actually better in a sense
+than doing the classification and the player,
+it is better than doing it there.
+But the problem with the rowing pooling is that,
+the fact that we are ignoring the positions
+that even larger, because now our lower resolution
+the presentation is even lower.
+While for the rowing align, the results actually improve.
+So, it seems that the features are better,
+we just need to make sure to represent the regions
+of interest thus beautifully.
+So, yeah, I promise the break, but I will cover this one last,
+like them, they will be a break.
+So, that we can start with a different topic
+or a different architecture.
+And just as the proof of concept,
+the mask, our ceiling was also used to do the human
+full systemation.
+So, in the human full systemation,
+it works the following way.
+You should predict the position of the key points.
+So, there is a fixed number of defined key points,
+like shoulders, knees, heads, and so on.
+And you should say where they are.
+And so, what they did in the mask are CNN,
+is that they had added another head for one right,
+which will predict these key points.
+And each key point will be predicted
+as a single pixel in its mask, right?
+So, we will generate the mask of a higher resolution,
+56 times 56.
+And let's say for the right shoulder,
+there will be just one interesting position there,
+like one pixel.
+And we will have as many channels as there are key points.
+And because only one of these positions
+is the interesting one,
+it will actually be a classification.
+We will run a classification into these many
+to 0.5,000 roughly outposts.
+And we will want the network to predict its position.
+That also means that we will use a soft max activation
+on all these pixels, right?
+That's so that we will make it into a distribution.
+So, instead of predicting like the real positions
+of the key points, we will use the machinery which we have
+and then we will predict them by predicting the pixel
+in the mask where the key point plays.
+And the thing is that this kind of approach,
+actually surpassed the architectures generated
+specifically for doing this task by,
+I don't know, I'm sure we'll margin, so that's that.
+And now, let's have a five minute break
+and let's compute afterwards.
+So, I hope you have enjoyed the break.
+And let's finish the lecture.
+So, are there any questions at this point?
+Is everything clear what we did?
+No questions.
+Nobody brave enough, last.
+Well, I will consider it to be a good sign,
+even if I am not perfectly sure about that.
+So, where we are, we are in a situation
+where we consider, in some sense,
+all the positions in the image,
+and for each of them, we try to predict objects
+of various sizes on these positions.
+So, now, let's attack the of different sizes,
+because what we do is, when we have the image,
+we run the convolutional backbone.
+So, in the end, we get some kind of a representation.
+Right, we just done some constant number of strides.
+And then here, we try to predict all the objects.
+If, and we try to predict objects of different sizes,
+using this specific representation.
+But for a very small object, it's probably not creed,
+because ideally, we would try to predict sooner,
+right, when our spatial resolution was higher.
+For very large objects, maybe it would be better
+to do it differently, I could generate even more,
+lower resolution, lower resolution features.
+So, the point is, we generate the features of the fixed resolution
+and we hope for them to cover all sizes or scales of objects.
+But that, of course, is not an ideal.
+So, what we could do?
+One thing what we could do is we could scale the images
+of the one of the input image into different scales.
+And then, run the computation in parallel independently
+for all these different scales.
+And then, predict the corresponding objects
+on the corresponding sizes, right?
+So, the very large objects would be predicted
+from a scale down image, where a small object
+could be predicted from an upscale image.
+So, the problem here is mostly just computation,
+because each of these scale images
+will need to be passed through the convolution
+on your network and the true take time.
+However, we know that internally, all those networks,
+which we have, generate, not just the final features,
+but they generate features of different presolutions
+internally, right, because they always start
+with higher resolution and then we generate
+small resolution features, which always contain more channels
+are like more abstract hopefully.
+So, what we could do is we could say, okay,
+so, let's consider not just the final output features,
+but also the intermediate ones, the ones
+where the resolution was higher.
+I believe the density or the width of these lines
+tries to indicate the number of channels, which we had,
+and there's like abstract mess of features.
+So, this would be performant in a sense
+that it would run the convolution only once,
+but again, it's not ideal,
+because if you consider these high resolution features,
+they are not very abstract.
+They are kind of local at this point, right,
+because we have just run some number of convolutions,
+like some small number of layers.
+So, the feature that they are dependent
+only on their local neighborhood.
+So, it's very difficult at this point to say,
+whether what we are seeing is the reason
+a blogger or not.
+So, what we will do is we will describe an architecture,
+which is called FPM, a feature pyramid network,
+which we'll try to get the best of all these
+combinations.
+So, it will try to produce the representation of the image
+for different sizes of the image,
+but in a way that the features are global,
+also for the higher resolution representation.
+And what we will do is, well, we will just do the unit,
+right, what would we, that discussed briefly
+at the end of the last week.
+So, once we go through the whole convolutional network,
+which we have here, then these features
+are globally in the sense that they have
+the largest visual receptive fields.
+So, what we will do is we will combine them together
+with the higher resolution features, right?
+So, what we will do is, okay, this representation
+that's fine, that's finished, that's nice,
+and high dimensional, and whatever, and now we will use it,
+and we will also take the higher resolution features.
+But these are not so abstract, they are more local,
+but we have the global features,
+we will combine them together,
+and hopefully get the best out of both of these two words,
+so we will get higher resolution features
+with the global information, right?
+And we will continue doing this until we get to the bottom.
+So, we will get the whole pyramid hierarchy of representations.
+They will all be in the same feature space,
+in the sense that hopefully the features
+will have the same meaning on all these layers,
+but each of them will contain the, like,
+high resolution information as well, right?
+And then what we will do is we will run the prediction
+on every of these layers, levels of the pyramid, right?
+And we will actually reuse the classification heads, right?
+So we will assume that the space of the features is the same,
+so we will just use the same set of heads
+and run them on all these representations.
+So how exactly is this combination going to work, right?
+When we have this combination,
+then these are the features which are slower resolutions,
+so we will scale them up to make them two times wider
+and two times higher, and then we will combine them
+with the higher resolution features from the left side.
+Well, these are in a different feature space
+and have a small number of channels.
+So we will map it to our corresponding feature space,
+well, just by running the one-time one-collision
+with as many channels on the output,
+as we have from the top from the global features, right?
+And then we just add them up.
+And we do this on every level of the pyramid,
+so we take the global features,
+so we just copy them to the higher resolution
+and add the low resolution yet local features
+from the CNN process.
+Now that this upscaling, it could be done
+by a transpose convolution, but in the paper,
+they really do copy every pixel into four pixels.
+So they just take this one-value
+and after this is upscaling, it's just there for times.
+They don't elaborate why they don't do it
+in a ten-level way, probably, it works fine.
+So how this would look overall?
+So let's talk about a faster RCNN modification
+where we would use this FPN as the backbone.
+So I did it in correct order sizes.
+So when I was 16 times 16 and 88 times eight,
+it was probably inception, so sorry,
+so seven times seven and 14 times 14, my mistake.
+So when we have this design at, right?
+Then normally, we just think about it
+as generating the fixed size vector for the model.
+The animation presentation, but internally,
+it computes the representation at various scales.
+There are these different stages
+where we do compute things.
+So what I mean is this table, this one, right?
+So what we could is we could consider the last outputs
+of all these resolutions.
+So they are usually denoted SC2 to C5,
+which corresponds to 0.2 to 0.5.
+And C2, that means the representations
+where we have performed strike twice.
+So the resolution will be 1.4 in height and width,
+up to C5 and in C5, we have done five tries of two.
+So that's 224 times 32, which hopefully should be seven.
+So these are the, is there really to,
+so these are here, so this is like C2, C3, C4,
+and C5 as well.
+And then the feature pyramid network
+will take these as the input,
+and it will produce the representations,
+which will combine both global and the local information,
+so they are usually denoted as P2 to P5, right?
+So on this image, that's what comes out of here.
+So this is P2, P3, P4, and P5.
+And they are computed exactly using this module.
+Then, and each of them will
+consist of 256 channels.
+So the classification heads, the classification one,
+and also the bounding box, the aggressor, and our shared.
+So we just use them and run the several times
+once for each of these layers or levels of the pyramid.
+And then when we run the normal maximum suppression,
+we run it across the whole hierarchy.
+So now on every layer, we consider just a single size anchor.
+We consider smaller and larger,
+but now we have representations of different resolutions
+in the first place, so we only consider a fixed size
+on every layer, so that means, in some sense,
+we consider the length of four sizes.
+Yep, but still, we consider various aspects ratio
+because some objects tend to be larger by extending humans
+or wider, like cars or something.
+So when this is done, it gets better results
+than all the existing alternatives.
+So here you can see faster RCNN plus plus,
+while you try to improve your architecture,
+you need to come up with names.
+So in many of these architecture,
+you will see papers for one more class
+that's been added to the name.
+So what they did with this feature pyramid network,
+still surpassed all the approaches.
+For example, the faster RCNN used the image pyramid,
+so by that, I mean that they considered
+different scales of the image from the input,
+but anyway, using this seems to work well,
+and it's something who's now being standardly done
+in the modern architecture, because for free,
+kind of free, you get different representations
+of different sizes in the same in the same feature space.
+So now we will describe a retina network.
+We are aiming to describe retina network,
+which is a single stage,
+detector which will work very well,
+and at the point where it was designed,
+proposed was the best, but we always describe things
+where the best on the other design.
+And but before we will get there,
+we will talk about one more, one more technique
+for improvement, and that will be the focal loss.
+So these single stage detectors,
+it was very difficult to train them, you know,
+sense that you couldn't do it,
+but the results were in this good
+as for the two stage detectors,
+and people were wondering why for quite some time.
+And then the people came up
+or some researches came up with the idea
+that the problem is the imbalance between the positive
+and the negative anchors.
+Because if you are doing one stage detector,
+you need to consider these dense grid of anchors
+and produce usually units of objects in the image
+while there can be thousands,
+or even tens of thousands of anchors.
+And so what could happen is that if you have,
+well, just not really image I wanted,
+if you have, I don't know, let's say, 10,000 anchors,
+then most of them are negative,
+most of them will not contain any objects.
+And for them, we have the classification loss
+or we should say nothing, right?
+So even if we are able to say it with like 99,
+put in 0.9% accuracy for each of them,
+they still generate the gradient of non-trivial size
+because there is so many of them, right?
+The average loss will always generate
+some non-trivial gradient unless the prediction
+is really 100%.
+So these negative examples,
+even if they are very simple and we can classify them well,
+well, with this accuracy it's really perfect, right?
+But still, even if the predictability is just this,
+the large, then the gradient these thousands of examples
+can accumulate, we will accumulate,
+can be as large as the gradient needed
+for qualifying the very few correct or positive objects.
+This can be of course improved in some way.
+So if you imagine that you put the data set,
+there are some positive examples and some negative examples.
+And there are much more negative than positive examples.
+You could, in theory, generate more positive examples
+by repeating them or you could filter out or you know
+or some of the negative examples,
+so that you balance the sizes.
+But another way how you can look at it
+is that if you have got like smaller number of positive examples,
+then when you compute the loss,
+you could multiply it by some weight, for example, say five times, right?
+So when you compute the loss and multiply it by five times,
+what happens is that the gradient, which you generate,
+will be five times larger.
+And this exactly corresponds to the situation
+and where you would repeat the same example five times in the batch,
+because that each of these which examples
+would get the same gradient, so altogether,
+these five same examples would generate five times larger radian.
+So we can avoid physically putting them there,
+but we could just do like a weight or this distance and multiply
+all the losses for the low frequency class with some larger number.
+And like virtually copy them in every batch where they appear.
+So this is something called people people do sometimes.
+And of course we could also use it in our case to improve the results
+and slightly it would help, but it is still not enough
+because coming up with this constant might be tricky.
+So what the people came up with in the focal loss paper
+is a special like the update to the usual cross-centra pillows
+by including this scale, like dynamically computed weight
+for the loss.
+So what they do is they took the cross-centra pages at this part,
+and then they multiply it by, well, one minus p model,
+that's the probability that we are not predicting the correct class,
+right, p model, the probability that we correctly,
+one minus p model, if not.
+So if the network is very good and predicts the correct label
+with 99% probability, then this would be just one percent,
+and it will be very small to say, okay, we are nearly there,
+we are predicting nearly exactly what we should.
+So let's scale down the loss because we don't need to learn so much.
+We are already being able to produce good prediction.
+On the other hand, if we are very bad at the prediction,
+and this constant will be going to be kind of larger.
+So this way, in the focal loss, they dynamically scale the loss
+so that the better we are at predicting the correct class,
+the lower the smaller the loss will be.
+And they even add hyperparameter gamma,
+which decides how strong this effect will be, right?
+So with the larger and larger gamma, this way,
+will get smaller, that's how it higher and higher.
+And so to show the effect of the loss,
+so here what we have is the all the background example,
+so all the anchors, which contains the object.
+And here, we have the cumulative normalized loss.
+So this means that 60% of the background examples,
+the easiest one, had 40% of the overall loss.
+So the idea is that even the simple examples are actually,
+like, have non trivial loss by by themselves.
+But they are different colors here, which I didn't say,
+so the blue one corresponds to gamma zero.
+When gamma is zero, then this thing is not there,
+and the focal loss is just percentages.
+So now, when we make the gamma larger and larger,
+then let's think about the violet one, right?
+What happens is that the loss for the examples,
+which we can classify easily, gets smaller and smaller.
+So what happens is that most of the negative examples
+will be scaled down significantly,
+and only a very small number of hard examples will remain, right?
+On the other hand, when you look at the positive example,
+from the foreground angles, then there, the effect is much smaller,
+right?
+And that's because the probability of predicting these correctly
+was much smaller, like the net purpose much more
+unsure with the predictions for the positive anchors.
+So adding the focal loss does not really change the distribution
+of these examples in an interesting way.
+So with the focal loss of the good, how we'll be at the town,
+is we were able to dynamically choose
+which of these negative examples are actually difficult,
+and then the ones which are trivial,
+don't have nearly any influence on the overall loss.
+So at eight, of course, the total width of gamma two
+is the best one, this is just the result of some kind of experimentation
+of course.
+And so I said that we could have dealt with the unbalanced
+issue by using this constant weight, which we could use
+for one class.
+Well, of course, the authors knew that as well.
+And so they said, okay, apart from the focal loss,
+we could also have this constant, so we could have constant alpha,
+which we would use as the weight for the positive class,
+and then the negative class would get one minus alpha.
+By the way, the keras look fit method,
+as an argument called class weights, class weights,
+which can be used to do exactly this.
+And in the end, what they do is they actually combine
+all these things together, right?
+So the focal loss they propose uses two weight weight things.
+One is the constant one, so that the positive examples have some weight,
+and then I got the big examples as a matter.
+And then it's the dynamic portion, which corresponds to the current
+probability predicted by the model.
+So all together, we have two hyperparameters,
+find the gamma, strength of the dynamic penalty,
+and the constant weight used for the use by,
+or used for the positive class.
+So now let's put it all together into an effort.
+The network will be called, or the architecture, it's called,
+it's a single stage detector, which means that we have the input image.
+We get the convolutional features, using the feature of the network.
+And then we will consider all positions in the image,
+right? And for each anchor for all anchors,
+we would just say whether their object is there or not.
+If it is there, we will also attach the,
+or we will also run the head, the bounding motion aggression head,
+and that will give us the positions.
+And this will be the final output, no more second stage or anything.
+So we are using the feature parameter architecture,
+and the authors want to reuse p3 to p7.
+So now when you consider a resonate that doesn't make much sense,
+because in a resonate, we get c3, c4, and c5, but that's it.
+And the c5 is already just 7 times 7.
+So what they do is they actually create c6 and c7.
+And then use the feature parameter network to compute the levels
+on the pyramid from p3 to p7.
+For each of these levels or layers,
+what we will do is we will again consider some number of anchors.
+We will consider anchors of different aspects ratios,
+but we will consider anchors of different sizes,
+but this time it doesn't make sense to use double or half,
+because that will be covered by other layers in the pyramid, right?
+So if we have got some size S,
+we will also consider third square of two times S
+and the first square of two times S,
+because then on next layer we will have two times S,
+right, because it is larger.
+So it will be like a geometric progression across the lengths.
+So I said that we will compute c6 and c7,
+we will do it by just a real single 3 times 3 convolution,
+and then on an activation another 3 times 3 convolution.
+So these are being computed in a very crude way,
+but it's a way how we can represent a really very large objects.
+For them we hope we have in our global information
+that and features just the 3 times 3 convolution
+which will have this try to be enough to get the features to the single place.
+So the overall architectural looks like this,
+and then on every layer we use the same set of heads.
+So we have both one, one head for the classification,
+and we use the same head on all the levels.
+And then we have another head for doing the bounding box regression,
+and again we use it on all the levels.
+So how does it work, actually,
+because we need to use the head on images,
+which have the same number of channels,
+but they have different resolutions, right?
+Because on different layers, the sizes of the image differ.
+Well, the thing is the head is implemented,
+so it's fully convolutional.
+So it actually can be run on inputs of any size, right?
+So the classification heads,
+there will be just a stack of many for convolutions
+with the strike 1.
+So the output of that will be just the same as the input.
+So in the classification head, what we will do
+is we will generate for every position k times a output.
+So k is the number of classes, which we want to predict,
+and a is the number of anchors, which we consider for every position, right?
+So for every position, we will produce a output.
+And for the regression head, then for each position,
+and for every anchor, we will generate four outputs for parameters,
+the centers, and the height, and the width of the predicted bounding moves.
+This different colors try to indicate that, of course,
+the bounding box regression and the classification,
+they have different weights.
+And when they say shared weights, they mean across the layers
+of the pyramid, not that these two different heads
+would share weights altogether.
+Regarding the activations, there is no activation on the regression head
+because, well, we are doing regression,
+and we are predicting the logarithms, and on the classification head,
+they use signals.
+So it's kind of weird in a sense that we are doing classification
+into k plus 1 classes.
+And what they do is instead of using the usual approach
+of using soft marks and something.
+They just say, okay, for each of these classes,
+I will just predict an independent probability.
+I think the reason why they do it is how the loss will interact with the
+calculus.
+I can see that with the focalos,
+given in the original paper, the focalos, well, this is the original paper.
+They describe the focalos in the binary classification task,
+where they are simple to say, the probability that we don't do it
+correctly, which is the opposite one.
+But the way how it downscale as the gradient
+may be, it works better if we apply it on the binary classification
+only. I'm not entirely sure how there is,
+and where they don't describe it.
+But the overall point is that they perform like k binary
+classifications for every anchor and for every position.
+For each of the possible classes and for each of these classes,
+the probabilities are completely independently, right?
+So you independently compute the probability that there is an apple in this position,
+and there is a table or something, and they don't need to sum to one.
+So during training, we again need to sign objects to anchors.
+So what we do is that whatever anchor,
+if we have a ground truth object to go to one,
+we just have an intersection of a distance of the person we say,
+okay, this anchor will predict that object.
+We will say that it's a background anchor,
+it doesn't contain anything.
+If the intersection of a name is at most 40%,
+and in between, it's like we will say nothing.
+We don't know, it's between 40 and 50. It's shady.
+The classification head is trained using this focal loss,
+using the hyperparameter's data scribe, so gamma 2,
+and for 0.25, I will talk about them on the slide.
+Well, they, at this point in the paper, they say that everything works fine,
+but that's not what the inflation experiments say.
+The inflation experiments show that they actually do is,
+it's definitely the best and you shouldn't use any other one in their task.
+And then the boundary regression head is trained again using the smooth L1 loss, the hyper loss.
+Exactly in the same way as in the past RCNN.
+So during inference, what we do is we ground the computation,
+we get predictions from different levels of the pyramid.
+And these predictions, we need to decide what the background is,
+because we are now not doing classification in a sense that we would have
+a class for a background, because they are doing total binary classifications only,
+then they only need to get the probabilities for the classes.
+So if at least one of these classes is 5% or higher,
+we will say it's a foreground object, like the one with a large probability.
+If all the probabilities are below 5%, we will say, okay, it's a background object.
+So we will take all the foreground predictions from all the levels,
+and we combine them using the non-maximum suppression cross, the levels.
+Like it can be done easily, because in the end every prediction
+just gets a bounding box in the original image.
+So if it happens that the same object was predicted by several levels of the pyramid,
+which can happen easily, then it will be a get trade-off again before the output,
+for really predicting the objects to the user.
+And they use the threshold of 0.5, close by to larger than they did in the past RCNN,
+because well, then it probably will be better.
+And they consider fixed size training and testing with various resolutions.
+We started for the ablation experiment, so they have different models for each of these resolutions.
+So let's have a look at how it worked out.
+So these are the architectures, which were existing,
+well, we know most of them, because of the, okay, this is the team, which we try, which we meant.
+But so here, so I was started with the Latin, and I will get it back to the right.
+So here, they compare with the two stage methods,
+so various faster RCNN versions by different authors, and also the one stage methods.
+And regarding the one stage methods, you can see that they are considerably better,
+but even regarding two stage methods, they were able to achieve results by,
+like, not really a higher, like if you look how these things differ,
+and they probably contain a lot of engineering for themselves,
+then surpassing them by, by four points, or something is, you know,
+trivial achievement. And this works across the board, apart from the very large objects,
+we were for some reason, one of the other architectures works slightly better.
+So here, what we see is the blue lines, are the retina net using the rest net,
+or maybe the rest next, probably a 50 for the backbone. So this is the inference time,
+and this is the, the mean average precision. So you can see that the smaller backbone,
+it is of course faster, but it doesn't get as high, while the orange one is the retina net with
+larger, larger backbone. And the other algorithms here are, yeah, they are just single stage
+detectors, which is why I was surprised that I couldn't find the two stage detectors,
+so let's have a look at the more detailed results. Here, we are considering the fixed size
+600 pixels resolution, and just using the resonant for the backbone. So here, we start by considering
+this fixed waiting, right? So let's say that we use the same lost weight for the positive and
+negative examples. That's this alpha of 50%, because then both positive and negative get 50%.
+So the network trains, it's not like it doesn't train, but when we start training with the
+focal also, we'll be able to get something like more like four points higher, but it does something.
+What we could do is we could increase the weight of the negative examples. So 0.75 means
+that 75% for the negative examples, 25% for the positive ones. So the negative examples have
+three times larger weight than the positive ones, they are in this sense, and generally the results
+are actually better, but if we continue with the scaling, so if the negative examples get nine times
+larger weight than the positive ones, the result starts to deteriorate and then the deteriorate
+further. So with the single constant weight for the positive examples, we couldn't have that much,
+we couldn't put in the point, but it could be it. On the contrary here, we can see how the
+focal of influence is training. So here, we have different sizes of this dynamic clock loss
+predicted or used by the focal loss. And here we have the best corresponding alpha. So somebody
+run a grid search, and we are only seeing the best constant weight, but of course they also had
+results there. So for the cross-entropy loss, 75% is the best, so this number is this number.
+Right? And then once we start increasing the weight, used by the focal, we can see that the results
+gradually improved. Also, when we do it, the alpha's decrease, right? And then the best result seems
+to be this gamma tool and some alpha. Now it might be interesting that this alpha's decrease,
+because actually the best combination means that the positive examples get only 25% weight and
+the negative ones get 75. Actually, in the best combination, we upscale the negative examples
+three times, but that's because the dynamic loss computed by the focal loss, the dynamic weight
+compared to the focal loss is so strongly at point that the positive examples have been boosted
+considerably, so scaling it down with this constant seems to be the best result.
+So that's the influence of the focal loss itself. Now they consider
+different number of aspect ratios and the scales of anchors for every pyramid level. So generally,
+using more like different aspect ratios is definitely important because it gives something
+like like two points. Now using large number of scales for every layer, well, it helps to use two,
+but when you compare two and three, it's not like the three is the best, it seems that
+actual edges just doing two scales would be better, while they use three in the final architecture,
+but they probably measure this only at the end, well, the full model was already trained. So
+still, adding these these intermediate scales is helpful, but maybe maybe not, not too much.
+And then we could see how we can make things better by, well, upscaling the
+scaling the resolutions dramatically. So if we consider the importance of sizes,
+400 and more, then generally you can see that the results get gradually better when we process
+images with larger and larger resolution, and that there's both for the depth of 50 and for the
+depth of 101, where you can see that the best results are achieved, as you would expect, with the
+largest input and the largest plate, and they will show the times required for actually
+using them. So that was written on it, which nowadays is considered like a very baseline
+object detection architecture, right? We have a pretty thin backbone, we consider all the positions
+or for each position we try to predict the object which is there, and the sit with many tricks
+in between, but generally it's kind of safe over the today. In previous years, I've described
+some improvements of that namely, efficient debt, which is based on the efficient net,
+backbone, right, just the efficient object detection. But the fact is that generally the
+object detection area has moved or improved considerably, and nowadays the efficient debt has
+very little influence on the today's architecture or the today's state of the field. So you can
+go through it by yourself or if you are interested, but I don't do it on the class anymore,
+by the way, this is a prediction from the efficient debt, or you can see an input with
+freely, very many objects, which hopefully kind of are a smart idea. There are people,
+motorbikes, riding here, which are not classified correctly, but anyway. So that is nearly everything.
+I want to finish up with a small detail, and that's we've seen batch normalization.
+And I've mentioned that the batch normalization works well if our batches are large enough, right?
+So to show that here we can see how the training on image net would progress with smaller batches.
+So with the batch size of 32 and 16 it's fine, but if we use for or less, then the performance
+deteriorates exactly because the noise produced by the batch normalization is too large,
+because we need to, because we would at that point need to, yeah, we very compute the statistics,
+we do it across the batch. So with the batch size is 2, we will really be just computing here.
+It from the 2 images and that scales the noise to be too large. And we can actually see the training curves
+here as well. So it's fine for 32 and then the performance deteriorates with smaller and smaller
+batch size for the thing is, when we try to find some kind of a detection network on top of it,
+then in many cases we want to pass just two or four images through the backbone. And then we want to add
+many possible regions of interest. And in that case, it means that we just cannot use the
+externalization because if we allow to using it during training, during fine tuning the architecture,
+it would make the training to fail in a sense that we also couldn't train the image net with
+a very small batch size. So in the case what people need to do is that you need to make the batch
+normalization to be frozen, which means we will not allow it to compute things across the
+batch, but we will always run it in the inference regime only. Even during fine tuning,
+so it works, it trains, but results are bad in the sense that they could be better.
+And so why am I talking about it now, is that in this context of the object detection,
+people have been using a different kind of normalization, which is called group normalization.
+So the batch normalization compute normalization across the batches.
+What we could also do, and what we will describe, also we will see, although later,
+is to do the so-called layer normalization. In layer normalization, we normalize,
+not across the batch, but every example normalizes across the channels. If you have fully connected
+layer, then we normalize the cross it, so there is like a competition inside that one layer.
+That it works sometimes, but not so well for images. So the people came up with a combination
+of that, which is called group norm, and in group norm, what we will do is we will normalize
+every image independently on the others, but we will normalize across some fixed number of channels.
+We can think about it as 32 groups of channels, and we will normalize in each group separately,
+like similar to the rest next, where we had these groups, so we could do it here.
+And this kind of normalization seems to work quite well in a sense that it is very insensitive
+to the batch size. If the batch size is large enough, it tends to be slightly
+worse than the batch norm, but it doesn't suffer this horrible drop of performance
+than the batch size is small. So here you can see the comparison of all the methods,
+batch norm is the best, then there is group norm, then slightly worse is layer norm,
+but even with very small batches, the group norm is very insensitive to results.
+So when we want to point you a model for object detection, it is actually better
+if the backbone is pre-trained using the group normalization, which even it itself is worse on
+image net, it is better suited for doing the fine tuning on these tasks. So doing that
+can actually generate you better results than running the batch norm, even if for the
+classification, the batch norm is better because we can allow larger batch sizes to be used there.
+So thank you very much for your attention. There will be a consultation later today,
+and the practicalest tomorrow with more chocolate, so I hope to see you all there and have a nice evening.
+So I forgot, there will be no lecture next week, right, because I want to keep this synchronized
+with the Czech parallel and there is no Czech lecture because of the Easter Monday. So
+free Tuesday or free Tuesday from the lecture point of view, but there will be consultations next
+Tuesday if you want to come, and there will be practicals on Wednesday, but no lecture. Thank you very much.

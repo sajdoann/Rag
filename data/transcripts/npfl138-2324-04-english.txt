@@ -1,0 +1,1110 @@
+So, with afternoon, everybody, I'm delighted I can meet you at yet another lecture of our
+reporting course in joy or lunch if you are going to eat or at least enjoy it if you
+have already eaten and I will try to provide also some nourishment for your mind in addition
+to the food which you probably have in your stomach. Before I will start myself, does any of
+you have some question come and something you would like to ask, no, I have carrots today so
+you can get a carrot or question you want. Yes? So, the question is whether did I have tomatoes last
+time? I had two packs of tomatoes yesterday and I ate all of them, apart giving it like
+ten of something like them to the students. So, you can get a carrot for your question if you
+want. You know, I am a secret agent of which it was to school program, just trying to improve
+the habits of students of eating, which was okay. Some other questions?
+Sorry, great. But they are funny and it's important as well because then we can be
+optimistic through the whole lecture. So, let's get started until now the name of deep learning
+was a bit of a misnomer because our networks definitely learned very deep, but they are going to
+be deeper starting today. So, at the end of today we will see networks with 152 layers or so
+and the depth will still be useful to them unlike stacking 122 fully connected layers which
+wouldn't do much. So, the thing is just stacking fully connected layers on top of each other is
+just not doing anything and people don't know how to effectively use it. So, we will now talk about
+architecture which are a bit different than just usual fully connected layers were all neurons
+on the input would be connected to the all neurons. At the end of the layer,
+but we will usually need some specific data for these two works. So, right now we will assume
+that we have data which is some structure in the sense that either there is some temporal
+axis so it can be speech like your eardrums are moving in time and you get the vibrations from me
+speaking here or we can have a spatial axis in a sense that if you have an image then there are
+two spatial dimensions like the horizontal and the vertical one which is different from just a random
+vector of numbers which don't relate to each other. So, seeing that we have this kind of data
+like our model example will be images because they are easy to image image image image in
+probably is the better word is. So, the data without structure could be tabular data like
+a patient and then five different measurements for them. So, I probably does a tabular data
+the only example which I have in mind. So, if you imagine having an image
+then if you have a fully connected layer right I will draw about the input and the output
+as images then what does the fully connected layer do well for every output neuron you have
+connections to all input neurons here right and this is true for all all the other ones as well
+right that they have the same colleges because they come from the same neuron but each of these
+edges have different weights but when you process for example images then this has at least two
+properties which we don't like much first probably when processing images it will be fine
+to consider just local neighborhood if you want to understand what a small portion of the image
+means probably looking just to a limited neighborhood could be fine right instead of looking at
+a complete different part of the image but the fully connected layer doesn't do that like every
+neuron is computed from all the input ones which means all the input pixels all the time would
+participate in producing a feature and so apart from this feature a lot of local features it
+makes sense for for our model to process same data independently on its position like if you have
+that's an ability to calculate it so if you have an appalling the image and you move it a bit
+then it would make sense to generate the same features just on a different position but again
+that's not what would happen with a fully connected layer because with a fully connected layer
+all those positions like all the output neurons have different set of weights so if you learn
+to recognize an apple in this position you need to learn it again to do it on the other ones
+and so what we will describe will be a different kind of of a layer which should be called
+the convolution layer and you can think about it as a very limited set of fully connected layers so
+it will still work like having some inputs, some outputs there will be some edges and there
+will be weights on these edges but there will be a limited in a way that both of these properties
+will hold so only local interactions will be taken into account and the the position of the
+the input of the some some input pattern will not matter for producing its activation
+for that we need the the structure in the data right so that when you say local interactions
+you should know what it means because you need to know what neighbors are but both in the time
+dimensions or in the temporal and the spatial dimensions the like neighborhood kind of makes sense so
+how it will look like in the one-dimensional case is like on this image let's say that we have
+got some input in the output or like an input and the output neurons so to model the local
+interactions what we are going to do is whenever we compute the value here we want to consider
+all the input neurons but just the corresponding one and then maybe some number of its neighbors right
+so right now I'm considering one corresponding neuron the input and then one neighbor to both sides
+this is what will make the interactions local so I like ignored edges to further ones you can
+imagine them having to wait zero when I said that this can still be considered the fully connected layer
+and the other property which I wanted was the local invariance in sensitivity to position
+then we will achieve it by actually using these weights right for all the possible positions
+so let's why the colors look like they look because all these edges they share the same weight
+and of course the the dark ruins this means that both our properties are true and also
+the like like a side effect is that the number of parameters of such a layer is very small
+right if we had like n neurons on the input and the output then a fully connected layer would take
+one square parameters but right now we are using three right so that's that's a side effect
+but but a pleasant one of course so for the two-dimensional case it would look like this we have
+got the input to the dimensional image so when we compute the value of of a neuron we consider the
+corresponding one on the input and then maybe some neighborhood so here we consider three times
+three neighborhood so for each of these nine numbers nine pixels sorry we have both nine
+weights like one for each of them right and then we compute the output which has to do with a dot
+product scalar product between the the pixel values and and the weights and so the same thing
+just numerically is on this image so the the first output we get by laying the kernel down here
+and and doing the scalar product the second output we would generate by laying the kernel here
+and when I say kernel I mean this this this weight matrix like we call it weights and we even said
+it could be a kernel when we are talking about the fully connected layer so it will be the same here
+so now let's do some some math not that it would be important for us
+per say for the unit for it but just to give you an idea of where this convolutional name came from
+so when you say convolutional it's an operation which is being used a lot either in calculus or
+also when you work with polynomials programming which so if we have two functions of a single variable
+x and w then the convolution is denoted with a star or a star and how it's defined
+well the convolution is again a function and if we give it an offset
+some t right then I will show you the images before we will go through the formula so
+imagine we have got some signal that's x here and then some window function
+so what convolution does is that it takes the window function and then puts it on different positions
+of the signal like that's what the t is the t is the offset between these these two functions
+and then computes the integrals so it computes the area under the curve but
+when the function is multiplied by the window function so when you are interested in knowing just
+some local part of the function you can achieve it by like running the convolution which will
+give you just the my local positions of the multiplications of the function and the window yes
+this is not commutative I would think we will mostly consider like if the functions are
+what's the metric or maybe the window function is the metric or maybe it could be but
+but generally not not as it is defined here I think so we can also see it in the in the
+action so let's say that we have got a function for example the blue one and then we have this
+this red window which we are sliding on it and so the convolution that the black line right which
+is always the the like the visible part of the of the blue functions you can see it like
+and smooth things out like instead of this function which goes up state globally this like
+gradually goes up and down and for other functions you could see that like if we have this specific
+window function then the convolution works really just as a smooth thing in in some local window yes
+yeah that's a good point so the comment in a comment is that it actually is commutative
+for the reason I can I can show you so I'm sorry I couldn't answer it correctly for the first time
+right so what what holds for for convolution is well I will formulate it for the for the
+vector instead of for the functions but it's the same there but but I think it will be more
+understandable in the in the dark discrete case so first let's define the convolution for vectors
+so if we have two vectors w and x then the convolution again is a vector and the output on the index
+t is scale product of elements from x and y such that there indices sum to t i so why this is
+interesting imagine that we have a polynomial a zero plus a one x to one plus a two x to two
+and so on and I will just write it down the coefficients into the into a vector so here I have
+got b zero b one b two and so on so I was a bit too optimistic so let me make this smaller
+right so the the convolution I will just say how does it look like well on the last position we have
+products of elements where the indices sum to zero so that would be a zero b zero and also
+although some some other weird ones which would crack around so assume for for a moment that upper
+half of these are zeros right so if there are zeros then the only interesting element which we will
+get here is really a zero b zero because all the other remaining ones will touch into the
+into the zero area so for the first for the index one for the second element well we get the
+product of a zero b one and a one b zero right because the again sum to one and then we have some
+some higher ones and for third position we would get this so what does this is if you look at it
+well that's just the multiplication of the polynomials right because you got a zero b zero on the end
+then you get a one b zero b zero a one because they are all the coefficients of of x to one
+in the product and so on so that the convolution is very much connected with with multiplication
+but in multiplication you don't consider these upper parts in the convolution you do
+but this is this is a place where you might have heard about convolution because
+it has this nice property that the the convolution can be computed as multiplication in the
+frequency spectrum right so what does it mean well consider that you will do an f f f f t right
+fast for your transform you probably have seen it of the of the vector a so let's this b a and b
+and now if you do it then element wise multiplication here in this domain is actually the same
+as computing the f f t of the convolution which means that you can compute convolution by
+doing the multiplication here and then running the inverse of an f f t but if you went to
+a ds you know that these things can be done and actually kind of quickly like quickly or
+then in the quadratic time so even if by definition this would need a quadratic time to be
+compute it you can do it quickly or and actually this is the way how you can multiply numbers
+in a sub quadratic time or there are many times many ways how to do that but on a on a run machine
+you can actually do this to multiply numbers in linear time right on run machine you assume that
+you can work with with registers of size log n in a constant time which is true on a usual
+processor like you can work with 64 with numbers with with thinking how many bits they have
+and so using such such operations you can you can hit a multiplication in a linear time
+because these at a piece are n again in the number of bits but if you can work with log n bits
+for free then they just take linear time for the to perform on your machine so I've got
+caught into it a bit but this is where the convolution you might have seen in because that's where it
+touches other other stuff but for us it will mostly really be just way of performing a very
+limited fully connected layers like computing local features in a sand that we'll have this
+window which we will put on our image or our our refunction and we will always compute
+the value of this this one pixel and it's surrounding so in the two-dimensional case
+how the convolution will look like if we have got an image and a kernel then
+what we will do is we will consider the kernel will usually be smaller you can
+imagine it being filled with zero physically so I did the definition we can assume they have the
+the same size but but it will be smaller so from now on let's let's think about it like that and
+so what we will do is we will consider all positions and when we have a position in the image
+we will put the kernel on it such that when we do the product of the kernel and the image where
+in the kernel we will go to the right and to the bottom and in the image we will go to the
+left and up then the resulting product is the result of the convolution now it's a bit weird
+that we are like going like bottom and right in the kernel but but like with with the negative
+indices in the image like it had an reasoning in the convolution and it it worked nicely
+for the multiplication but here we don't feel it care about it much so what we will do instead
+is we will in fact use a cross correlation like all the neural convolution neural networks
+in fact use a not really a convolution but cross correlation but there they are very much connected
+and so it will work you know straightforward sense that when we compute a value
+at one point we will put the kernel there it's top left corner and then we will just do the
+dot product between the pixels and the kernel weights and the result will be the result
+of this cross correlation operation right these things they are actually the same if you just
+like mirror the the kernel I hope that in this direction so we will start specifying how the network
+how the layer will look like in our layer so when we specify the dense layer we get to say
+how many values it should it should generate which right now we consider to just a single
+but single images so we need to to work on it to be able to to use them so in this case kernels
+or filters need to to consider actually not just a single value for for one pixel in the input
+but every pixel in our input image can actually have multiple values if you think about
+color images there would be three channels wide thread green and blue but generally after doing
+some processing to generate features like whether this looks like a head of a cat or something like
+and we could have many of them for a single position so our images are actually three dimensional right
+so what we do the convolution we will meet the kernel and kernel will again be three dimensional
+with the depth same as as the number of channels in the input right so we are considering
+a local neighborhood in the like in the image positions like so the kernel is limited and it's with
+and high but if there are multiple values for a single position in the image we will have
+weight for each of them or a set of weights for each of them the thing is on kernels we know
+we don't have any structure actually right it's not like the red and green because they are
+neighbors are more tightly connected then the red and blue which are further apart in this
+channel dimensions by they are just independent channels so if you are processing them
+we will generate a different or independent set of weights for each of them so this means that
+our kernels are now three dimensional and actually we will kick it up a notch again
+the thing is when we do the dense layer we say we want 20 output neurons right so here when
+we do the convolution we will also want to say we want 20 values for every position right we will
+call these channels so we will say we want 20 output channels for every position
+and then how it will work is that we will run like these 20 independent convolutions each will
+give us one output right and then we will stack them and get 20 outputs so when you just specify
+the number of output channels you can imagine that you have got that many red dimensional kernels
+one for each of these output channels and to keep them like nicely together you can
+imagine that we will call like them into a four dimensional tensor like a vector of three
+dimensional kernels and and one of the one of the dimensionalities will become or will be indexed
+by the output channel so in a two dimensional convolution the kernel is actually for
+dimensional right we have input channels output channels and then horizontal and vertical positions
+now the thing is if you think about like one time one image I think you imagine that our
+image is one time one and the kernel is one time one then we are in the same situation as we were
+before right we have a vector on the input because there is just one position we will generate
+like just one position on the output but some number of output channels and in that case
+with the kernel looks like well the kernel is matrix again connecting all the input channels with
+all the output channels for this one position right so another way how you can look at the kernel
+is that we are doing a lot of fully connected layers each going from the input channels
+to the output channels but we have a collection of these matrices for each position like for
+for the corresponding neuron and for all its neighbors which we want to consider when we compute
+the convolution right because the kernel is for dimension also like we can like depending on which
+dimensions we look at first we can consider it either to be like a set of these two dimensional matrices
+or you can think about it as a convolution and we have it independently for all combinations
+of the input and the output channels so to arrive at the full specification of the convolution
+layer what we need to specify we need to specify the size of the kernel right that means how many
+neighbors you will consider in both directions when you say local interactions mostly this will
+really be three times three so you will see larger ones but when you want to think about it
+three let think of a very small kernel just the pixel and it's it's neighbors like immediate
+neighbors when you specify the convolution layer that is apart from the kernel size you need to
+specify the number of output channels so that's the same way as in the full connected layer you
+will set how many output there you see one date here you say how many output there you see one for
+every position in the input image well maybe in the output image and then to be to be complete
+we will also consider a situation where like normally when you use the convolution you put the kernel
+on every possible position right so I would put the kernel on these three positions but sometimes
+you could say well I will want the the kernel is not to be applied everywhere but only
+I don't know you could say I want it to be applied on every second position right so you could
+say okay let's just skip over one then I will apply the kernel here then I will apply it here
+right so like the offset between the applications of the kernel will not be one but it will
+be some other predefined constant and that's called stride so if you are running convolution layer
+with stride two it means the output will be half the size because you apply the kernel only
+on on the even positions in the input right so if you want to write this down then the difference
+is just that when you consider like if you have the output position I and j then you just don't
+take that position from the input image but you take i times s and j times s so what does it mean is that
+if i increases by one you skip by s positions in the input image so if i says one everything is
+as I describe but we will see cases where we will use to or for or values like that right now
+it's not very obvious why it is important but I will show you
+and so the last thing which we need to specify when we create the the layer is to describe
+what should happen at the border until now I conveniently ignore the problem but there is a problem
+right if you image imagine a kernel of three times three which is the one which is here
+then if you want the the kernel to always fully intersect with the image then the output will be
+smaller right so that's what happened in this top left animation where you can see that we are
+applying this three times three kernel to every possible position but that means that the output is
+well narrower by one from each side but this is a reasonable setting and it's called a valet
+bedding right the bedding regime tells you how to deal with the borders and valet means that
+you only want to apply your kernel so that there are always the full image on on on the kernel
+so the kernel doesn't go outside of the image this somehow also interacts with stride right so
+you are going stride so you can see it i'm going over two positions and also stay staying
+put inside the image the problem with valet bedding is that it makes the output smaller
+I know you could say yeah just just one like a border of one on all sides but if you imagine
+these promised one hundred and fifty two layers then that means you would shave off three hundred
+pixels from your image or even more so we will need a way of making the convolution
+so that the output will actually be the same as the input and that is called same bedding for
+the obvious reasons so the sizes are the same and so what we will do is we will pad the image with
+reasonable or needed number of zeros so that the sizes of the input and the output if we do the
+valet bedding on the padded image are the same so this actually has a nice interpretation of
+bed window so imagine that we have got these three time three kernel so if we want to do
+same bedding you can think about it like that you will take the middle
+place or part of the kernel and you will put it on all the positions of the image right that
+will give you an output of the same size but near the boundaries sometimes it will happen that
+the parts of the kernel will be outside of the image and in that case the computation will
+assume that they are just zeros there you don't physically generate them there but you can do it
+now this is kind of straightforward so this is mostly how I think about it that when we apply the
+kernel we apply it like in on the on the middle position and then we look look around
+that's all considered neighbors to the left prime top and bottom but for this to work nicely
+the kernel needs to be of an odd size because otherwise there is no middle image and it's kind of
+tricky I'm not saying you cannot use convolutions of even sizes we will see kernels two times
+two or four times four are used on generating images for example but if you want to think about
+same bedding then the three time three kernels have this nice like interpretations so like here
+you can you can see that that it works in the same way like that when you have this
+the dot in the green one the kernel is centered on the corresponding position in the input image
+yeah so the question is why it's problematic for the valid bedding to decrease the size of the image so
+it's not really like a problem per se and we will see cases where we will use valid beddings
+but there will be networks which will use tens or hundreds of layers and if you imagine that we
+will start with the image we will quickly get to the situation that we will consider something like
+dozens of regions in the image so we will have we will have images with size of I don't know 13 times 13
+and we will want to perform more tens of convolutions on it yet so even if it seems that it's not
+much taking one from all sides it will be too costly because when we will be doing the processing
+we will not consider just pixels of the input image but we will consider larger regions of the
+input image so we want a way of not really throwing away things at the border so it's not a problem
+per se but in the future it would disallow to us to create deep networks
+do you want to carry it? you're welcome
+with both the process of this problem and we do the bedding to reduce the error and then the
+sound will reduce the speed of the problem so the question is is it a problem at the border
+when there are a lot of zeros right for example if the values there are quite kind of a large
+ish then normally you are using kind of them and here you would be using only four of them
+in this extreme case so yes it can be a problem but usually we will not handle it explicitly
+in any way we will just leave it to the network and hold the things will work out nicely at the
+border and in practice it seems it kind of does so one thing what the neural network can do
+is that it can like generate the activations to be reasonable not very large and we will also
+be seeing some normalizations so if you imagine the neural network generates activations which
+have a mean of zero then it wouldn't be such a problem but again still the variance at least
+on these numbers would be lower but we will not deal with it in any way and we will see that
+it will not cause the problem in practice even if in theory it could so now one technical
+technical nitpick which however will influence our lives the question is where to put the channels
+right if you have an image images like a collection of images it can be considered to be
+for dimensional right the number of images like a bed size height with and the number of channels
+this is what for example the MNIST data that do for you right you get these four dimensional
+tensors where the channels are on the last position and this is usually called an age WC
+in the QDAT terminology and in Keras it's called channels last so this works the best on CPUs
+because of the pieces right so when you do some programs you want to iterate over the channels
+for forest single positions so you get them in a single or consecutive cash lines
+so some frameworks like TensorFlow, Jackson Keras do it like this on the other hand
+when the NVIDIA were was implementing convolutions it was actually faster to put the channels on top
+in a way how the memory is distributed in a port like the like inside the warp core like if
+you have the computation like a parallel computation on the GPU there are some ways how the
+memory they process should be divided and for that it is actually more beneficial if the channels
+are there on top so this is called the channel first version and PyTorge goes the other way so
+it represents images in this way now the thing is complicated in a sense that for the later GPUs
+like the ones from QDAT and higher so the ones from I don't do years ago and onverts
+for them it's again faster if the channels are our last for reasons I cannot really explain
+I just know that it's the case so we actually want the channels to be somewhere which fades
+to the computation not not where we will have them so both of these frameworks both
+PyTorge and TensorFlow converged to a situation where logically the channels are last
+in TensorFlow and first in PyTorge even if physically they can be moved around either on your
+request or when the framework wants to yeah so the question is why it cannot be handled by the
+compare it can be handled by the compiler and it is handled by the compiler in TensorFlow in PyTorge
+you have to say that you want it probably you have to say that you want the continuous in the
+channels last I think you have to say this one command in TensorFlow it's and Jack it's being
+handled by the compiler automatically but you still need a way of how to describe these when you
+construct your neural network so you need to have some like a logical way how to do that and
+unfortunately these two frameworks converge to different logical representations like so physically
+they can be in either case but in TensorFlow it will always say you the channels are last
+even in the app physically at the beginning and in PyTorge it will always tell you that they are first
+even if physically they can be lost and you can have a look at what actually is happening
+but it's a mess so if you read source code you never know whether the channels are logically
+first or last and then when you run it you also don't know where they are physically but usually
+you don't care you just hope that somebody will do it nicely for you but it means that all the
+pipelines for augmentations and preprocessing and so on are like technically different for
+for PyTorge TensorFlow because of these different positions but it's just a technical trouble
+nothing too serious is just a heads up that this kind of exists yeah the performance like
+one thing is that it's like generally like if you write one code you need to generate the channels
+some of the positions where the frameworks expect them so if you are doing some
+data preprocessing pipeline you need to know whether your feeding data depends on the
+flow or to PyTorge but the reason why we shuffle them inside is performance and originally it was
+just CPU versus GPU where CPU like channels last and GPU like channels first nowadays different
+GPUs prefer different positions so you can ask QDNN during the compilation like like on this GPU
+do you think it's better if the channels are first or last and it will do sandwich marketing and
+say yeah so I prefer this kind of thing and then you need to recompile and do a lot of
+transitions in your graph and something so if you are doing things like in like a compile kind of
+way like in in denser flow or checks where you take the computation for your neural network and
+compile it then it's kind of simple because when you get the hints and you just do the compilation
+you avoid all the transitions or you drew it once then you keep them somehow then you do it again
+or something in PyTorge is tricky because you don't do these penalizes before so you are
+responsible for knowing what your card does the best but PyTorge is also trying to have this
+distortion compile which hopes to handle it and if they are in some cases it will and in some
+example yeah so this was just a technical thing so now let's like to take a break from
+conclusions but let's back so before I will show you how an architecture using
+conclusions that sure look like we will need one more operation and that will be a
+pooling operation so a pooling operation well that's just a convolution but with a fixed
+operation which we want to do right or the pooling operation considers some local neighborhood
+of the values on the input so it has kernel size sometimes it's called pool size but instead
+of having quads and then performing the dot product it just computes something pre-determined
+and that's either average pooling or max pooling right so here we have a pooling
+player with kernel size or pool size 3 so it considers three values on the input and we have a
+striped for which means the size of the pooling player will be smaller now this is how we will
+be using these pooling players so in most situations we will consider a striped do for them right so
+if you are a cheque speaker you know that pooling actually means having in check right so it's
+like a nice name for the but for in English it doesn't work but you can think about it is
+having in both the horizontal and vertical direction but of course the striped can be set it's just
+that when I will say we will do pooling then mostly I will mean pooling with a striped too yes
+so the question is why having an explicit pooling instead of just conclusions well originally people
+thought about it that when they combine several like regions or informations together it might
+be preferable to use some specific function and explicitly the max pooling function cannot
+be performed by a convolution it's non-linear operation so it can do it easily definitely but the
+effect is that people use this explicit pooling operations for decay or maybe more but since like
+2015 people are using only convolutions with strides so I cannot answer easily in a
+question like people started with that because they thought it would be a good idea and it's not a
+bad idea but in the end just getting rid of that and doing always convolutions with strides
+too and you want to have the resolution seems to be the best solution in practice anyway but still
+when we will be talking about the architecture with they will contain a lot of pooling
+layers which is why we are talking about them and still if you are creating a simple
+as simple architecture I would still put max pooling in it probably without thinking
+you still haven't got your character right if you want one
+yeah so I will postpone the answer to your question by by this single by the slide
+because I will have a more setting ready to to to to to to to really answer that right but it's a
+good question and I will I will get to it very quickly
+yes definitely like the average pooling can be performed by a convolutional kernel with the uniform
+weights or one over and or something so the average pooling is definitely learnable by by
+a convolution while with max pooling it's not not a simple max pooling is not linear so it's
+it's not not easy to do so to answer why by pooling can what does it going to do so imagine that we
+have an image right and we want to perform the so-called image recognition so we will want to classify
+the image into some number of classes right feminist classification over again you get a
+picture from some social media and you want to say whether it's cute or or even cuter right or something
+like that so how we are going to do it well we will start with these convolution so we have
+a large image and we are doing like local convolution in a sense that each value depends on some
+small local neighborhood we will have some number of channels to represent this information but
+after doing this for some time we there will probably be little progress because we have
+learned what we can from these very small small areas so what we will do at that point is we will
+say okay now we have learned something about small areas let's learn something about larger areas
+and we will do that by combining the areas into larger ones so maybe like like this so we can
+merge two times two windows into single one so we had a large number of more regions and after
+after this we will have a smaller number of larger regions so we will start learning about larger
+portions of the image and this is where the pooling class right because the pooling does this
+like combining of the information from small smaller regions into larger ones and then we will
+continue right we will learn something about these larger areas because they are larger we will
+probably use more channels for them right because now this this one region like takes a large number
+of pixels in your original image so we can actually connect to a layout the number of channels to
+grow and again when we have learned enough we can do this again and start learning about even
+larger areas of the image and we will do this like learning for some time and then the pooling
+class which means generate larger areas and some number of convolutions and generate larger
+areas and we will like switch between those regimes until we get to the situation where we know
+something about very large regions so about probably like a constant number of regions like two times
+to four times for in the in the whole image right so the way how we can look at it is that we will
+start with an image which is large but a small number of channels we are doing the convolutions
+and the pooling class so then when at some point the horizontal and the vertical resolution of the
+image gets smaller now here it seems that it gets smaller but what this means is that the individual
+regions or pixels of the representation corresponds to larger regions in the original image right
+and then again right after pooling it will see like we have got smaller number of features
+but that's because they they correspond to larger regions in the input and you can see that the
+image gets wider because we can allow to generate more channels now that we have smaller number of
+regions and we will do that until we have decided that it that's enough by the way until now the
+the convolutions can process image of any size right because they are shared across all the
+positions they don't depend on the size of the input but at some point we want to combine all the
+local informations in the image into like the final global meaning and for that knowing the
+positions might be interesting right because if you see I don't know like a yellow circle on the
+image and if it's in the top right maybe it's sun if it's on the bottom then maybe it's like a child
+try cycle or something like that so the positions might be interesting so what people did at the
+beginning is that at that point they flatten the image right you know we have done this at the
+beginning of all our processing and then just do some number of fully connected layers and the output
+layer right so at this point these the first fully connected layer will know exactly where the
+regions for which we have the features are because it constructs weights for each of the
+region so that from from that point the positions in the image will matter so this is like the overall
+structure of of a neural network and we'll see an example of that immediately but before we will get there
+let's stop a bit with this question of what should we do when we actually have the horizontal
+vertical resolution I imagine that we have got the image I quit and now we will do a pooling with
+straight to a convolutional with straight to and the the image will now be smaller so we will want to
+increase the channels because now that we know something about larger regions we can allow to know more
+and the question is how much larger like what should happen with the channels and what we will
+do for us is we will come up with a number so that the computation required to do the convolution
+before and after the pooling operation will be the same so when we had the upper the image height
+times width how many operations we needed to perform in the convolution well for each position
+we needed to consider all the input channels I will denote them c and the output channels I will
+also denote them c and then the kernel height and width I will say m and m the kernel can be
+rectangular in theory but but I have drawn square one right and then here when we have done the pooling
+with try to what we can afford is we can afford having two times as many channels
+because these would cancel out with the half width and high so if we double the channels then
+because the complexity is square in the number of channels in in some sense a number of
+computation will still be the same but even if the computation is the same the size is not
+in a sense that if you do this this pooling then the the result is only half the size
+of the original because we have one quarter because of the spatial dimensions and we have doubled
+the number of channels right but when you store these you only store vector for for the layers so
+when you like a thing about the activations they will get smaller but because the time complexity
+is is quadratic with the number of channels it will keep the roughly the same but the convolutional
+kernels will be larger definitely because the convolutional kernels
+this size right after pooling if we double the number of channels the convolutionals will have
+will have four as many weights as before the pooling because for the convolutional kernel the size
+of the image doesn't matter so let's have a look at AlexNet if you remember AlexNet
+was the network which performed well in this competition with this very long name i i can say
+it only in check quickly so i will just not say the abbreviation i will say image net large scale
+visual recognition challenge actually that's the we get an animation we should say which of these
+1000 classes are there i talked about it on the first lecture and we will discuss the competition
+for the rest of the day because we will it was used as a place where everybody send their improvement
+in the image recognition area and also that's what we will be talking at the end of the
+today's lecture so we will usually evaluate using the so-called top five error which means that our
+system can actually produce five labels and if any of them matches we did it correctly so it's like
+top one is accuracy and and top five is like a sim like you can make four error accuracy
+so this is the the network they came up with and this is one of the sources of these this
+booths of deep learning so let's let's have a look at how how it is so the input images are of
+size 224 times 224 they had three channels are g and b right so at the beginning they they wanted
+to scale down the horizontal and vertical resolution like the thing is individual pixels don't
+mean much right so we need at least some neighborhoods for it to make sense so what they did at the
+beginning is they did the convolution with a kernel 11 times 11 so it looked at the patches of 11 times
+11 pixels and they they used a stride of four which means they consider overlapping ones but but
+not not like a densely overlapping ones yes so what happens with what yeah I'm sorry I don't understand
+over yeah yeah yeah yeah thank you so yeah so the what happens is that some pixels just
+are part of several outputs like if we have got these 11 times 11 windows right then then this
+window will be like the value of the top left output and then we move it by four so it will be
+something like this yeah we don't turn about it it's fine like like we get features like for all
+this region we like find the the the patterns in the corresponding window but we don't mind that they
+it's fine yes I like even the the third thing we'll have enough sort of four right so the the pixels
+in this area will will contribute to three three values in the output
+so after this step we have generated the image of size 55 75 roughly four times smaller
+right because of slides stride of four and we have 96 channels so you can say that it doesn't
+seem there is a 96 on the image which it is not the thing is at that point they actually use the
+GPU well they probably programmed things directly in CUDA because well the things like CUDA and
+library sort of something didn't exist because people didn't know that they should actually
+made them so and the GPUs weren't as is good as nowadays so they they implemented this on two GPUs
+because they didn't fit on one right so they separated manually the model between the two GPUs so
+that's why it's a top part which is not very visible and the bottom part right but nowadays you
+would just create a single hidden layer with 96 channels but they they created to it for the
+aid I will talk about it as if they had just used one GPUs because it's something which people
+stop doing when when the people's generally like implemented like doing this GPUs started implementing
+or programming like manufacturing strategies so and then we will see the the similar similar
+trend as we talked about so we will do max pooling player and the convolution so this
+max pooling means we are max pooling and then running a five times five convolution with more channels
+right so smaller resolution large number of channels again max pooling and three times three
+resolution internal with even more channels here we only have a convolution right no max pooling
+another convolution and finally we will do a max pooling and then a dense
+highly connected layer with 496 neurons another one and the output layer with 100 yards right
+so this kind of follows our general trend we start with the large image and then we go to motion
+but pooling maybe some number of color motions but pooling and flattening can and the
+dense connected then the connected layers now the reason why is this 224 well they had images
+of 256 times 256 and so when you do this you probably go from the from the back position so here
+after this max pooling what they had is they have 7 times 7 times 256 so
+kind of smaller regions still because there is 7 times 7 regions in the image each with 256 channels
+and then when you go the opposite direction right this this max pooling will make this into 13
+and then another max pooling will will make this into into 27 and then 55 and then 224 so
+this 224 is like a convenient number which which we get used so that then when we do the
+revolutions with the appropriate settings we will get something something nice on the output
+yes
+channels so why we are doing it or because because it's our choice like we could decide not to do it
+so we do it deliberately in a in a sense that when we know something about these small regions
+that means we have a tensor of size height with and then some number of channels right
+then we we interpret it as we know see number of information for every region right
+where this here this one pixel might correspond to some large number of pixels in the original image
+and now we will do the pooling so we will start learning about large regions
+so that we can generate more structured features so we do this and the size of our internal
+representation will be smaller and so because we want to describe larger regions
+they might contain more information so it might be useful to increase the number of channels
+just because we think it will allow us to to better describe what these larger regions are
+so we decide to just say something larger than C
+yeah so they are filled by the first convolution so the thing is the first convolution which we will do here
+we will just say even if you have twenty channels on the input generate four pitch channels on the output
+so it will generate forty kernels and each of them will be a linear combination of the input features
+so we filled them with originally randomly initialized combinations of the input channels in the window
+yes yes yes yes that that that's how it is with the kernels because the kernel is they are parametrized
+both by the input and by the output channel so we can think about exactly that for each output channel
+you have a three-dimensional kernel which computes that channel so when we have multiple output
+channels we have multiple different initialized kernels so these new channels are filled with
+combinations of the of the channel which we have but each channel with a different combination
+so at the beginning you probably will have some lines in the input and then you will start combining
+them into trees and arms and I don't know circles and things like that so these more abstract
+features will be constructed from the basic ones but it makes sense that there could be more of them
+like once you will start seeing faces and end laptops and things like that so we like generate
+a larger feature space when we consider larger regions yeah so we initialized the kernel is actually
+in the same way as we did in the fully connected layer right we there we used this this
+initialization so we will still do it here because we can consider the kernels to be a collection
+of matrices which each takes a vector of input channels a generates a vector of the output channel so each
+of these matrices in the kernel will be generated according to the well in keras to this
+bengior or which is a exact Xavier initialization so they will be generated from this range
+where this n and ms are actually the number of the input and the output channels
+so here we use the fact that the kernel is our in fact still a collection of matrices like the
+if you think about a convolution with kernel one times one then that's just a densely connected layer
+it's a fully connected layer which you apply on every input position right because if the kernel
+is one times one then like this is not here this sum is not here well the c is these ms and ms are
+not here this is not here right so for the one times one kernel you just consider the input to be
+a collection of vectors and you apply your matrix on them so and because we can understand kernels
+like that then we can just reuse many things from the fully connected layer area like initialization
+haha yeah so the question is if there is some reason behind this why these kernel sizes
+why exactly these dimensions I don't think there is a good reason and we will spend lecture and
+how seeing how people were evolving or like trying to wrap their head around to see what a good
+architecture is so there are some ideas behind them so this is kind of inspired by the human kind
+of processing I will get to that in a moment but the explicit numbers are just random and we will
+see that they are definitely not optimal like you can think about this as a project we're like a
+bunch of PhD students were motivated to say let's try this it will be great and they just
+just program it in a garage like week before the line and they just try to make it work you know
+how it is right but then it worked it was very successful so many people came and try to improve it
+and a lot of people found out a lot of ways how to make it better so this was like the first proof of
+you definitely don't need to know these numbers or something the only an important thing from
+this slide is that it worked and I will talk about it more and that they use this thing where
+you do the convolutions and then you do the pooling so you start with some low level features
+and you generate more and more abstract features which corresponds to larger and larger regions of
+the image until you get to the situation we have got abstract enough features which you can just
+pass through in a classifier and and be done with it.
+Yeah so the question is why are these connections here so this is just like an engineering
+thing because they had these two GPUs so the interactions between the GPUs were costly so
+ideally you would want them everywhere but that made the computation too small so they said that
+they used just this one because that seemed to help the most but from from the next like apart from
+this network apart from Alex Net people don't they didn't play the networks when they didn't
+need to so this is the religious like technical detail but they said that this is the place where
+it did the best for for the time it had taken and they also do it at the end right here they also
+swap everything so let's look at the training details so the model has 61 million parameters
+whether it's too large or too little that depends on how you look at it and it's trained on 2 GPUs
+for 5 to 6 days the SGD was used but size was 128 the moment to most also used 0.9
+not the nester of but the usual one and it used L2 regularization strength which is very small 0.005
+so what I mean by that is that the the moment to most updated by multiplying 0.9 here we have the
+gradient update and here we have the way decay where they have a learning crate and the way decay
+and the parameters are so it's very small the learning crate decay was manual what I mean by that
+is that they started with 0.01 and then when the student watching the graphs said okay the validation
+error is no longer improving let's lower it down they they failed the computation changed
+the learning crate started the process again it loaded the weights and then it continued right
+so they don't have anything schedule it's just when it looked like it's no longer improving
+let's do it I don't know if they say how many times they do it but usually you do it 2 times
+sort of 3 times this this division by 10 and of course nowadays you could just use a cosine
+and a crate decay or exponential and a crate decay but they relayed just did it manually maybe they just
+tried it at the beginning and it was doing something so they say yeah let's let's do it
+they used relevant linearities actually this was one of the first papers we used
+relos in some non-civil settings they they have a graph so this is from the paper by the way when
+I have a figure I always have the reference here so you can find it right if you are interested
+it or if I didn't say enough about it there is a paper and a number of bigger and you can get
+the additional details there so this is the training with a tonnage non-linearities and this is
+relo and this is training error rate right so this should ideally go to zero so the
+relo ones are obviously much faster than the tonnage so at this point they probably did the
+initialization reasonably correctly but still the tonnage non-linearities suffer this
+vanishing gradient problem like when you get to away from zero and the gradients will be very
+small and they won't be propagate nicely so this was the paper where people say okay
+relative to be great they also use the dropout as probably one of the first papers or actually
+the official dropout paper came out two years after this but but still they used it they use it
+on all the fully connected layers only not on the convolutions we will discuss dropout and
+convolutions on the next lecture right but here and here on these on these two layers which also
+worked very well and as I said on your images you want to do data augmentation there is no reason
+not to do it so they did it and what they did it they did it something kind of simple so
+they had these images 256 to 156 and they just chose a random square patches of this smaller
+size from it right so because you choose a different patch or the time you can think about
+as horizontally a vertically translating your larger image and they also did horizontal
+reflections like horizontal because horizontal is kind of fine vertical reflections are kind
+of weird like people standing on their heads pavements on the top it's not very natural for the
+network to see but but the horizontal are fine like even if I'm here well like this but
+if I had a mirror here like you wouldn't be surprised looking at me from the mirror so
+and these are images like photos so it kind of exists yep that's a good question so why are we
+doing translations when the convolutions don't care well the convolutions don't care but these
+fully connected layers do right so so because of them it is definitely
+definitely interesting and also what they did is that they only keep kept part of the image so
+even for the convolutions like a different translation means the borders will be kind of
+different so even that could cause some some differences so even for the network which are fully
+convolutional we will see such ones then still even the translations can help even just because of
+the boundary cases are the fact that you can see the smaller or larger portion of the or different
+portions of the image so during inference they do is they actually just they just don't process
+one image and say the world class it is they do something like transposed to unsabling in a
+sense that they generate several different patches from the image they want to classify they
+run each of them through the network they generate distributions for all of them and unsabled
+those in a sense that they average these output distributions so what these patches are that they
+consider well it's like a top left corner top right corner bottom left corner bottom right corner
+each with size 124 times 124 and then they consider the middle or the center patch and for each
+five patches they also consider their horizontal reflections so they have got 10 10 patches
+I don't think I have the the numbers here directly but later in in a two more papers or something
+we will see the evaluation what it does generally improves performance one by one percent
+for for nothing in a sense for just running the network 10 times during your inference
+so the interesting thing and especially the people who know about how how vision works
+is that the way how Alexander decided to process images is somehow reminiscent to the way how we
+do it so I am by no means knowledgeable in this area but my cartoonist view is when you like
+members look at something that it works like this like the light goes in the eyes there is the
+retina which like gets the impolices and they get transferred via via some of the neurons
+to the back of your head where there is this V1 visual cortex and then it does some processing
+and gets into V2 before there are many of them and they are connected not just in the forward way
+but they are cyclic but but in the in the first area like in this V1 center it's known that the
+members react to something which is called Gabor functions. Gabor functions are like you can
+image in a plain plain or sine wave multiplied by a Gaussian distribution right so we can
+imagine this being multiplied by some circle so what you get are like straight lines right
+because the straight lines are like the sine going up and down that can be rotated so they are like
+rotated straight lines and then the sine wave can do it again at wider so instead of flying
+it can really just be dots and they are like circles not really not really always lines and the
+the Gaussian distribution doesn't make it local right so it's not like a full plane of these but
+they are just filters which are kind of kind of local so these kind of shapes generate response from
+from from like when going out from your V1 center and these are the kernels learned by
+by Alex net in the first convolution layer like the first convolution layer is 11 times 11
+so these like this one image for example corresponds to one kernel three dimensional with
+height number of channels right and you can see that they well are kind of similar in a sense
+that there are some number of rotated straight lines and generally like like edges or interfaces
+between colors and even more like non regular shapes but people are like oh this is a great
+like we are doing it in the same way as the animals do we have convert the nature and so on so
+yeah it's different in ice I really like it on the other hand when you look at it like
+with less enthusiasm like if you imagine that you need to describe an image and at the beginning
+you will be using 11 times 11 kernels how they can look like like now not many 11 times 11 kernels
+which might be interesting right you will need edges there so like it's it's not surprising
+that it looks like this because how else it would look like but through maybe it could
+could look like like a lot of random noise instead of nice regular patterns and it looks like
+nice regular patterns but by the way when I say that this is like a pattern like how does this
+corresponds to the convolution operation or anything the thing is when you are computing a neuron
+by considering some number of input neurons each weighted by some weight right that's what
+fully connected and convolutions do right each neuron here is a dot product scalar product
+between some input and some weight vector I can case of images the input is like a neuron and
+it's channels and it's neighborhood but generally it's like a dot product so this dot product
+that is actually so the length of X times the length of W times the cosine of this angle between them
+right or you can know both cosine similarity and that's like the dot product divided by the
+norm and that is that is used to define the angle between them so the larger and this is what this
+is like this activation is this quantity so it's like weighted similarity between the portion
+of the input and your your kernel so that's why I say similar and finding patterns because the
+more the input is similar to the to the kernel the larger the deactivation
+yep and it even takes into account the the size of the the lengths right so you can think
+about it as a weighted similarity because the the neural network by increasing the norm
+of W it can say I want this pattern to match even if it's not so similar maybe as the other
+other ones right because if you imagine that there are several neurons there each have their
+own weight vector and each can define the weight of their of their pattern matching
+so this is just so that why people talk about patterns because in some sense that would
+the fully connected layer do thus so I think now is the time to have a break right so let's
+have a five minute break and we will continue afterwards so I hope you have enjoyed the break
+and now we can get to the rest of the lecture we will start lightly with nothing
+nothing very complicated and that will be just me trying to convince you that for some reason
+the convolutional networks work well with images if you remember the no free lunch theorem it was
+like no algorithm is universally better than the other one but if we have some specific data
+then maybe some algorithms can be better so I will now argue that the the convolution
+architecture is somehow well tuned for processing images in a sense that it gives some some bias
+or some information to the model so that when it learns it learns something like it learns
+very easily on the real real images so to try to to show you how it works imagine that you have
+got an image of zebra and maybe it's like a lower scale right and you would like to obtain a
+higher solution version of that so you can do that by really scaling in Photoshop or something and
+that will generate image which is blurred right in the sense that the details just for there
+in the lower resolution so it's kind of really you could use the model which was trained or
+many images so that the higher resolution is much more much more nicer but we will do a following
+experiment which will work surprisingly well imagine that we will do a neural network the neural
+network will get an image on the input and but the image will be random noise white and black and
+it will be one fixed image right so we'll be in a very different settings than until now we will always
+put the same input noise to the network the network what it will do is it will be the convolutional
+networks so it will work similarly as a SWTV if it's described so it will do some number of
+convolutions pooling convolutions pooling so it will generate some like global representation or
+some like abstract features of the image and then it will reverse this process and generate an
+image on the output we don't know how to do it yet we will see how to do it in the next lecture but
+you can imagine that it does some process which is like the transposition of convolutions that
+in like a similar sense it will generate an upscale version from this point of view I know that
+you know not really sure what's happening here but just convolutions and we will add a short
+cuts here and what you will do is we will actually let the network to generate larger image
+then we want then and then I will zebra right and then we will scale it down manually to
+produce the output of the lower resolution zebra kind of thing and then we will train it so we will
+take this network always put the same noise in it and we will always want it to generate this I
+don't know zebra here on the output right and when it generates the zebra nicely we will look
+at what this high resolution version looked like and the answer is that it will be this image
+which is definitely much nicer than just upscaling so the for some reason the network does not
+generate just as large blurry zebra because when scaled down it should be the original one but
+it actually generates a nicer higher resolution version even if it hasn't seen a single image right
+no real image on the input like like real one only one training image and random noise
+or we will consider so there are the technical details there but I will skip them we will
+consider also some other situations in these situations we will no longer be doing the upscaling
+and downscaling so we will just start with random noise and generate the image right so image in
+that we want to generate the image with the text in it and so that's what that's what our
+lost is we want to generate there and during training what will happen is that actual at a network
+will first generate this image and then if you train longer and longer it will hardly try to also
+generate the the black text but even if it doesn't know what the black text means it's much
+easier for the unit to actually generate this like it tries to generate the black parts there
+it just cannot it's it's too difficult for the for the convolution because for convolutions you want
+things to be local and invariant to positions and that's completely contrary to what the text
+is right it is depends on the specific position in the image it's not really regular just
+just text with some weird shape so these kind of like high free provincial details are very
+difficult for for the convolutions to learn or in the bottom part here we say the network
+regenerate this noise image and what it will do is first during training it will generate that
+one and then it will try hard to actually add the noise because it's difficult for the
+convolutions to to generate this kind of thing right because it's like a random so you need to know
+well this specific pixel has this random noise in it you cannot infer it from from the neighbor
+or something right so when you train you start by generating this nice real image and only then
+you'll be able to learn these these difficult parts right or imagine that we have got this image
+and we will train it and we will train it but only outside of these black areas right the black
+areas they will we will have no loss for them so the network can generate whatever it wants
+for the black areas we only want the remaining parts to be fixed to the image and so these are
+four different runs of the network and if you don't zoom very very close enough it looks
+actually very normal and even if you zoom very close enough it's kind of difficult to spot some
+problems maybe here this is like a weird kind of pattern there but it's not visible even here
+so it's very hard to tell so all this shows that the real images really follow these properties
+of of revolutions in a sense that we can describe real photos using local interactions and the
+same response everywhere unlike many other details like random noise tags and things like that so
+the the convolutions they have this nice bias of like choosing a model which will favor
+inputs which are the the images which will actually throw throw edit so people really like this and
+there is a paper about it many more visualizations and technical details I will skip it it's just that
+just the architecture of convolutions is very suitable for processing images because the
+architecture of convolutions like have some some properties which are actually the ones
+which are the real images stand to then to keep or follow our field cool right
+so now let's see how people improved on Alex net in 2014 to this image that's
+large scale visual recognition challenge competition there were two interesting entries
+then we will talk about both of them because both are somehow interesting
+influential that is a bit away by the way the the errors went down from 16.4 to 6.8
+so less than double of errors than Alex net so all the numbers in Alex net definitely learned of
+and so here this is a VGG net in a VGG net work the authors say okay there are so many choices
+so many numbers let's make it somehow simple regular so that we don't have to design
+too much things and so what they did is they say all of our convolutions will be always
+three time free convolutions so why is that a good idea well consider five times five
+convolution right that can be done but if instead you do two three time free convolutions then
+in the five time convolution each pixel depends on all five times five neighbors in the original image
+so if you do one three time free convolutions then this pixel depends on these three but then
+this one for example depends on these three so positively this this one neuron actually depends
+on all these five in the original input not necessarily as in a convolution but still they can
+influence it so from the and and from the practical reason we will see that it actually works well
+so instead of one five time fine convolution we can do two three time free convolutions but the
+thing is running two three time free convolutions is actually faster why it is well the five time
+fine convolution has this five times five 25 but positions where the kernel needs to be applied
+when you have a three time free it's just nine positions so even if you do these two times
+it's just 18 applications compared to 25 in the five time fine network this has this something
+got to people have accepted a lot since then so we will mostly go for the three time free convolutions
+because we can get the similar size to receptive field and by receptive field I mean like the
+large of the image which influences the value of a single output while being cheaper right so that's
+one choice the second choice is whenever we do my schooling we will double the channels no weird
+numbers like 90 say x minus 28 one hundred I don't know 12 whatever we will just double them
+so they always started at 64 and only only when it would be more than 512 they didn't
+go higher because it would probably be too large or something so they just wanted to limit it to
+this number and they considered five different sizes or three different sizes and some variations
+of these networks and the only thing where they differ is the number of convolutions which you do
+in every so-called stage right so it's like convolutions and then one max pooling player with a
+striped two and then another set of convolutions and the first convolutions there will double
+the number of channels and we will do that until until the end after this max pool we will have seven
+times five hundred and twelve input features and then two fully connected layers that the same
+as in AlexNet output layers of consideration and then we are done so these versions the variants
+they they name them from A to E nowadays it's more like you will say VGG 19 because that's what
+people know more and VGG 16 these two can still be seen somewhere so maybe you have seen VG 16 or 19
+this is the number of parliament parameters they had it might be surprising that the numbers are
+kind of large like double what AlexNet had and that they don't really increase that much
+with the deeper networks why is that well the convolutions themselves they don't have that much
+parameters like even this convolution with five hundred and twelve channels it has three times three
+times five hundred twelve squared so it's like two point twenty five or some or so million
+parameters so it's not so much the problematic part is this first fully connected layer because
+it has seven times seven times five hundred twelve features on the input right so that's four
+ten nine so it's like twenty five million twenty five thousand features on the input and four
+thousand features on the output which is roughly one hundred million parameters something like that so
+this is a huge layer and that's the reason why they didn't want to get more than five hundred
+and twelve channels because with two hundred and twenty four channels it would be twice as much
+parameters so most of the parameters actually are here but if we look at the results we will see
+that still the depth will kind of help us considerably so the training is the same as before
+the only difference is that we have a larger batch size but one thing convolutions they are
+invariant to to position but they are not invariant to sizes if you have a larger problem
+small Apple it looks differently so if you just recognize it by by finding this this better
+in the image then the different sizes will not be handled automatically so what we can do
+is well we can include scaling into our data augmentation right because then if we have smaller
+Appalachian across smaller horrors larger horrors like even if it looks like opponents or
+even if it is like a giant monstrosities still horrors right and that allows the network to
+not be independent to to positions by itself but but learn to ignore scaling differences
+in the input data so they did it during training so what they did is that when they had this image
+256 they scale it to like randomly chosen larger portion and then they chose the random
+fixed size batch right so they they come to the even larger versions versions of the image
+and of course during test time you could also do it you can say okay during test time I will try
+different scales of the image to to process and then average all these possibilities so what we can
+see here these are the versions which became big the char more and more deeper and when we look for
+example at this error we can see that they generally are I should here generally are improving
+with the depth well for e they they don't but but generally like even if the number of parameters
+doesn't increase too much and in more and more convolutions seems to improve the result of course
+training larger images or even training like randomly augmented scale images improves the
+result as well so here you can see we have about 0.6 here 0.6 here and even 1.1 here so that also helps
+and if we do the evaluation also using different scales then you can see that we can get
+how the point just for trying different scales of the image during the during the evaluation
+even if it's trained in the same way so in the in the competition what people do is people use
+ensembles actually right so they they did just the two model ensembles which improved just
+just marginally but still still it improved by the way we will see that some of these errors
+are validation errors and some of these are test errors but the test set of this image that
+set is actually closed so it's kept private on some servers and you can only submit your
+your predictions once we can you will get your results back so many of these experiments are
+run on the validation set which is publicly available because the test set was being used in
+the competition and people were like like it's like in the records like you just are not allowed
+to get too many evaluations and no evaluation on the test set but so every team can have only
+one account in the competition and then it's it's like in the kindergarten some teams I like
+fake the and they had three different accounts if they used to evaluate more evaluation then
+somebody found out then they had to bend from the competition like you know we say
+people that now we are in adults but I am not really sure that the adults are much better than
+the children but anyway I will really just look at the numbers are kind of similar anyway so I will
+not talk about it anymore but but the numbers can be from different sets actually so that's VGG the
+good thing about VGG is that it's simple it has good performance more than twice better than the
+analogs net but it's large and it takes some non trivial power to run the other contestant
+in the same here in the competition competition was an inception network it was also called Google
+and during the time of the submission but later they dropped it and they just go they just went
+with with inception in the inception they they went the other way around they said let's let's do it
+effectively don't just go for the numbers like let's come up with an architecture which will
+not be very large it will not require too much competition but it will be it will be good now
+this seems like an ice and dignified motivation the reality was that at that time Google didn't
+be needed GPUs will be way how to run neural network competitions so they didn't have them and they
+completed everything on CPUs so they have distributed CPU kind of things so they say like let's
+do it for the better of the humanity to have these these models which are which don't require
+that much power but the fact is they couldn't run the more more advanced models right so they
+had to find way how to how to train these things on CPUs and they say okay so when you imagine
+that we are doing some transformation there are different sizes of convolution or different
+operations which we could do and maybe we want to do all of them right we want to do some
+number of one time for a convolution they are cheap but they don't consider a neighborhood or you
+we want to do even some five times five convolutions they are more expensive but maybe if you do
+small number of them it would be beneficial like some features could benefit from larger neighborhood
+and some other one so they thought about how to make it configurable what number of input
+and output channels the convolutions will use well the number of output channels let's simple
+right the convolutions just generate as many channels as you want but on the input it's not as
+simple so what did they they realized is that you could use one-time one convolution before
+and let it generate small number of features which will then be passed to the convolution which
+will be wider right so these are like dimensionality reduction blocks whose goal is to generate
+small number of filters on the input because together it will be cheaper than running the full
+three time three convolutions on all the inputs and this idea of these dimensionality reduction we
+will see it in many other places because that's what people do a lot they also saw that maybe
+having three time three max pooling point also be interesting that always has the same number of
+output channels as the input channel so there they need to do this afterwards so what they could
+do it even before but but they do it afterwards so then if you have a network you have very many
+hyper parameters to tune right because for each of these blocks you need to decide how many the
+channels will go here here here and here and the overall network looks like this right
+it's like I don't know this is not very visible just to get a feeling right that there are like one
+two three four five six seven eight nine of these blocks and for each of them you need to come up
+with the hyper parameters how many of these channels will be processed where so this is the table
+which shows the same thing in a let's let's color for a way so we start with a larger convolutions
+seven times seven times two nowadays you would just have three convolutions three times three but but they
+they they wrote this before the VG came out right then there is a max pooling player so that means
+we have gone to 56 times 56 something similar to this Alexandre 55 times 55 times 55
+resolution one more convolution and then there are these inception blocks and for each block this
+block has the in number one hundred and ninety nine and ninety two input channels and you need to decide
+how many convolutions or filters will be generated by the one times one convolutions how many
+you will generate channels as the input to the three times three convolutions how many output it will
+create how many inputs to the five times five how many outputs and then if you sum this this and this
+because that corresponds to these four outputs and you concatenate them you get the resulting
+256 channels so you can imagine how fun it was for somebody to generate these hyper parameters
+because where they are known they are not regular or anything so somebody really ran a lot of
+experiments on the CPUs which they probably had a lot of of compared to the GPUs and they were
+able to come up with the network which is also kind of kind of good one very interesting thing
+which they have is they don't have this fully connected layer with one hundred million parameters
+at the end that's a good thing and that's probably the interesting thing which came out of that
+well it's one of the interesting things came out of that and they say okay so we will end up in
+a situation where we have seven times seven regions one two three four five six seven and also seven
+in this direction right they have got one thousand features for all of them and why we did this
+fully connected layer is that we also wanted the information about positions like to like combine
+everything with everything but if the network was deep enough before these things then maybe
+if you have like like one value here this this value it's not very nice sorry so maybe if you have
+one one here if there was large number of convolutions it was influenced by a large portion of the
+image so it can actually have an idea of roughly where it is and how it can relate to all other
+pieces of the image just because there were so many convolutions that it is already seen it so what
+they say is instead of the fully connected layer let's just do a global average pooling so
+global average pooling means we will run an average in the spatial dimensions so from this seven
+times one thousand twenty four you will generate just one times one times one thousand twenty four
+so for the first channel you will take the average of all the 49 positions in the image
+right so you can think about it as an average pooling of kernel size seven times seven with
+stride seven I just just one application of that and it seems to actually work if you have
+enough convolutions and it's something what people started to do because they definitely like it
+very much right because then you can process actually in put of any size right just the final
+average pooling will average different number of regions but you will get a fixed sour fixed
+representation for an input of any resolution so they train it in kind of same way so they use
+fixed learning schedule with an exponential decay they also rescale things so I probably skip this
+in the VGG nope nope yeah I skip it in essence sorry my mistake so they also do this let's
+pass multiple portions of the image during during inference but they are crazy because they
+they consider really large number of possibilities price when you have an image they say let's consider
+three configurations the left center the middle center and the right portion right for each of them
+we will extract four corners and four okay I'm writing it somehow wrongly but so yeah
+but that's still these are these three configurations we have oh sorry I got a bit
+got a bit tight checked but I will I will make it I will make it in the end don't worry
+so this is the sixth this is the okay so now I know so this for that's the four different resolutions
+which which we will consider then we have these three squares in the image for each square
+we will consider it's corners it's center and it's scaled down version which fits into this
+224 times 224 so that's six and two horizontal flips it's not important how exactly these
+first you can see I don't know it as well but they just do many of them but the good thing is that we can
+have a look at the evaluation so here we can see what's the difference between doing one
+like the prediction of one single page or ten pages these are the ones which also the BG
+and Alex not used so we can see that we get something like a percent and then if we go and
+use this 144 evaluations per image we can get two point two additional improvement for
+well I'm not saying I'm not sure if for free is the correct correct phrase because it's
+144 times slower but it's only during inference so it's not so bad right and again they are
+they also do ensemble so with an ensemble you get something like two or one point three percent
+for free for seven times longer training right so they were able to actually get good numbers just
+because they did the large ensemble because the BG G single VG G had an error of seven or something
+so it was it was still still better but their model is ten tenth the size of the VG G and
+also uses less computation but it's very difficult to come up with because tuning the architecture
+is really problematic so people have stopped doing that after some time because it was just too
+costly to do it so now we will see something new something interesting in 2015 people came up with a
+nice new strategy which is called batch normalization which helped a lot with training deep neural
+networks and the motivation they they describe is the following so let's have a network it gives
+any image on the input classification on the out and if we consider one specific hidden layer
+somewhere in in the middle right then we can think about the network as to write the other one
+which starts with the image and generates the features on the boundary and then the second
+network which takes the features and generates the output classification now during training
+this is part is trained to generate better classification given these features
+and then this part is trained to generate better features from the input image but the thing is
+when this first network generates different features the improved ones right that might be difficult
+for the second part of the network because the second part of the network was used to the old features
+and now it gets new updated features so it needs to adapt right because during training these
+features change so that the letter part of the network needs to update or catch up to that all the
+time and that can make training more problematic and they say okay let's stop the problem and let's
+just normalize the features which we will pass through this boundary and when they say normalize
+they say okay so maybe it's bad if they move around or they get larger or smaller so if you think
+about like the dimensional inputs then we could each dimension independently so each channel
+independently we could normalize so that it would have a mean of zero and the variance of one
+right this can be done by subtracting the mean dividing by the square of the variance you can
+verify that this has a mean zero and the variance of one this way even if the initial portion of
+the network decides to increase or decrease the sizes it will not influence the the letter part
+of the network so that's just fine now you could ask why zero and one maybe some other values
+would be nicer pride maybe whatever so yeah it's true zero and one are some constants so
+let the network decide instead right so we will give the network two parameters beta which will be the
+expectation of the new distribution of the mean of the new distribution and gamma which will be
+the standard deviation of the new distribution right so the visualization allows the network to say
+okay the distribution out of this layer should have the distribution with a trained mean and
+trainable variance so there are a few questions were to get these variances and the expectations
+well what we could do is we could just take all the training set pass it through the network
+and and get this right the training set is only one million images so if we only take an hour to
+do it so and we only need to do it for for I don't know 20 layers or so so in a day we will do an update
+or something right so we actually already dealt with this right we wanted the gradient which was
+an expectation over the whole dataset and instead of completing it exactly we just sample it
+using a batch but we have a batch right so that's what we can do we can estimate this this variance
+and mean on the batch we are currently processing through the neural network so during training
+and now you see why it's got a batch normalization right because we normalize the cross batches
+so let's say that we have got a mini batch of M examples they are vectors as you can see because
+well we have some number of features and what we will do is we will estimate the mean
+now this is completely across the batches not across the the channel so each channel
+it gets normalized independently we will estimate the variance the the unbiased sorry the bias
+estimate is actually being used I went into the source to really see it and they really
+advised one but well it probably doesn't matter then we do the normalization
+we need to have some epsilon there so that we avoid the writing for zero and then we
+do the part where the network can use the trainable parameters so we add beta here so that it's
+a new mean and we multiply the features by gamma so this gamma and beta are trainable parameters
+they are vectors right because it's one beta for every dimension for every channel which we have
+usually beta is initialized to zero and gamma to one and both are train by the optimizer just
+there's gd just big propagates things and just abdates them whatever network wants
+when we want to use this in the neural network it's actually being used between the linear
+activation the linear transformation and then the non-linear activation right so we put it between
+convolution and and trial for example now when we do it there is little sense in using bias
+in the transformation because we center things here right so if we add bias to all the images
+and then we center them then we'll just subtract it again so it's more efficient to not use bias
+there because well this beta that acts as a bias right so the bias has moved from the linear
+transformation to the end of the of the batch normalization so now we have nearly described it
+we need one more thing and that's what we will do during inference because during inference
+we might not necessarily have a large batch to use maybe somebody would want to do a prediction
+on a single image or maybe somebody would be mad if if the same image would be in a different batch
+it would generate a different prediction because that's what would happen right because the the
+batch here actually influence the individual examples so during inference we will need some fixed
+mean and variance what we could do is we could pre-compute them on the whole training data
+so after finishing the training just one more hour to compute the statistics right but that's boring
+well not some boring it's in simple it's in practical because just want to stop your training
+and then use the model whenever you want so what we will do instead is we will actually remember
+the statistics over some large number of last training batches so you can imagine that we will
+track these means and variances these ones computed during training but across large number I don't
+100 of the last batches that's a good good estimation of these statistics over the whole
+train set right because they will come from thousands or tens of thousands of examples that
+seems kind of fine so how to do it effectively well we already know that we will use the
+explanation moving average for that right so we will do the exponential moving average of the
+batch estimated means and variances well our momentum will be kind of large so 1% comes from the
+last batch and 99% comes from the previous batches and we will do this during training without
+using these values at all we are just just storing them but then during inference we will just use
+instead of computing them from from the batch so during inference we are independent on the
+batch size we are deterministic even the intermediate but we don't need to do any additional
+work to start the inference just the training just does this for us automatically so this is the
+batch normalization operation one last thing if you are in a fully connected layer right so idea is
+that this is one one layer with hidden neurons then the normalization happens across the batch
+right so that's why the blue thing is there so different channels gets normalized differently
+now if you consider a convolution in convolution the question is what will happen with the spatial
+dimensions like we know that we will normalize the cross-bick size we know we will not normalize
+across channels so what the position or about the positions do we normalize for each position
+independently or do we also compute the averages over all the positions and the things
+in the neural networks we are in the convolution networks we wanted this this invariance
+for the positions so if we normalize for each position independently that will break it
+because depending on what the other images in the batch are the same pattern could generate
+different activation in different positions and even from the practical point of view you need
+beta and gamas for each place which you normalize but you cannot allow yourself to have beta
+and gamas for for different positions in the image you don't have one type of vector of the size
+of the input image so when we are processing images we are normalizing all all across the spatial
+dimensions right so we normalize one channel across the batch and also across all the positions
+of the channel in a single image so even with a convolution the bias is always a vector of size
+of the number of channels and the same gama right so we just normalize the channels so now let's
+have a look at what this brings us so the people who implemented inception naturally came up
+with this so they they use inception as the baseline so when they just use the batch normalization so
+every convolution is now convolution without bias batch normalize then that's the red part right so at
+the beginning the training was much faster and it was able to achieve slightly better accuracy in
+one third of running time or something but they also realized that the training is kind of stable
+so they shy also increasing the learning grade times five and that make the training still
+stable but very fast so that's the dotted thing here right so they were able to surpass the
+validation accuracy with one 15th of the runtime and with even larger larger batch size they they
+got to even better results so they they realized that and they probably didn't expect it at the
+beginning that this actually has regularization effects so they could throw away the dropout from the
+from the last layer they were able to decrease the way decay to one fifth and still the
+network generalized better right so the dropout and the and the way decay they decrease capacity
+of the model somehow but with batch normalization because regularized by itself they can stop
+throwing away capacity just for the generalization performance so that's why things got better
+when no dropout and smaller way decay was was actually used and they also show that they can
+train a model with a sigmoid activations which would be very deep because the batch normalization
+can actually take care of the of the saturating non-linearities problem right because if
+you want to stay inside a narrow range of the activation then well the normalization can make
+the network do that and also even if your activations are scaled down the batch normalization
+will scale them up because it wants to keep them in some given range so without any magic they were
+actually able to make networks with very bad activations to kind of work right more perfect it
+just shows that it helps with training of the view of the of the deep networks because all these
+difficult scaleings which we did are now for free but normalization is independent on the like
+if you take weight matrix multiplied by one thousand and then you better normalize the output it
+makes no difference all right it will just scale this thing off so with batch normalization the range
+in which you generate the weight matrix actually does not matter all these square root of six
+computation which we did were for nothing if we can use batch normalization in our network
+yes sorry so the so that it's like times five and times clarity and it means we are using
+this larger learning case so these are like the improvements like the baseline uses the
+exactly same settings and these increase learning crates and they don't use the dropout and all these
+improvements so yeah so the question is if one specific feature would have like a constant value
+or something very small what would happen well the thing is if the batch normalization wants it
+to stay very small it can because it can learn this this this this learnable variance to be
+very small so it's up to it's up to the network it can decide to scale that maybe if it is too
+small and it's not a good idea it can it can scale it but if it wants to keep it small it can
+right you can just use gamma of 0.00 or whatever and it will it will be able to do it so I'm
+not saying that it will do it effectively but in theory it can make it small whenever it wants
+but the thing is if there is a feature which is constant all the time all across the batch is
+problem very useful so you probably want something else so scaling it up and trying to to change it
+might be even a good idea but but physically it can make it small if it wants to so the inception
+guys follow their route generated very complex modules with more and more hyper parameters but unfortunately
+nobody really wanted to follow them so this this way is just dead and I will just keep it
+for the better mental health for all of us and I will get to the last model which I want to
+describe which is resonant resonant is the winner of the 2015 competition it decrease the error
+again by half or something right from 6.8 to 3.6 and it comes up with a very interesting idea which
+we will be seeing in many architecture and their observation was that even with batch normalization
+training deeper networks is still difficult right they consider 20 layers network and 56
+layer network convolutional one and even the training error was much worse for the deeper network
+and also the test but the question is why is it the case right the deeper network couldn't it just
+do the same thing as the 20 layer network and then select off for the 36 layers right I don't
+all listen to music or whatever right you just can could do nothing and then you will be able to do the same
+thing but the network cannot do it and they cannot do it because copying information like this
+doing nothing is hard for them like copying information means that the weight metrics need to be
+very specific it need to be some kind of permutation matrix or something which like our
+orthonormal matrix or something which really like copies all the information through so we could help
+we could design our our our layers to not to express the output but to express just the
+difference just what should be changed in the input when producing the output right so
+if you imagine that we will add this so-called residual connection or skip connection
+over some layer then from now on this layer is just the difference
+between the input and the output so doing nothing is simple you just do zeros in the middle and
+and generating zeros that's simple for this gd right like if you're grading and saying yeah
+as zero so it's fine that's much easier for networks to achieve so in the resments the main idea
+is we will add these shortcuts residual connections over the computations and that will allow us
+to train nicely so to heaven idea I know that it's not very visible right but this is the deepest
+vgg19 and this is the 34 layers residue on network and you can see these residual connections
+each over this block and each of these blocks are three-time three convolutions
+the good thing is that also during during back propagation the identity connection has
+a derivative of one so the gradient it can flow easily via these residual connections
+to any part of the network like it's not constrained ever it can just use these shortcuts to
+get everywhere so it kind of makes sense that if each of these blocks during just some local changes
+then like each of them can start training because all of them have the head the signal of what they
+get on the input so what these blocks look like they either use two three-time three convolutions
+crelos, batch norms and they they found out that the it's actually better if this rello
+is moved after the addition right so it's convolution rello convolution versus your connection
+and the rello that was a fluke in a way how they did the evaluation so we will see way like later
+that the rello shouldn't actually be there but but but they were there in the in the original
+in the original architecture now the thing is if the dimension is larger if we have got many channels
+the problem is that the three-time three convolutions is a bit costly right because it's three times
+three-time input and double channels so we could use the similar trick as the inception
+guys did to make the computation cheaper to allow us to use more layers to have a deeper network
+so what we will do is we will first reuse the dimensionality from 256 channels to 64
+then on these 64 channels we will do the cost-lay three-time three convolutions and then again we will
+expand these channels back to the original dimensionality which is weekend which we can then
+add right so this is just a way of making this block cheaper it's called botanical block because
+that is the thing is the middle which makes it makes it narrower so and then they consider
+different number of layers like from these 50 layers onwards they use the botanical block
+just because they they wanted to be cheaper no not that it wrote to be so large and not
+to require so much computation so what they do is they they say depth is the interesting thing
+like let's make the blocks narrower but but let's get deeper blocks of them other than that you
+can see that this generally follows the VGG in a sense that it's like convolution max pool
+some number of convolutions and then when we decrease the spatial resolution there is no explicit
+max pooling but we will use strides right so always the first convolution in this block has
+strides too and it doubles the number of channels right so that allows us to get get to this
+situation and with these updates if you use there is a newer connections then the the depth
+actually improves the results like on the on the left it's no residual connections and
+there are there on the right so it helps and this image which we have seen actually shows
+how the VGG looks like with how the loss how this random view of this 850 000
+dimensional loss landscape look with the residual connections and without them and the results are
+right so I would just quickly go through the training details we will do batch normalization
+after every convolution before activation usual SGD the learning crate well they still don't say
+how exactly they divided but from the graphs you can see that they decay the learning crate at 25
+percent and 50 percent of the training these are the reason for these weird jumps right because
+that the place where the learning crate was divided by 10 and again and again here in some later
+papers people do it sometimes in the third and second third of the training or they do 3
+decreases there is no fixed way how to do it but it's at least there is some rule not someone in
+the garage says no let's do it right no drop out smaller way decay and also resizing during training
+an inference and that's how they were able to go to the crate results so I hope you enjoyed it
+we will build up on it on the next lecture so thank you very much for your attention there will be a
+consultation there is Piazza there is practical so right whenever you have any problems and I will be
+happy to see you next time

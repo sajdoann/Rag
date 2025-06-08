@@ -1,0 +1,1314 @@
+So, good afternoon, everybody.
+Let me welcome you on the next lecture.
+We are in a new phase where the lectures are numbered by two,
+this is two digits.
+So, it's lecture 10 already.
+So, now everything will double.
+They amount of content.
+You amount of assignments, though.
+Don't worry.
+So, before I start myself,
+are there maybe some questions, suggestions,
+or anything on your side?
+Something you would like to know.
+So, the question is that when using WDK in the technical competition results were bad.
+So, the question is how large the WDK was.
+So, if the WDK is too large,
+then of course, it will underfeit because.
+So, that's one possible thing was happening.
+It was just too large.
+The usual, I don't know which, which weight do you use?
+Yep.
+So, that's the one from the default and chaos, right?
+They have different defaults in Pytharch, actually.
+But, yeah, I would just try going for one 10 of that and see whether it would influence something.
+Because, for example, in the convolutional networks they have,
+they use 100 times less than the default.
+They use 0, 0, 0, 0, 0, 4.
+So, I would just try with a smaller one and you will see.
+But that's my guess.
+The best answer which I would do.
+If I would do it, I would just try and see what the effect of that would be.
+Will be an hopefully.
+It should like increase when when you decrease the, sorry, from your point.
+When you decrease the WDK and then it will go down.
+If there is no WDK and either it will go slightly up at the beginning when it's small.
+And then it will decrease because it's, because it's.
+Or, underfitting or it could be the case that it doesn't help much.
+So, it goes straight or even down.
+But, we are probably too too much to the right.
+So, you need to see what will happen to the left.
+So, that's my guess.
+But, if you try to 110 and 100 and all of them are still very bad then we can try thinking about it further.
+Yeah, no, no, I don't think there is a hidden reason.
+My thing is just the hyper parameter is not at the correct value.
+Okay.
+So, now the.
+My turn.
+We start talking about the structure prediction on the previous lecture.
+Right.
+So, we had a sequence and we tried to generate a sequence of labels on the output with various.
+A constraints on the sequence.
+So, in the first one, we tried to to perform spin labeling.
+So, we needed neighboring labels to fulfill some condition and in the end.
+We just ended up by generating the sequence of text which fulfill these conditions and was the best one.
+And then in the CTC will also be.
+Try to generate a sequence where we didn't know the alignment.
+But we assume that the order of generating the elements corresponds to the order of processing the elements on the input.
+And we just tried all possible alignments.
+So, now we will talk about the sequence to sequence architecture like a general architecture which processes and generate sequences.
+And it's like ultimately strong in a sense that it can model any dependencies between the labels.
+And the idea is that when we predict the whole sequence, we do it by computing the conditional probabilities of the labels.
+So, every label is being conditioned on the whole input sequence and the idea.
+But if you have a recurrent network, then then in theory all the input elements could influence that one specific output.
+So, also add an explicit dependence on all the labels which we have already generated.
+So, this is like generally true.
+You can factor joint probability in a lot of conditional probabilities.
+So, our goal will be to somehow model this conditional probabilities as well as possible.
+So, the initial attempts tried to do this quite literally.
+So, the original architecture which people came up with looks like this.
+We will have two cells to recurrent cells.
+And one will be the so-called encoder whose goal is to process the input sequence one by one of the input elements and to produce representation of that sequence.
+So, that's one of the ways how we can use recurrent networks to get the representation of the whole sequence independently on how long it was.
+Right. And now we will start generating the elements.
+So, we will have a new RNN cell.
+And it will start by predicting this Y1, the first label.
+The information about the input sequence is being passed through this state.
+So, we can think about the state as the things which you still need to generate.
+And then after this one step, you will probably update it by somehow remembering it for the generated Y1 and now we only need to generate this much.
+And then we will continue and use the same decoder cell to generate the elements.
+When we are generating Y2, then this Y2 can somehow not really depend on Y1, right. That's what we have here.
+So, you could say that it like implicitly depends on it because of this edge.
+And in a sense that this little cell kind of decided what to do here.
+So, now we could get the information from it.
+But that's not really exact. In a sense, you have an idea of what you roughly wanted to generate.
+But the final decision like the discrete decision of what to generate happened only in the output layer.
+And there can be cases where it's not completely obvious what will happen.
+In a sense, let's say that we are translating as a sentence from from Czech to English.
+You can process the checks sentence and then you should start translating.
+So, in the state, you have some idea of what to say.
+But if there are multiple ways, multiple relatively reasonably equal ways of how to express the beginning of the sentence in the English language and they probably are,
+then on the state, you see kind of information of roughly what you wanted to say.
+But the final decision might have happened to late in the output layer.
+So, when we want to include this this dependence, we do it by really passing this generated label also on the input.
+So, this way, we can really depend on all the ways which would go for me.
+So, we will be doing this.
+And then at some point, we need to stop like we need to say.
+We have generated the whole sequence and we will do it by anything special symbol, which will save end-off sequence in this case.
+Well, we are just generating like performing a classical classification like we have got like a discrete label in every time step that we usually just add one more label.
+And let's say if we would be generating something more like a speech, for example, right, then the speech would mean a vector of real
+numbers, then you would probably have to add like binary classification there as well, which will say whether you should continue or not.
+So, one more thing which needs to happen is that here on the input, you need to give yourself the symbol which you generated in the previous non-existent times them.
+So, usually you have another special symbol which just means like empty or like give no generated anything.
+And sometimes you call it the beginning of sequence or go symbol.
+And here they actually use the same symbol because like here is processed by these layers and it is generated by these layers.
+So, even if they they they overlap, it kind of works usually.
+So, when I say sequence to sequence, I mean like a general architecture which takes the sentence sequence generates a sequence.
+You can also call this an encoder, the coder architecture because they have got the encoder at the beginning and then the decoder later.
+So, this is definitely not optimal from reasons which you can think about and I will discuss them in a moment.
+But before we will get there, let's think about various details which this with architecture breaks.
+So, one thing is how to train this because during training, we have two possibilities.
+Like either these wise could be the correct ones, the ones which we should have generated.
+But at the beginning of the training we probably didn't write if this decoder cell is not trained yet then the output here will probably be bad.
+And of course the other possibility would actually do what I've drawn here so we use the text which we have already predicted.
+So, usually such models are trained using the so-called teacher for saying which means that we will really consider the the wise the labels which we should have generated.
+And hopefully once we train the model it will actually be able to predict them so then using the predictions on the input should hopefully work fine.
+There's this teacher for saying works better at the beginning of the training because you train the model to do the right thing if it gets the correct label.
+But the disadvantage possible disadvantage is that the model will probably not be able to recover from errors in a sense that if during prediction you generate an incorrect label and then pass it to yourself in the next time step that that's something which didn't happen during training.
+During training you always got the correct label so nobody knows what will happen if you take the the incorrect label on the input so sometimes people try to think about various schedules or probabilities with which you would get the actually predicted label instead of the one which is which is correct.
+But in the end even if there were quite a lot of papers about the issue people still dominantly rely on the teacher for saying so nowadays I would say the standard to just train assuming that everything is correct.
+And to train the model so well that the real problem of like recovering from the errors will not be strong at all.
+Actually using teacher forcing is some additional advantage which you will discuss in like 90 minutes or something and that's one of other reasons why people have stuck or stick with a while I stick with teacher forcing because it brings some additional advantages.
+Nevertheless during interference we cannot use the gold labels on the input because we don't have them as humanly.
+So we will be processing whatever we have generated in the previous step and this kind of decoding is called auto regressive decoding in a sense that we are the ones who predict the label for for the next step.
+So I have some idea of what does it mean technically well here from the from the island layer we got a vector in the hidden space there is some kind of output layer which gives us a distribution over the possible labels.
+And when we want to pass the prediction here we need to choose the one which is the most likely so we will probably perform some some arguments to give us the index of the most likely label and then we will have some embedding matrix again here which will give us again a vector.
+And the latent space and that will be passed to the decoder cell.
+When we think about these two operations like this this output layer and the embedding matrix they are somehow connected.
+Right so I've redron this is one step of the decoder here where we got the idea of generated birds we use the virtual embedding matrix or something which will change this index into the vector of of the numbers.
+Then we pass it through the RN cell we get the the output all this output that's again like the vector of some dimensionality of the number of units which we have given to the decoder cell.
+And then we need to add the output layer whose goal is to generate the logits of the target labels or words.
+So this this output layer is a matrix and the size is D times V because we start with the latent vector of this size and we should end up with a categorical distribution here.
+So it's the the size is of the two matrices are the same apart from the fact that one is the transposition of the other and also they actually have a similar meaning right because what the first matrix does is that for for every label for every word.
+You get it's representation in the D dimensional space so it's like this this word should be represented using this vector so we can think about it as a point in the D dimensional space which is I am the word I don't know.
+So then the RNN generates the output and what the output is it's again at the point in this D dimensional space which we need to transform into into the resulting word right and what we do here on on this output layer is that we.
+get the vector dimension D and then the output layer matrix is of size D times V and then when we do the transformations when we multiply the vector by the matrix or do we get as the result as well it's always a scalar product between the vector produced by the RNN and then the the columns of this of this output layer matrix.
+So every of these numbers is a scalar product so it's I don't know let's call this age for example so it's age times one of the columns of this matrix so we can say I don't know we more data.
+but I just wanted to say these are two vectors so the scalar product we can write it as.
+using the the cosine similarity so the scalar product of two vectors can be also written as an angle.
+which these two vectors have and then multiplied by the length of the two two vectors.
+So what this output layer does is that it understands the columns of the output matrix as points in this D dimensional space and then it measures the distance of the the input vector to every one of them right.
+so still the columns in these matrix and this matrix represent the worlds as their coordinates in this D dimensional space so because of this this fact we could combine these two matrices into one.
+and that's what happens quite a lot it's called tying the vertical bedding so these two matrices are then identical is just the second one is the transposition of the first one and what we get is some savings.
+I'm regarding the number of parameters because well if we are talking about machine translation for example then there could be there could be like thousands or.
+hundreds of thousands or large tens of thousands of their virtual these matrices can easily take hundreds of millions of parameters and even that they have the similar meaning it also improves results usually because you could learn.
+the information from from two different places and like regularize the space from and to which this this RN and so goes right so we are like fixing the mapping between the words and the embeddings for both sides of the generator of the decoder sorry.
+well I said that there should be the same one so there is just one tiny difference between them and then that's the scales of these matrices don't actually match what I mean by that is that this.
+embedding matrix usually it's generated so that each element has some fixed rise right the idea is that these these embeddings are like inputs to the network in a sense that you have given some some indices and now you'll get a vector.
+so usually each element of the vector is initialized in some small range but that's that's different to what we do in in linear layer when we have a linear layer we know that the outputs will always be the sum of like the numbers like we got it will be.
+first dimension of the input times some some weight plus the second dimension of the input times some weight and so on and so on so because the result of the output layer is the sum of in this case D numbers we need to make sure that the variance doesn't increase and we do it by initializing the weights.
+in this matrix from this range which roughly goes from one over square root of the one over square root of the like we know that it's like actually square root of say x over the or something but but roughly this is the dimensionality where we want to be so.
+these ways do depend on the dimensionality D and we want them to be usually much smaller so when we do this and use for example the embedding matrix here in the output layer we need to divide the.
+these ways by the square of these so that they have a reasonable range at the beginning so this is not mentioned frequently enough usually just say we do the the tying in the in the decoder but if you don't do it it will work very badly and it is implemented in all the usual frameworks in in this way.
+so.
+I said that there is a problem with architecture and there is like a real like it's it's not just a small technical problem but like a ideological problem and that's.
+this part here in this architecture we expect to be able to represent the whole input sequence however long it is by some fixed size representation like everything which we learn from the input sequence must pass through this.
+so that if bottleneck which well it can be hundreds or thousands of dimensions but usually more would be too much but if you imagine that the sequence get longer and longer and longer then like even in principle to this just cannot pass in a information from the input to the output sequence.
+like usually we assume that the individual elements can be represented with this fixed size vectors so like passing be here we kind of think that it's fine the problematic part is that the number of elements in the input sequence doesn't need to be bounded by an reasonable constant so passing them through this one straw when on workout.
+so quite quickly people came up with a possible solution to this problem and that's the approach which you describe is called attention.
+it has been formulated in the context of machine translation so from now on let's think about specifically about machine translation but whatever I say applies to other tasks and other domains as well which we will discuss shortly.
+so let's say that we are translating sentence from one language to the other so what I do when I don't understand the sort of language let's say I'm translating from German which I'm not very good at right so what I would do is I would like read the sentence would get some idea of what I'm translating and then I would probably look at the first verb and I would think hard what it would mean or maybe look it up in the dictionary or something.
+like if an idea of what it is and then I would thought about the translation and I would write it down maybe and then I would go back and say okay so I deal with the first one so now this is the second verb is the one which should come in the output and again right so what attention does is to model this kind of approach in a sense that whenever you want to generate an output element.
+you might want to like peak or look in the input sequence so what we will do is we will provide the this model mechanism that in every time stem you will be able to take some.
+information from the input sequence so the overall the architecture will look like this so we have got these input elements we will pass them through some.
+and what we will get will be the representations of the individual elements of the sequence like previously what we did is we have.
+we have taken this value right and pass it as the initial state of the of the decoder we in pure equal to also maybe the other direction but now.
+let's well maybe we can still take for example this state to be the initial state of the decoder but the new thing is that in every time stem we will.
+what we will do well one thing we could do is somebody could tell us okay now take X2 and take it.
+we will actually not take X2 directly but we will take the.
+representation generated by the encoder but these decisions like take X2 X3 or something they will be difficult to to train because we usually don't have this kind of information in the training data like the idea is that we will still.
+just give a sequence on the input and the sequence on the output without the alignment as to see this situation so.
+we cannot rely on some data to to learn how this.
+kind of attention to look like instead we will make it trainable right so we will allow the attention to look wherever it sees fit in in the input input sequence so.
+and because we want to train it it cannot be a discrete decision we just cannot say take X2 because.
+that that means you would do some arguments or something and then passing gradients through the passing gradient through discrete decision is kind of difficult.
+can be done actually but but it's kind of difficult.
+so what we will do instead is we will use the same approach if we use when we do classification.
+the attention will actually produce a distribution over the input sequence elements.
+and then what we will do is we will take the weighted combination of the representation of the input sequence elements.
+so the attention might say I want mostly to look at X2 and maybe also slightly X1 and slightly X3 and so on so what we will do is we will take the representations of all the sequence elements.
+multiply each by the probability assigned by this attention module and then then some everything now.
+so we will get fixed size representation of whatever part or even parts of the input which the attention things that are relevant to the current times.
+we will produce an element we would generate new state and then again the attention will get another.
+possible possibility to decide which of these input elements are needed and then go and go and go and go.
+and so originally I said that the problem is that we couldn't just pass all the information through this boundary between the encoder and the decoder.
+so what we have done how to avoid this problem is that we have added possibility of copying some constant amount of information like one element.
+from the input sequence to the output one right so this way we can copy like in theory like all required information from the input sequence because well in every time stem we can just take some amount of information.
+so how does this work more mathematically.
+so let's say that we have this decoder cell.
+so it gets the state from the previous time stem so we will denone the s.
+we also get the label which we have generated in the previous time stem and then we will get this output of the attention right so in many cases it's called a context vector but you can think about it as like the attention to the input sequence.
+so the decoder will do whatever it needs to produce the output elements and it will also generate the next state over and over but the question is where to get the context vector.
+so as mentioned let's assume that the attention mechanism what it will do is to generate distribution of us over the input sequence elements.
+so this i is like time currently so i mean the attention at the times the i and the attention is itself a vector over all the input.
+input elements so that's why here we have got alpha i j where the j is the j input sequence element and the i is the time stem where we are operating and as i said we would just take the weighted combination weighted average.
+of the representations of the input element so that's what the h is so h in this formulation corresponds to the values here right so this would be h1 it would be h2 and so on.
+and now the question is how to copy the attention how to decide where we want to look at.
+so this decision there are many ways how it can be implemented but what we have is we have got the state at the beginning of the decoder right that that tells us what what should happen next.
+so that's one thing this is the part of the decoder which will decide where we want to look at.
+so we have this state and then we have the representation of all the n input sequence elements and for each of the the the despair so for the state and the i input element we need to produce distribution.
+so in order to do that we want to produce a logic for every input sequence element so like one number for every input sequence elements and once once we have it once we have or end of the we will pass them through softmax activation so it would generate a distribution and we will use the distribution to multiply it with the input sequence elements some everything up and then get the constant the context vector.
+so in order to get the logic now we are in the situation where we have got the the previous state we have got one of the sequence input sequence element representations and we don't generate one output so what we will do is we will use the universal approximation theorem right if we add one in layer.
+process all the input by mapping it there use some non-linear activation and then have an output layer which will produce this one output which we need then in theory this is like strong enough to be able to model whatever.
+so that's exactly what we will do and we will use this same module we will use the same weights for all the input sequence elements so we are end times using the identical.
+module but executed on n different representations of the input sequence elements.
+so you can either look at it as that we have got these two inputs states and the input representations and that we are passing each of them via its own weight matrix into the space and then we add values.
+or you can think about it as like concatenation of the state and the sequence elements and then passing through them through just one larger matrix.
+that's the same thing what we discussed in the RNN that it doesn't even matter whether we look at it as two different matrices that I tried to do here with the different colors or if you think about like concatenating things and then just doing usual.
+so when we write this down formally we can say that the logits in the times that I for the input element J is computed by computing this hidden layers of combining the state and the input element representation passing it through non-linearity passing it through the output layer finally we pass all these logits for all the input sequence elements to softmax and that will be so.
+how the how the paper wishing to use is this looks like so this kind of attention is called either by the now attention because of the first author of the paper or sometimes it's also used.
+so we use additive attention right and the additive is there because we will just add the representations of the transform or met state and input element representations.
+so if we use such mechanism for like during training.
+the question is how the attention like the train attention will look like and the the fun I think is that it will actually be kind of deterministic or like.
+one hot kind of attention like what you would expect even if we never really like required the network to do it like the network is or the model is completely free in deciding how these attentions will look like like they can be all uniform.
+so like we don't really need anything specifically what we just need is to improve the or maximize the likelihood of the data right using this maximum likelihood estimation so whatever attention which helps the network to produce the correct output is fine.
+so when you think of it.
+let's say that we are really translating so we are translating an English sentence the English sentence is the agreement agreement on the European economic area was signed in August.
+and we are translating it into French I won't be able to read it sorry then let's say that we are translating the agreement and we should be projecting the the French one and we can look at all the input verbs well.
+what helps you to generate the word with the highest probability is to actually look at the corresponding word in the English language like looking somewhere else or the final dot or something.
+means that you will have to rely on the information which came through the state and just fixed in size.
+so actually the honest strategy which make which makes sense in a like which allows you to maximize the probabilities of the output is to actually look at the corresponding word if there is one in the in the input sentence.
+so what we are seeing here is how this attention looks so the this first line this this first line shows you how the attention looks when you generate the first first birth then the second third and so on generally you can see that the attention is kind of mostly.
+really going over the words one by one then something interesting happens here well here we are translating the European economic area and the thing is in French you need to swap the word order so first you say area then you say economic and then you say European and you can see that the model was actually able.
+to understand this all the attention didn't just go sequentially but skip over the corresponding words but then mostly it just continues right so this nice like alignment of these words was was obtained as a by product of trying.
+to translate right where we just are willing to look whenever just so that we maximize the probability of the output and voila this is what the model comes up with.
+so I would say that if you are doing a sequence to sequence model you always want to do attention like there is very little reasons why why not not to do that so it's like a fairly standard thing nowadays.
+but of course there are many ways how this attention can be computed so apart from just adding the piece of presentation so the idea is that we will transform both the state and elemental presentations into a single space kind up.
+right ending the mover and then generating the output we could also for example to take these vectors and instead of adding them together and then adding another layer we could directly.
+you compute the dot product of the likelihood say that after this information the dimensions already correspond to each other so we would just look at how much they they coincide in a send how much the outputs are like kind of similar for for the two vectors and and use that right again this is the this is the dot product so we can think about it as the cosine.
+of the angle times the length of the vectors right you can think about is the way of measuring the similarity of these of these two vectors.
+so this is called sometimes dot product attention if you like this cryptid names versus additive attention or long attention if you like to remember these things according from the authors of the of the paper.
+generally there is little difference in a trained model performance but the the letter one this is the product attention is kind of more difficult to train for kind of numerical reasons and I will elaborate on that once we talk about the transformer.
+later later today but once you train there is no no big difference between there are papers which which.
+describe that they could better result with about an attention so sometimes people are like like this is better but in in some cases using the protection attention is also faster in a sense that if you have a lot of states.
+like to set of vectors and you would like to do the attention in all pairs of them then this allows you to do it more quickly.
+and I just realized I didn't tell you this why the tonics being used here right one would say that you just go for hell and be happy.
+well I don't know if it would work well I don't think it would be very well and the problem which we are facing is that because we are just applying soft mugs here then these logits they should be like close to each other what I mean is that if one of these logits is like one and the other is ten like there is a vast difference between.
+the difference between the values right then after the soft mugs I should actually drawn it before then after the soft mugs they will differ by a multiplicative factor of.
+that mean that the output distribution would be very very like spiky with very low entropy and that would it could make training difficult.
+for the elements which were not chosen.
+So there's a generative with softmax,
+like you want the logic to differ by units, like once.
+You don't want them to differ by hundreds or thousands
+because then the softmax will just produce
+where a very one-hot distribution.
+And so no gradient would go through the elements,
+which have very low probability.
+And that's because everything, like, in the backward pass,
+things will need to pass this waiting.
+And in this way, it is very, very close to zero.
+The gradient, which goes through it,
+will be multiplied by, so it will get very close to zero.
+And the network will not see how this,
+like, producing or increasing the probability
+of this wooden influence that network.
+Like, the trick is that in the output of the network,
+we have the negative lock likelihood loss.
+So we are normally computing the lack of the logarithm
+of the softmax activation.
+So whenever this softmax goes to zero, our loss
+gets exponentially larger when we are near zero.
+And these two explanations, like, cancel each other.
+So training the classification does not
+saturate when the softmax is the last layer,
+just because the loss is there to help you.
+But here we are using the softmax in the middle of the network.
+So when the gradient comes, it will not flow through the elements,
+which we had a probability of middle zero.
+So if these lodges differ too much,
+we will not be able to learn nicely.
+And at the kind of age, there are the limits
+the size of the activation, right?
+So it makes sure that the activations here
+are reasonably sized, then the weights in this layer
+are initialized in the nice range
+so that the output doesn't differ that much.
+So by construction, we make sure that the variance of the lodges
+is reasonably limited by something like one,
+or because that's the variance of punish.
+Is, and we try to keep the variance by the construction
+of how we initialize the wave resistance.
+Ooh, so now let's discuss how all this can be
+wrapped together into a nice working translation system.
+We are talking 2017, 2016 translation system.
+One thing which we need to deal with, though,
+is how to generate words.
+We already discussed how we can process words on the input
+and we ended up with two different set of embeddings,
+one embeddings, which understand whole words.
+So we have a matrix for every word with its representation.
+That's easy to train.
+It's like a reasonable quality.
+But it doesn't give you a representation of word,
+which would not be present in the training data.
+So we dealt with it by also having character
+level embeddings, which also knew that the words
+are sequences of characters.
+So we could get a representation by looking
+in the characters of the word.
+That might sometimes be difficult, because like taking D
+and then O and then G and say, well, all these letters
+together, they mean the animal that it's kind of a stretch,
+because you cannot either get their representation
+by composing the meaning of D and the meaning of O
+and the meaning of G.
+It's instead like the D OGs, like a label kind of thing.
+But still, it can be done,
+and these character level embeddings
+can give you some representation.
+But now, we want to generate words.
+So it's not easy to compose these two different granularity
+version embeddings into one decoder,
+because well, when the decoder wants to produce something,
+it would have to say, I either want to produce a verb
+from the verb embedding matrix or maybe a sequence of characters.
+So these kind of decisions like what we are going to do
+whether we should have separate decoders
+for the characters and for whatever it is.
+Make it kind of difficult.
+So what people do instead is they have decided
+that we will be representing the inputs by using something
+in the middle between the verbs and the characters.
+And that will be in so-called subvert units, right?
+So we will use pieces of births.
+Either whole birds or even individual characters, right?
+So we'll have a dictionary, which will contain birth pieces.
+And we'll be able to compose every word from them,
+because well, individual characters will also be
+worth pieces.
+So in the first case, we can generate every verb
+of letter by letter, but the frequently used verbs
+should probably have larger pieces, or they even
+could be represented as whole in this kind of a dictionary, right?
+So the first, like B and you are a V, full stop, A,
+and all these high frequency basic verbs
+will have a representation of their own.
+But then we will also have sequences.
+So when something low frequency comes, I don't know,
+like, you get a variation of auto-encoder on the input, right?
+And unless you train these embedding
+from a very scientific text, you'll need to somehow separate
+this into pieces and then process these verbs as a sequence.
+So the question is, how to generate these dictionaries
+with the sub-routunites?
+So nowadays there are two algorithms, which
+are being used for that.
+So we will describe both of them.
+The first one is called BPE, where
+the BPE stands for byte, where coding algorithm.
+And so what we want from our subverse is that they
+probably should be as large as possible in some sense,
+like we don't want individual characters.
+We ideally want whole verbs.
+And also what would be good is that if all of these sub-routunites
+were actually being used in a sense, if you just
+do unit for a verb, which appeared only once in the training
+data, then it's probably not very useful.
+One of the problems with the verb embedding
+is not just that the verb embeddings don't contain representations
+for words, not present in the data.
+If you have a verb present in the training data once,
+it will have an entry in the verb embedding matrix.
+But the embedding will probably be bad,
+because well, it was trained only once, forever.
+You only see one context for it.
+So it's difficult to come up with a good representation of it.
+So we can get or we can fulfill both our goals
+by actually using compression.
+So what we will do is we will try.
+So the input and compress it in a way
+that we will represent the input as these units
+of our dictionary, as these sub-routunites.
+And our goal will be to come up with a representation,
+which will be as short as possible.
+So using as little sub-routes as we can.
+When we do this, then we will probably come up with a sub-rout
+with where each of them is being used a lot,
+because if you generate sub-routes, which are not used very much,
+they won't be like the they will probably
+make the input in longer, because if you use some word piece,
+which would be more frequent, you could use it,
+and that probably would make your representation shorter.
+And we will use a very, very simple compression algorithm
+that the byte pair encoding, it was originally
+a name of the compression algorithm.
+And it will work in a very greedy way.
+So we will start by generating the dictionary,
+and the dictionary will contain just the letters
+of the alphabet we should be had.
+And then we will need a specific symbol, which
+will indicate the word boundaries.
+So we will denote it as an end of word symbol.
+And the idea is that if we have the sub-routes,
+I don't know, like banana, then if you should combine them together,
+the question is whether it's like one whole verb and these are,
+the pieces of it, or whether it should be independent birds.
+And this kind of information will be indicated,
+exactly by this end of the verb symbol.
+So this symbol means that the sequence of the sub-routes,
+at this point, the words which are the verb being represented
+by the sequence ends.
+We will allow this end of a symbol to be just,
+to be always the last symbol in our dictionary.
+So we will be able to have, for example,
+like low and the low and the end of the verb.
+So this could be a sub-rout, which means low and that's it.
+And are we going to have a sub-rout, low and doesn't mean low.
+But we will continue with another sub-rout.
+So if another sub-rout is, for example, with end of the verb,
+then this would be the representation over the verb, lower.
+And so to generate the dictionary,
+we will start with the characters plus the end of the symbol.
+And then we will always,
+greatly consider a pair of sub-routes,
+which appear the most next to each other in the input text.
+So consider, for example, the input corpus,
+which would be low, low-waste.
+Oh, sorry, not very, the low-waste,
+newer and wider.
+Because these are words, they actually should have
+this end of a symbol, append it to the right.
+And at the beginning, I have just letters and the end of a symbol.
+So looking at it, there are some number of pairs of sub-routes,
+which appear twice, which is the largest number,
+so we could start by saying R and the end of a,
+should be a single sub-rout R and end of a verb.
+Then, for example, low and all,
+we'll be combined together.
+And then, we could, for example, combine L, O and W, right?
+So we can combine sub-routes already, so L, O, W is there.
+So that will create another sub-rout.
+And we can continue, and we can do this until we have
+reached the prescribed size of the dictionary.
+So usually, this works by giving training data
+to the sub-routes and limit, like we want 20,000 sub-routes.
+And this is where you will get them.
+As I said, the compression algorithms,
+like a very heuristic one, but in every time
+we try to merge the sub-routes, which appear
+as often as possible, so that will make the encoding
+of the input sequence as short as possible
+in that one time step.
+So, can you explain this to the sub-routes?
+Yes, yes, yes.
+Can you explain this to the sub-routes?
+Yes, one more.
+Can we take 20, 20?
+Yes, so the idea is to take the whole input
+corpus with all the repetitions and something,
+because when we are processing this data later, for example,
+by translating them, but exactly what we will do
+will take every sentence one by one, even with the repeated
+words.
+So that's usually the same.
+So you can easily give the model like billions of words
+in some initial corpus.
+And when you do this process, you will get the dictionary,
+but you'll also get the input represented using these sub-routes,
+because during the computation, you represent the whole input
+with the sub-routed ID.
+So the result of this algorithm is not just the dictionary,
+but also process training data.
+And then we can use it later for generating whatever output
+we want.
+If you thought about responding coding,
+when hearing about this, then it is kind of similar right there.
+We also take some kind of neighboring,
+and we merge them if they appear as, like the most,
+frequently in the data.
+So we get not much as the dictionary,
+but the data is well.
+So that's one way how we can do it.
+The other algorithm, which is called Verth P-Sates,
+was being used a lot, or it's still being used,
+but nowadays, I would think that the BP is probably more
+frequently used, not by much, but probably a bit.
+But the idea underlying Verth P-Sates is kind of very similar.
+So let's assume that we have the dictionary of the sub-routes.
+We have got the input text.
+So we will represent the input text using the sub-routes
+from the dictionary.
+And what we can do is we can define the probability
+of the whole data by saying, okay,
+let's consider the probability of the individual sub-routes.
+And the probability of the individual sub-routes
+will be defined, like without thinking about context.
+So every sub-rout will have the probability defined
+by the number of occurrences.
+So the probability of sub-rout B is just a number of times
+we have seen B in the corpus divided by the total number
+of sub-routes there.
+And what we can do is we could merge two sub-routes
+so that the probability of the data increases as much as possible.
+So we can use the MLE, but not train the model,
+but we can use MLE to come up with a better dictionary.
+So what we will do is we will consider, again,
+merging pairs of sub-routes together.
+And whenever the ID, when these two sub-routes appear
+consecutively in the data, we will represent
+this pair by the new sub-routes.
+And the goal is to increase the probability as much as possible.
+So the difference to the BPE algorithm is that here,
+when we merge things together, then we
+care not just about how frequent this pair is.
+That's what the BPE does, like the BPE just
+has to take whatever pair appearing most next to each other.
+But here in this unigram model,
+we also think about the probabilities of the individual
+sub-routes at the beginning, right?
+Because when we represent this element
+by the probability of the new sub-rout,
+we also will, like, the probability changes
+by how much the this occurring pair appears compared
+to how often the individual sub-routes appear.
+So when we are merging things, we want to merge things,
+which didn't appear that much frequently in a sense
+that if some two birds are connected to each other,
+like New York, which, like, new is very high-fringed
+work in New York as well.
+But New York is like a specific connection.
+So when we have a birds which appear frequently with each other,
+but not individually, then we are, like, more likely to merge them
+because we will get something from from joining them
+and then we will get rid of these low-fringed birds,
+so that that would be the larger game.
+But as these are strictly heuristics,
+because we do agree they are played every time
+and the overall effect on the final outcome is not very large,
+like whether we do it like this or like that.
+But there is some, like, technical difference
+between these processes.
+And that's in the bird species of crows,
+or what the author state is that we had this dictionary, right?
+And what's up on a while, they have just thrown the representation
+of the training data and they repressed this training data
+by greedily finding the longest subvert in the dictionary,
+which we have.
+That seems like a natural thing to do, right?
+When you have the dictionary and the input text,
+to locate the subbirds by just always finding the largest match
+from dictionary and then say, this is the first subvert
+and the continuum continuum.
+But the thing is, this actually is not the case for the BPE.
+So why is it?
+Let's say that in the BPE algorithm,
+we merge n plus n in nana.
+And then, sometimes later, we merge n to bana, right?
+And now, let's say that we have got to banana on the input.
+So if we try to find the longest match with the dictionary,
+then we would probably merge this bana together
+and say, it's a subvert bana and then we have n as itself.
+But in the training data, right?
+In the training data, we first merged nana together, right?
+So in the training data, the banana would be represented as
+bana.
+But the greedy parsing gives us a different composition.
+But during training, we always use this.
+So if during inference, you represent both differently,
+the model might work very badly because now,
+we are representing same-perts, same-perts in a different way.
+So when you use this BPE algorithm,
+you need to make sure that by representing the input
+as a subvert, you will not interfere with the merge,
+which shouldn't have happened later in the birth,
+but sooner in the construction of the subverts.
+It can be done.
+They are fast algorithms for doing it.
+But the BPE is a bit slower during the generation
+of the input representations.
+While in the vertices, it's fine to always find the degree
+much.
+But the things, this difference, it's mostly artificial.
+It's not like that it is somehow embedded in the way
+how the BPE and vertices compute which pair to merge.
+It's instead the way how they are being used.
+Because in BPE, you just don't reparse the data.
+You just do the same set of updates in your training data.
+I see the dictionary, so that in the end,
+your representation of the training data reflects
+the history of creating subverts.
+While in the vertices approach, they, well,
+at the end, they just throw away of whatever they had
+and they reparse the training data by matching
+greedily the longest subvert in the dictionary.
+So we could have easily done it for BPE as well, right?
+After the BPE algorithm, we could have just thrown away
+all the merges, and we could have just
+recorded the input using like a green image from the dictionary.
+There is no guarantee that it would be as good as the thing
+which we train.
+So it's probably not why it's not being done.
+But if we did it, then the inference time
+the coding will also be the same.
+And of course, these algorithms also differ
+in the way how they decide which subverts to merge,
+but again, it's difficult to say which one of them
+would be better.
+So when we use these, then generating something
+like tens of thousands of subverts, like 32, 64,
+seems to work well for probably most.
+I will not say all languages changes in Japanese
+specific, as they have many, many characters.
+But for most languages, just using this number of subverts
+is fine, even if these languages can have millions
+of different birth forms like check, for example.
+One more interesting thing is that if we are doing machine
+translation, then we usually use a shared dictionary
+for both the source and the target language.
+So it's not like we would run this on the input language
+and then independently on the output language
+and then have two dictionaries.
+What usually happens is that you just join the data
+both the source and the target.
+And then you construct one single dictionary
+between these two languages.
+So why this might be a good idea.
+Well, many words, which you translate
+between the languages are actually going to pass unchanged.
+Like, I don't know if you translate from check to English
+and you thought about, I don't know, some famous person,
+like, I don't know, which in Steve,
+I don't know, some Dominic Hashtag or something,
+like a name, right?
+So usually, you will not be translating that into English.
+You wouldn't say Mr. Hand or something.
+But you were just keeping.
+So what the translation needs to do is, well,
+when we want to generate it here,
+we need to start generating the subverts.
+And so if the subvert organization is the same on both sides,
+then it's much easier for the model to do it, right?
+Because, well, it will say now I need to generate
+the first subvert, the attention, like, points me.
+So this thing to just, I'll just copy the subvert.
+Like, I'll just use the subvert with the same idea on the output.
+If, instead, you have used a different subvert dictionary,
+then it could easily happen.
+That on the input, this would be very, very different,
+and as you can apply.
+So at the beginning, your attention looks at the first letters,
+but you need to generate a subvert, which corresponds
+only to the two of them, so you need to know which one it is.
+And then the attention needs to look at,
+I don't know, again, this one, or maybe this two ones.
+And then decide what will be the subvert to follow.
+So the model will need to be able to decompose subverts
+on one side, and then recompose the same sequence
+using the subvert dictionary from the other ones.
+You can learn to do this if you have large data,
+but in some sense, it seems suboptimal to do this.
+And by forcing the same dictionary on both sides,
+allows you to do this straight forwardly.
+So there are quite a few libraries, which can handle,
+like generating and using these good pieces,
+so that's not something what people do,
+like implementing these algorithms manually,
+we'll be just using these work pieces
+in various assignments.
+So now let's have a look at the neural machine
+translation architecture, which was the state of the art.
+In 2016, yes, a question.
+How do you understand the number of the number of data
+that's like not sure, in a state like they always be different
+to the level of the data.
+Yes, although the question is,
+how the non-mahobotic characters work.
+So there is not single one way how it's done.
+So usually at the beginning, people just somehow
+acted and generally can vary as approaches.
+How to handle these non-obvils work characters,
+but the usual approach, or at least the ones
+used at the beginning, was to separate alphabetical
+and non-phobetical sequences.
+And then, in code, non-phobetical ones,
+as either like individual characters as subverts,
+or just the sequences of them,
+but usually, it's not allowed to merge the birds
+and the neighboring characters.
+So when you have high and the exclamation mark,
+usually you won't merge them together.
+But at the beginning, some kind of a pre-tocanizer
+put run and then separate them into individual pieces.
+But as I said, there are many ways how that can be done.
+Another interesting question is, what happens
+spaces, do the spaces getting coded, or not?
+Like, initially, people just use the spaces
+to generate the end of the symbols, but the explicit
+information about where the spaces are was not
+encoded in the subverts.
+So when you wanted to produce an output,
+you had to include some kind of model, which
+guessed whether the space should be there or not.
+So, but then people came up with other approaches,
+or specifically the sentence-peast library,
+what it does is that when it gets an input,
+it represents every character from the input
+in the subverts.
+It's creating, including repeated spaces, and all these things.
+So there can be like information less or less process
+of translating sequence of characters into the subverts
+and then back.
+So that it's good on the point of generating spaces
+to the correct place.
+But that also means that sometimes you will have
+like multiple subverts for the same thing,
+specifically when you merge the spaces with the verbs,
+then if you say, I don't know hello, with the question mark
+and then hello, how are you?
+Then if this space is being represented together
+with a hello, which is, and this is kind of like hello
+in the end of very simple, then you could easily
+have two representations of hello.
+One where it will continue with the space and then something else
+and the other where it will continue with something else.
+So from the point of statistical evolution,
+it's kind of bad that every bird might get two entries
+in the dictionary, but from the point of working with the data,
+it is very convenient because whenever you generate the subverts
+and sequences, you will just get the output,
+including the spaces and everything.
+So usually people end up using this approach
+of explicitly representing everything on the input
+because it's kind of simple and they just train longer
+and maybe have larger dictionaries to handle the fact
+that sometimes a similar bird could appear there
+depending on whether it continues with spaces
+or punctuations or parenthesis or things like that.
+So let's look how all these would be
+I've talked about the subverts and sequence sequence
+with tension was merged together into a state of the art
+machine translation in 2016.
+So this is the system which was actually being
+used by Google Translate at that point.
+So we start by processing the input, sorry,
+the input subverts, they are the word pieces kind of,
+subvert which we use on the input and also on the output.
+Then we have an encoder.
+So the encoder is using eight layers of recurrent neural networks.
+These layers are a bit weird in a sense
+that the first layer is by direction one,
+so one forward one backward pass.
+And then remaining seven layers are just forward
+direction one.
+And they use residual connections to one on top of that.
+This is actually the first taper which
+added residual connections over RNNs
+but from that time it has become a standard.
+So this encoder was executed on an 8GPU machine
+to use by planning.
+So what I mean by planning is that this
+RNN is being convicted by the second GPU.
+So when this first step finishes,
+we will start processing the second element.
+But at the same time the GPU tree can start processing
+the first element here.
+So we will be doing this by, we have this rectangle
+and we will compute it by going like processing
+each of these diagonal one step at a time
+by having multiple GPUs.
+So what we can get is if you imagine that our input
+has an elements, then this way we can process it
+in something like n plus six probably steps
+because at the beginning it will take us like six steps
+to start generating the first output.
+And then we need to do the n steps to get to the end.
+Instead of doing something like seven times n.
+So that's a nice speed up if we have an GPUs.
+At the beginning because we also need the backward pass,
+there we have to wait until both of them finish.
+So that we can do this by planning and that's one of the reasons
+why they use the backward pass only once
+right because with it you cannot do the by planning effectively.
+On the other hand when translating the first word,
+when generating the representation of the first word,
+you need to account the words which follow at least somehow.
+So that's why they just use one backward layer.
+So this will get out the representation of every sequence element.
+And now we are a decoder.
+The decoder again will use eight layers.
+So here we have the input.
+So at the beginning it's like start, let's do something.
+No, no, previous originated words.
+And then we will compute it.
+Here we will get logics.
+We will heal you again to logics.
+You softmax, you generate the first output.
+You pass it here as the input and continue.
+So here in the auto regressive decoding,
+you can see that we can no longer do any tricks.
+We can not do any pipelining or something.
+We will need to go through these cells one by one,
+sequentially, away from the top to bottom in every column.
+So let's now have a look at how this worked.
+So this is the evaluation from the original paper.
+It's a manual evaluation.
+So people looked at sentences and their translations.
+And they gave scores from six to be like an errorless translation,
+fluent one to zero, which is like very bad, very bad one.
+And here what we can see is the scores of human references.
+So these orange ones are the translations generated by humans
+and then other humans evaluated them and looked how they liked them.
+Like so, most of them set okay, six, so that is great.
+And then some of the translations was deemed to be a flow of quality.
+Then we have the blue columns and the blue columns are the like non-neural network kind of
+translation, so that the best thing which was available before using
+preferential networks for translating stuff.
+So you can see that there are much less scores of six.
+So some of them are just not that good and then many of them
+for and then some of them are three and so on.
+And then as you guessed, the red one is the other neuro one, right?
+So when you look at it then what happens is that like out of these translations,
+which were not translated well by the previous systems,
+you were able to translate something like 80 or 90%.
+Correctly. And then the small amount of those is something which you translate
+with the quality of five instead of six, right?
+And then there is some very small number of notes of translation,
+but mostly what has happened is that you were able to deal with most of the errors
+by translating them with the quality of either six or five.
+So in some sense it is closed again between the human translation and the previous
+state of the art by very large margin actually this is the place or the time
+where the organization systems started to kind of work.
+Yeah, it difficult here they just leave it to the raiders like so the raiders will
+seize the input and the output and they will just give it this crate, right?
+So you can have like a manual which has six means that the meaning is preserved,
+nothing new has been edited and it's kind of fluent, right?
+And then usually five means that the overall meaning is preserved but some small
+part of information might be missing or it might be less fluent.
+So you will just do some kind of annotation and then you'll just let it to the people to do it.
+Of course, as you said, sometimes it's kind of objective.
+Different people might not agree when you do just a minor error in a larger translation,
+it's not obvious what to do so here, it was still a sentence level.
+So this was just a sentence with sentence.
+So hopefully people like did something.
+Of course, you have to think about it, it's kind of noisy but
+there is no other like better way in how to do it than just to let the people decide.
+So when training, we have these reference translations.
+So for training, we have got these input sequences and the output sequences.
+So we just try to predict the one reference which we have in the data.
+We could have even multiple references in the data and then during training, we will choose
+random one when training.
+Yeah, so especially for the evaluation, it makes sense to have multiple correct outputs.
+So usually the good test sets like let five people translate the input sentences and I just keep
+everything and then during evaluation, you are willing to consider any of the references,
+which gives you the largest score.
+It's not that it's required but it's usually allows you to better evaluate your system,
+because if you have only one reference for every input, then if you generate something,
+reason I'm about to different, you will lose something's score in the metric used.
+So apart from just doing machine translation, this sequence to sequence or encoder the
+code or architecture can actually be used also for different modalities.
+So you can imagine that your encoder instead of some recurrent network could be, for example, an
+image encoder like it used a convolution network and for the given image produced some
+lower-level representations with abstract features like seven times seven times something,
+right? And then your decoder could be maybe a text level decoder. So by composing these two,
+you would get an architecture which generates labels for the given images, right? You just need to
+define how the encoder will look like, how the decoder will look like, and how the attention
+works between these, these two modalities. So here is an example from an older paper from 2016
+which shows how this works when trained on some data. So the good labels are boring, the
+interesting kind of incorrect ones on the right side, right? On the top, you get a label that
+the doc is jumping to catch a Frisbee. It doesn't seem jumping, it's just standing there, right?
+But the problem is that in the training data there are many dogs jumping to catch the Frisbee.
+And so the model is still relying on the prior a bit too much. So it's not looking at the image
+that much and just saw a lot of dogs jumping so when other doc is there, it means to be jumping,
+right? Saying that this is a whole school bus is probably not that bad. Well, it doesn't look
+like a bus, but it's yellow. So it's like I understand the model, can do it. And this is completely
+terrible because here it says that it's a refrigerator filled with lots of food and rings, which
+probably is not, right? Note that this is a very old paper, but the problematic part is that in the
+new papers, you have just all the labels correctly or the errors are completely understandable.
+So it's boring to look at them. So that's why I keep this image from an older paper. So
+that you can have some fun by looking at these labels. Otherwise, it's like, yeah, I see great 12
+label for the given images like that. Our opening could do is we could do, for example,
+vision question answering. Like, let's say that we have got an image. We got a question.
+So what vegetable is the dog chewing on? And then what he will do is we will have two encoders.
+All right, we'll have an encoder, which encodes the image. We'll have another encoder,
+which encodes the question. And then we have the decoder, which will generate the sentence.
+And we just need again to define how the encodes will look like, how the decoder will look like,
+and how the attention will look like. So how the individual parts of the, in this specific case,
+the question will attend to the parts of the image. But usually you just have some number
+of vectors of the image than a vector for every work in the query. And you just use the attention
+like, because you have two sets of vectors. So just in the same way as before, you will just
+attend and get attention maps. So here you can actually look at what the attention maps look like.
+So it's being generated in some lower resolution, like 14 times 14 or something. So what you are seeing
+is just like a nice representation of a very low resolution map. But it looks kind of cool,
+because if you say what the vegetable is the dog chewing on, then you can see that the model is
+actually looking here and then it's a scare. So you can kind of believe that it's no smooth
+doing like a new ask of kind of dog. It is then it will like look at the dog part, not at the floor,
+not at the, not at the carrot and then it will say husky, right? And if you ask about a words lying,
+then it will look here and then it says from the front or carpet or something, right?
+The other thing which people could do when you have like a lot of encodes and decoders
+is to try to train translation models in multiple languages. I think it's okay. Let's translate
+not just from English to like French, for example, but we could consider multiple encoders,
+multiple decoders. So we could have, I don't know, English, German, Czech, and when we are translating
+we would just choose one of the encoders and then we connected one of the decoders and each of them
+could like understand their own language or generate their own language, but they would generate
+the representation in some kind of shared space. The tricky part is the attention because the
+attention connects the outputs and the input representations because the state in the decoder
+attends to the input sequence. So usually in these architectures people consider a shared
+attention. So just a single attention module and hopefully all these encoders and decoders
+would generate the representation in the same space shared with all the language. Well,
+actually people found out in the end that it is much easier to have a single large
+encoder which can process all the languages. If you give it a sentence you even don't need to
+tell it what language it is. You would just throw the sentence at it and you will hold it
+to understand, well, if it seems like checkers or English words or German words, it would just
+do whatever it can. And it actually does this very well and then you need to add a decoder.
+So the decoder will also be shared because the language is, but you still need to tell it
+would language you want the input semblance translated into. And what works very well is to actually
+have first specific token which says to English, right? So we have got tokens for every possible
+target language and then you just input there as the first thing. And then this information
+can be used in the encoder, right? Because it's on the input it can be used in the decoder
+because we have the first attention which we will do can easily give it the information about
+the language. And it seems to be the best way how to do this. So this idea with the specialized
+encodes and decoders has not been used recently and even the large models like GPT,
+the capable of working in like 100-foot language is just just used this. A very large
+share model. Well actually GPT is just the decoder so no no encoded there. So let's now have
+a break and after the break we will start discussing the transformer architecture.
+So let's get to our final topic today, now we should read the transformer architecture. So
+the other then they work. But one of the problems with the recurrent neural networks is
+there that are sequentially in a sense that if you have a sentence and that sentence is very long
+so let's say that there is 100 words in the sentence that the RNNs need to process this whole sentence
+one by one. And you cannot make this faster by having better hardware or better GPU because
+of the sequentially. Even if your GPU could process in parallel there are a number of operations
+because of this linear dependence that this second cell can not be computed before the first
+finishes. So the RNNs force you to do a lot of small-ish sequential operations which doesn't
+play nice with the way how we construct the accelerators like our GPUs and GPUs they can compute
+the vast number of parallelized operations. So this was causing some trouble during training
+of the architectures. So what people did is they tried to come up with a way of getting rid of
+these sequential dependencies between the computations. There were some some attempts of using
+convolutional machine translation very only considered some fixed context so that was 2016 or something
+but then another idea came up and it was described in the paper which is called attention is all
+you need which described what what we now call the transformer architecture and the idea was to take
+the recurrent neural networks and then or just the way how people did machine translation
+and get rid of this sequential it. So we originally it was described just for machine
+translation but nowadays it has become the basic blocks of all the image processing and speech
+processing and every other processing which you can think of and so how does it work.
+So if we don't have the sequential dependence we need to find some other way of contextualizing
+of being able to somehow process the neighbors around you into like the meaning of one element in
+question. You can of course consider using convolutions if we consider convolutions that they
+could consider some fixed blank context but this fixed blank context is a bit of a problem.
+So people came up with different ideas and the way how people decided how to do it
+is to actually use a version of attention because attention the one which we described right now allows
+like during the coding queue to consider which parts of the input sequence you want to look at
+constant trade from which you can get some kind of information. So we could use the same approach
+and then allow this element to decide where it will look in the input sequence and from these
+places it will copy the information. So you can think about it as like an adaptive convolution
+with like an infinite kernel size in a sense that you can consider the elements not just
+around you but anywhere in the input sequence but once you've decided which one of those you will
+concentrate you can then copy the information from them right. So this attention kind of thing is
+called self attention because the elements are attending inside the sequence itself right in the
+translation like in the sequence to sequence architecture it was the decoder attending to the
+encoded element but here it will be the elements of the input sequence attending to the elements
+of the input sequence. So let's start by describing the overall architecture so as I said it was
+proposed for the machine translations so we are now in the machine translation kind of
+kind of situations so we will use the encoder and the decoder approach right. So this
+image comes from the original paper but instead I will use some other ones with a block which
+contains a lot of images about how the transformer works. So overall the architecture contains
+some number of layers in the encoder part we will have like an encoder block repeated some
+number times then the encoder will produce the representations of the input elements and then we
+let the decoder block and it will again be used some number of times you can think about six or 12
+of these and then we will get an output from the input sequence. So the encoder block will
+consist of two sub layers sometimes they are called sub blocks. One will be the self-attention
+the one where the elements will be able to look around and then the other will be a feet
+forward net perm so some non-linear processing but processing each sequence element independently
+right so I zoomed in into the encoder block so we start with the self-attention
+and then we have the feet forward net perm so when you look at this from the like
+convolutional networks point of view the self-attention it's like a convolution with like an infinite
+kernel size like it can look any further and then we will do like processing of each of these
+elements independently so we can think about it as one time one convolution would just
+repeat the same operation everywhere on on the input. So regarding the self-attention
+let's say that we've got an input sequence it is an element each element is represented with a
+deniimensional vector right so how is it going to work well every of her so let's say that we have
+got I don't know the or maybe transformer is
+we will still be representing the thing inputs with subverts so maybe this transformer
+gets separated so I should probably do these end-over symbols there
+so how will the self-attention work well every of her will post three signs over over their heads right so
+one sign will be a query sign and that will represent what this element is searching for right so
+the transformer could say yeah I'm searching for a verge goes bright after me because I'm missing
+the subvert right and the Americans say I'm searching for a verb like I'm in a
+town and I would like to know where some verb is when the east might say yeah I am searching for
+for subject in this sense I'm a verb I probably would combine nicely with them right
+then this great might have a sign saying I don't want to be here at all somebody saved me right
+so everybody would stop a sign of what they are searching for and also
+everywhere it will say what they are offering right so they also put up a key sign
+and the key sign says transformer will say maybe I'm now I'm I'm the first half or I am
+some first part of some subvert like in the murk would say I think I'm subject and but I'm also
+maybe missing a subvert on on the left I don't that I'm a subject and I am I'm like a whole
+verb in a sense that I'm not continuing with anything else maybe it would also say I'm second
+in the sentence right the east will say I am I'm a verb if somebody is searching for a verb you can
+find it here right and the great says I'll give you money if you'll save me from descendants
+and these queries and the keys will play the role in the attention mechanism right so whenever
+this this this first verb for example transform is like computing the attention
+what we will do is we will take it's query and we will combine it with all the keys
+they are right so it's like some kind of a marketplace where everybody came up with
+they are searching for what they have and now the matching will begin so every query gets to be
+compared with all the keys which they are there and eventually transformed into a distribution
+right so how this will this this comparison verb well we will use this dot product
+attention like this one of the attention mechanisms we just compute the dot product so if we have
+got some query and some key we will just do the scalar product and that will give us a number
+because it's a dot product this corresponds to the cosine of the angle between these two vectors
+and then the length of Q and the length of K one so it's like a reasonable measure of
+similarities of these two vectors so we will do this for all the keys and then we will
+understand or interpret the results as logits so we will pass them through softmax and we will
+distribution in this case it will be the distribution of how this this specific query so how
+this first subvert wants to attend to the remaining parts in the sequence but we will repeat this
+for all the queries at the same time right so instead of just one we will we will get all pairs
+of queries and keys computed together so let's put some math into it so let's assume that we
+have got the queries for all the elements so for L and in both elements we have got queries of some
+size it's decay dimensionality of the key keys is the same so for elements we have got a vector
+of size decay these things need to be the same because we will be doing the dot product between them
+and how to compute this this combination or this this attention for all input words
+or for pairs of the sequence elements well what we could use we could put all the queries
+as lines in one matrix so this specifically Q right where the individual queries are rows and
+then what we could do is we could take a matrix where the keys would be in columns so on so this would
+be a matrix keys but transpose because by default they are rows there and now we will compute
+the matrix product of these two matrices so what the results will be well here we will get the scalar
+so the dot product of Q1 and K1 here we will get Q1 and K2 here we will get Q2 and K4 so
+this one matrix multiplication will give you the the dot products for all the pairs of the
+queries and keys which you have so by taking the queries keys transpose and multiplying them we get
+the the budgets for all queries and all keys so to make it into a distribution we will just apply
+like row wise softmax in a sense that every row will pass through a softmax activation function
+so every row will be a distribution so if that's what we have like a distribution in the rows
+we need to do something with them and what we will be doing with them is that every element will
+have a third sign I promised three at the beginning and the third one will be very you so the very
+you that's the the information that this element of offer or describe in the key part like in the
+key part you say I am I'm a verb and then the very u is I am is like in the key say what it is
+and then in the very u you actually give this this thing like is if you are I don't know
+setting a bike then the key would say I have a bike and then the very u is the bike itself
+which you are sending to whatever whoever went and said I want a bike so the result of the outcome
+of the of the set attention layer is weighted combinations of the values right so imagine that
+we have the values and we will have them as rows I didn't do enough space for it so I will cheat
+a bit so we will put the values as row in a matrix right and at this point when we do another
+matrix multiplication what do we get here well it will be the first row times this element so
+the weighted like the the very of the first word weighted by its probability and then we take the
+second row times this way so the second value multiplied by the appropriate probability and so one
+and so on so the result of the matrix multiplication will give me here the weighted combination
+of all the values according to the attention computed by the by the attention module right so
+all this simple looking formula does this thing to try to be in describing here for 10 minutes
+the good thing is that you can compute it quickly matrix multiplication is the most optimized
+operation in a new network because we do it all the time right and so even if we need to combine
+all pairs of the input elements it's quadratic in that in that dimension we can compete it
+in parallel right so this is the place where the accelerators are are very happy because you can
+process the whole sequence elements by doing like two two matrix products and n ones of
+max which is great so for the time being just ignore the normalization for a bit in the
+denominator which I haven't discussed yet but I will get there quickly so how to generate these queries
+keys and values well we just have the input element representation x right so what we need is we need to
+create these pre vectors for every every input element we will just create three way to see so
+we can think about this as creating three layers like each layer computing other the query vector
+for the given input element and the key vector and the value vector and we will apply them to all
+the input elements we will get matrix of queries keys and values so it's like a linear layer without
+an activation and also usually without bias so if it would be just a layer with probably a
+causal bias there but it can be there and might not it doesn't heal a matter they described it
+without days or many implementations it just don't there but it doesn't matter yeah so I said that
+the dot product attention might be a bit tricky to train and so the reason for that is actually
+the fact that like the the variances of this product are actually quite large so what I mean
+by that is when we were initializing things for the usual for the usual layers for the like hidden layer
+like we said okay we have looked like a vector on the input and now maybe I would like this like a
+vector on the input and then we have matrix and we will be producing the output and then this
+element is like the dot product between these two things so if you assume that these elements
+as have some constant variance then this this element is the sum of let's say this is
+some dimensionality d right so it's the sum of d numbers always this value times this way
+this value times this weight and so on so on so generally the result is the sum of the d
+elements on the input each weight it by the way but if we want to keep the variance then
+because we are something d numbers without anything specific we would generate a number or the result
+would have d times large variance so that's why we initialize these weights roughly in this one
+over square root of d to one over square root of d range so that if we sum d numbers of them
+they will keep the input variance intact so normally like I've said it in on the second or
+the third lecture we have forgotten about it but it's important that if you have a very large number
+of input features you will make sure that the first hidden layer will produce number which will
+not just grow and so here we are in a similar situation we have a vector of q numbers with some
+constant variance and then a vector of k numbers sorry of the same number of numbers but in the
+key vector so if we sum them then the result will have d k times larger variance because we
+some that many that many elements so if you want to keep the input variance we need to normalize
+by the number or by the square root of the dimensionality of the queries that and the same as
+for keys what we could have done otherwise is that when generating this query and the key here
+we could have used even smaller range in this query and the key right because if we initialized
+these values so each of them would be even smaller we might like hid this this fact or hi this
+vector inside the initialization usually the initialization is kept across the network so usually
+we just do it explicitly in here know that in the edited attention this was taken care of
+like magically because in the edited attention instead of multiplying query and key we would say v times
+query plus v times keys right if we would be doing the edited ones we would multiply them
+by the matrix matrices and then sum and these A's and B's would have been initialized in this range
+from one over square root of d k so then the initialization of the fully connected list would
+do this normalization but but in it isably because it's hidden like you would have to write and
+I think in your call to just in the way how we initialize things but here there are no more parameters
+which could do this transparently so we need to deal with it manually if you take this way
+it will just not train right because the the the logits which you will pass to softmas will be
+very one-hot or so maybe it would train but it would train badly because the gradients would
+not propagate through the elements where you did not attempt to with this normalization and at the
+beginning like like this allows you at the beginning to really consider all possible positions
+so hopefully from that you will converge to the case where you are looking at the right places
+where without an normalization the the distribution would be very one-hot even at the beginning
+but just because the random initialization so it might have been very wrong but the gradient would
+not flow through it easily to allow the network to to change the focus to change the way where they are
+looking haha so there is an illustration of the whole process here so we have with the input embeddings
+right then we have with the wait matrices for the queries keys and values what applying the
+input embeddings by these wait matrices will give us the individual queries keys and the values for
+all the sequence elements these times for two words then we will take the the query corresponding
+to the first word and we will combine it with the keys of all these sequence elements so we
+will get the root product we will normalize it by the square root of the A we will apply softmax
+so we got a distribution and then we will take weighted combinations of the of the very used
+and that will be the output of this half attention layer and then we will do the same thing
+also for the second word of course so we can actually implement the vectorized way like when I say
+implement something in the vectorized way in the assignments you start to clear how we are going to
+do it so that is exactly what happens like here it seems so like nice and obvious and now
+we have just this small number of operations and here to think about what exactly they do but
+in principle it's not really anything difficult so now let's consider I don't know
+resonate right in resonate but when we have this this residual block what we did is that like it
+does some kind of computation and then it's going to add the result there and in original
+resonate here we have this three-time pre-convolution with a very large number of channels I don't
+know and we argued that maybe like using what Resnext does is better like instead of allowing
+one convolution where we we would like spend like use all the channels to inside this one
+convolution maybe it would be better to have like several of them where the convolutions would
+just work independently in every one of them and we actually might want to do the same thing for
+our for our attention like instead of doing the attention once we might consider doing the
+attention eight times in parallel for example so every word would not just have one set of queries
+keys value signs but it would generate eight eight queries eight values eight keys and then we would
+do the attention for the first set of signs for the second third and and so on so when we have this
+queries keys and the matrices we will separate them in these set of queries keys and values
+maybe I will do it on the as the superscript to indicate that they are still the whole sets for all
+the developments and then we would use like three parallel self-attensions and what we will get is
+we will get like the values like three set of values for for every position.
+So first when we do these queries what we will do is we don't want to generate more dimensions
+right so if we have a single single attention we can consider I don't know the queries with
+dimensionality of five hundred and twelve for example and then if we instead want to use eight
+eight of these parallel certitensions then we can use the smaller dimensionality and every one
+of them so the keys queries and values could be eight times smaller so they would really just have
+64 dimensions so the the same the number of informations are of the dimensions of the queries
+and values is the same it's just that we use only parts of them to do the self-attention right so
+that's that's similar kind of of what resonates next does when it divides the channels into groups
+and then process each group separately and then combine it together. Now the combining together
+might be a bit tricky so what will happen at the end is that this self-attention layer will
+be like combined with a with a residual connection like we'll have many of these layers so the
+residual connections will be important so the actual architecture have this this residual connection
+it goes over the self-attention so we start in some future space where the dimensionality
+is something and we end by producing like the differences like how we should modify these things but
+it needs to be in the same same feature space that's what was the case also also in the
+rest next so if you remember like each of these groups generated some number of channels but the
+meanings of these channels was different to these channels on the in so we had this one output layer
+which produced the output in the corresponding feature space for the outputs of the
+convolutions so we will need to do the same right when we run this top product in in parallel
+we will concatenate the output but now the first set of dimensions belong to the output of the
+first set of attention then another part of the output will belong to the second set of attention
+so in order to to make this consistent with the input feature space we'll have another linear layer
+chance which will be able to produce the output where the right meaning of the first dimension
+will correspond to the first dimension of x of the input so when looking at this set or this illustration
+like now we have multiple sets of these queries keys and values now in the context of the
+self-attention these parallel self-attensions they are called heads right so the asset of attention
+has got eight heads which means eight times in parallel we will do the self-attention with the
+difference of queries keys and values in every head so here they show that we have got two sets
+of query weights like the one for the first and one for the other but they will be hard the
+size of what we would have used if there would be just one head right so we have like a fixed
+number of dimensions and then we just split it into queries keys and values according to how
+number the number of heads which we want and now the result of the multi-head attention is the
+concatenation of the outputs of the individual heads but we need to generate the result in the
+in the correct feature space so we will transform each of them with a linear transformation
+into the output out to space so overall we have got these input representations we have
+with the sets of queries keys and matrices we use them to compute the queries keys and values we run
+the self-attention to give us results for every of the head and then we combine them with a final
+linear transformation to get us the output value for this one input value depending on the one
+or the other input planets so as I said these this self-attention is complemented with
+residual connection now this residual connection what it does is that we will sum the input
+and the output of the self-attention and then we will need also to apply or what the authors do
+is they apply a linear normalization like which norm is a bit tricky but later norm seems to work
+well with the RNNs so so that's what we are going to use also we will have much smaller
+sizes than the image people so so that's why it's random so that's the self-attention block
+now let's talk about the FFN block the feed forward network one there we will apply the same
+non-linear transformation to all the input elements and once we do it we will again
+add the input and the output with a residual connection and we will normalize so these feed forward
+networks like initial configuration proposed by the transformer architecture is the one here on the
+left so we put the input then we did some non-linear processing we edited and here is the
+normalization so how does the non-linear processing look like well it's very much like similar
+or analogous to what the mobile inverted button like does so we have some input and we want to compute
+some difference to somehow like update it or change it so that it reflects the new updated value
+so what we will do is we will do one hidden layer with non-linear activation there and then an
+output layer so again through the universal approximation theorem we know that this is strong
+graph but what might seems weird is that we don't do any non-linear activation on the output layer
+right it's what usually you linear plus error or linear plus layer or dense plus error
+like we'll be stable with think but even do it the last layer is just the linear transformation
+and that's it and that's what we some here so the reason why we do it is well imagine that we
+apply rather by that means some of the videos are unchanged and some of them are zeroes so in our
+update we are updating just some of the elements because the last rule decided to ignore the changes
+for the negative ones but we actually don't need it for this model for this module to be
+like strong enough like because the universal approximation theorem tells us that we need the non-linear
+the only at the middle like if you imagine it's like the input hidden and the output and we can
+model whatever we want on the output when we have the non-linear it's just in the middle right so
+we don't need the out like like the here we want to get the output which will be like the
+difference with respect to the input of this whole block but the only place where we need
+needs some non-linearities here in the middle that is needed it would be there then this would
+not be able to model any function but with it it is so it's why we are doing it like that they don't
+feel it's like discuss the choice and they would say that this is all I like the same idea has been
+described in the previous papers but the underlying idea I think is the other same and we also know
+that the like that are probably the wider this will be the better the approximation will be
+so usually there is this widening factor here usually transformers use four times more
+I'm just on this hidden layer because we can have small number of operations which are more
+but combinational demanding so that's like the widened kind of thing right and widened they
+also consider doing like more expensive operations but small number of them so one of the things which
+change in the transformer is the position of the layer normalization the thing is the layer normalization
+in this position is kind of problematic because at the beginning the the gradients when it grows
+through the layer normalization it gets scaled up quite dramatically and that will cause the problem
+with actual exploding gradients so what people realized I don't know in two years after the original
+paper is that it works better if we move the layer normalization to the beginning of the block so
+now it's like preactivated resonate if you remember like in the beginning of the external
+realization that we did something so this is very very much similar to the situation that we
+normalized first and on the on the main connection there are no other layer so these are sometimes
+called host land normalization and creep land normalization all the very large models like the
+GPT ones and something usually use this this updated version so the overall architecture of a single
+encoder block looks like this we have got the input and then we have the self-attention power
+so we do the land normalization self-attention and we'll also regularize by using dropout so we will
+use dropout but we will do it before adding things to the residual connection so that this is
+perfectly fine to do it before being added there and then we have the FFN power so again
+layer normalization local non linear processing which we just described and then another dropout
+and added to better and we will stack this six 12 times in our model and that will be the encoder
+it can be executed in parallel because this whole one level can be executed in parallel and that's
+the part which we wanted to get great of the sequential processing of the elements and we did it
+but it costs us to consider all possible pairs of queries and keys at the same time but hopefully
+we can do it weekend with like in in parallel so that was the encoder now let's consider the
+encoder as well right so the encoder gave us very nice representations where every element can
+depend on any other element literally we don't care much whether it was close or far away
+so what needs to happen in the decoder well in the decoder we will again have self-attention
+so this self-attention allows the decoded tokens to consider the other decoded tokens so you can
+attend to the tokens which you already generated right so we need like if these are wise you can also
+depend on the otherwise but we also need to depend on the input elements so we will also need
+another attention and this time it will be like the attention from the sequential architecture because
+every output element will be able to attend to the input sequence right so every of these elements will
+look at the encoded elements and then attend to them so what does it mean technically
+is that the queries they will come from the decoder however the keys and the values they will come
+from the encoder right so the each bird in the in the decoder looks to the encoder for what they
+offer and then copy the information from them so this is freely the usual attention from the
+RNNs because then the the state which was generating the next bird so the next bird attended
+to all the input sequence elements and then that there is the feed for the input right so instead of
+two blocks we are actually using three blocks in the in the decoder because we are attending to the
+already generated queries sorry in that queries but but tokens or elements or labels and then we
+are attending to the input sequence there is however one slight trick we will be training this model
+using teacher forcing so we will actually be able to run the whole decoder in parallel we won't be
+decoding one by one during training during training we will just put the whole element like whole
+generated sequence on the input and we will just train everything at the same time the only
+problem is that we probably shouldn't allow the generated birds to attend to the future
+like what I mean let's say that I I should create high but then this high will be
+areas the input for the next element so when we are running the attention at this point
+attending here probably bad because there is high there so I know what to do I will generate
+my output right so this kind of weird so unless we have way of reversing the flow of time
+or something in the universe what we need to do is we need to disallow the attention in the decoder to
+look in the future elements so what we will do is when we generate the self-attention matrix
+I we will so here let's say that this is the where the first variable attend so we will attend
+we will allow it to attend to itself right or to define but we will disallow it to attend
+to the second element and the third and the fourth one because while during interference they
+won't be there truly so you cannot just look at them right and the second element can attend
+to the first and second one but not the remaining ones and so on and so on so on so this is called
+masked attention where you want to like physically give zero to the elements which will not yet
+be generated during inference in practice how it works is that you will set the logic to minus
+infinities before running soft marks and then you will run soft marks and a good representation of
+minus infinity is one times then to nine that's usually being used the thing is the the
+exponentiation of that is a strict zero because of how floating points work so it is infinity in a
+sense that e to that is zero towards like an effective infinity and the encoder decoder attention
+that's what we have already described there the queries come from the decoder and skis and values
+from from the encoder so from the input sequence so during the the inference however we will need
+to do it automatically so during inference we will really need to like generate things for the
+first verb then when it's generated for the second the generation will still be slow
+then auto regressive but at least during training we can we can do it quickly so I will keep the
+position on embeddings to the next next lecture so I will just finish with the training kind of regime
+so how you will regularize we will regularize by using the dropout on the input embeddings
+we will do the dropout of each sub layer so that was the last dropout which we did before
+adding the output to the residue of connection and we will use label smoothing and both dropout
+right and the label smoothing is set to zero point one so for label smoothing that's fine for dropout it's like
+I said by previous let's 0.5 gives you the strongest regularization so why we are not using strong
+regularization here well there are two reasons first is costly right you can you drop out of the
+0.5 but it hampers the capacity so if you train your GPT model or with I don't know 20 billion
+200 billion parameters then if you have used a stronger dropout maybe you would need twice it
+of like as many so 400 billion parameters so instead of I don't know 20 million training it will
+cost 40 million training and it is D so that's probably not a good idea right so here we need to
+make make sure that the strong regularization will actually not decrease the capacity of the model
+too much and secondly this is usually being trained or very large number of data so if you train
+on billions of of words then you are probably not over fitting too much just because the very large
+amount of data but still the larger models with larger capacity sometimes gets the larger constant but
+but we are also very careful about the compute which we need to train the models so I said that
+parallel execution can be there so this is being trained by the aidem optimizer
+interestingly this is one of the hyperparameters the beta 2 that's the momentum for the second moment of
+decredience you really said to slightly smaller value than the default ones so you will see papers
+were especially the beta 2 is being tuned for aidem but the one thing which is different or
+level here is the use of warm up so the learning kideke which the use is yeah I forget to say
+during training they use the inverse square root decay that means that if T is the number of
+updates they have made they multiply the learning kide by one number square root of T this mean that
+the learning kideke looks like this and then it gets creditual at 0 but it gets 0 and infinity so
+it's not like that we will say we will train for two efforts the digits just go to 0 and the
+the beginning they didn't know how long they will train so they come up with this this schedule
+which can go on as long as you want but their model was kind of diverging in some of the cases
+at the beginning so we came so they came with like an engineering solution and that's to start
+with a like 0 learning clay and then increase it for some number of steps and only then
+started to follow the decay like later people realize that this this diverging at the beginning
+was caused mostly by the learn normally the bad position so if we move it inside these blocks
+then the model user trains but still the warm up has been described and in some cases it can
+help you if the beginning or model is like a weird weird state and it could diverge quickly
+so that's what the warm up does so technically how do you implement it let's say that you
+want to do the warm up for some given number of steps one thousand four thousand are the usual
+usual beliefs so you want to start with the learning rate of zero the linear increase it
+you want it to cross whatever learning rate you have at the prescribed number of steps and from
+then on you want to continue with the original sketch so what you will have is we have two
+sketches like the original one one over square root of the step number and then the new one the
+warm up which goes from zero increases and we don't take the the smaller one of those right because
+the smaller one of those will use the warm up at the beginning and then the original sketch so the
+formula is the minimum of the original schedule and then the warm up and the warm up needs to be
+defined so that at the beginning gets zero and then after the prescribed number of steps it will be
+equal to the to the original schedule so the value where the original schedule will be will be one
+over square root of the prescribed number of steps so here we will have a constant which will start
+at zero and well that gets to one at this point because it means that at that point you will
+return one times this which is the very usual one which means this just needs to be like the linear
+mapping which we start with a set number zero we end at the
+certified number of steps so when we divide this we'll get the three from zero to one but note that
+this is not to make the results magically better it's mostly to prevent divergent during training
+if it doesn't diverge then doing this will probably not help you but still this has become
+method which you can use for various kind of transformers but mostly because of the unaficient
+architecture at the beginning so thank you very much for your attention right
+that we will start by like recapitulating the transformers and then going to the the
+ablations and everything at the beginning of the next lecture and then we'll spend time talking
+about how we can use transformers everywhere so we'll be like attention it's not all you need
+but attention is all you have on for all the architectural thank you very much and I will see you tomorrow
+on the practicals

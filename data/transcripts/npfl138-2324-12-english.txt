@@ -1,0 +1,1465 @@
+Good afternoon, welcome everybody to the next Tuesday regular portion of the deep learning
+information for you.
+So we have, but before I will start with myself, other maybe some questions,
+we should comment anything.
+So we have somehow finished the supervised learning part of the course,
+and in the next three lectures, the last three lectures of the course,
+we will talk first about reinforcement learning,
+and then we will talk about generative models for most of the rest of the remaining time.
+So when I say reinforcement learning,
+I mean different way of obtaining feedback or knowledge from the data.
+So unlike to the usual supervised learning,
+where you get the correct output,
+so whenever you train, you always know what you should have done,
+what's the correct solution.
+In reinforcement learning, you are learning by interacting with some environment.
+So we have got some kind of environment,
+and what you can do is you can perform some kind of an action suit.
+You can imagine that you, for example, won't write the car,
+so the environment is the car, the street, maybe the other members of traffic,
+and then the directions are that you can move the wheel,
+and you can use gas to move forward.
+Or you might want to learn how to move some kind of robot to the environment,
+is the robot, the physical system,
+and some kind of environmental,
+like neighborhood, or some floor,
+and then the directions are probably changing the park,
+or applying park in various engines in the robot.
+And, or what you could say is also like building a nuclear power plant,
+or a refusion power plant, right, is a problem back of this kind
+that we have got the environment, plus the rules of physics,
+and then you would like to build a fusion power plant.
+And for these tasks, some of them, you know,
+the solution of some of them we don't know the solution of,
+but in reinforcement learning, in order to really learn,
+you won't get the correct solution instead.
+You just have some kind of a reward signal,
+which tells you how the interactions worked out.
+So, for example, when when driving the car,
+what you could do is you could sit in the car,
+try driving for four or five minutes,
+and then your reward could be like the number of fines you will have to pay
+for how you drive, and maybe the damages you need to fix.
+Or you could be driving the car on some racing track,
+and your reward could be the place on which you finished
+after driving the race, or you could place a board game,
+like a computer, like a chess versus a computer,
+and then your reward could be, whether you have one,
+lost, or that was a draw.
+So, we have some way of how to try, how to learn,
+but not by somebody demonstrating what the best solution is.
+Instead, we only need to try doing things ourselves,
+and when we do, there will be some kind of evaluation,
+so that we will get the information of whether we did well,
+badly, or what exactly happened.
+So, the great, important learning, as a field,
+was created by merging to, like, subfields, or how to say it.
+One is the optimal control, so in the 50s and 60s,
+people start using computers for various tasks,
+and one of them was to generate, or create,
+control system for power plants, and
+trading programs to land, lunar land, and a module on the moon,
+and things like that.
+And they wanted to, or they thought about,
+like, how to come up with the best controlling mechanisms,
+how to drive, or implement systems,
+so that they have some kind of an optimal performance.
+And this is very much connected with Richard Bellman.
+That's also the guy who coined the term dynamic programming,
+so you know who to think for, for the Tegrner assignment.
+And so that was one branch, and the other branch,
+was the so-called trial and error learning.
+Like, people were wondering how, actually,
+other people and animals learn, so they start observing,
+for the animals, like, how they react to different stimuli,
+and what to do, so that they can run effectively.
+So these, like, biologically motivated system,
+and they also thought about how it works in the brain,
+who kind of chemicals are being used to learn something,
+or unlearn something.
+And both of these combine create an nowadays,
+like, reinforcement learning area.
+In the last decade, for 2013,
+actually, the readmaster learning was also connected,
+or merge, or start using deep networks,
+so the deep reinforcement learning was created.
+And so the initial, like, success, or initial highlight,
+or initial event, which people did, which made,
+this reinforcement learning into some kind of spotlight,
+that people allowed computers to, like, play games,
+like, it's not like people want to, like, open play games,
+but computer puzzle wants to do that.
+And so what people have done at that time,
+unknown company, DeepMind, came with an idea of how
+the computers could learn themselves to play games,
+they just set them in front of a screen,
+and they gave him a joystick, like, the old school joystick,
+so it was just nine positions up, down, let's try,
+in the center, and then there's one button,
+and you can match the button, and it's as quickly as you want.
+And so with this kind of interface and the screen,
+the computer was allowed to just play, it's, like,
+like, me here, and just just fiddle with a joystick,
+and do whatever.
+And there was, there is, of course, a score,
+which you can see when you play the game,
+which is this numeric reward signal, which we can use
+to train.
+And they actually were able to come up with an idea at the time
+that allowed the computers to learn, effectively,
+in a sense, that after playing the game,
+it's held for quite a long time, something like several days,
+that the computer was able to reach the performance,
+or surpass the performance of motivated human players
+on more than half of the games.
+And this was, like, oh, the sparks,
+of artificial intelligence is coming,
+here we can play games.
+So there have been a lot of research in this area
+and after seven years of development,
+people came up with an agent,
+which can beat humans on all of the games,
+and it achieves a score of, for 1,800,
+roughly, human normalized score.
+These games, they are, like, old school console games,
+like, from Atari console,
+because they're also an emulator for them,
+and they were, like, simply enough on one side.
+You can quickly simulate them,
+and on the other hand, they are already challenging,
+but, of course, you could come up with more complex games,
+such as various board games,
+like, there's another area where the reinforcement learning
+is able to achieve very nice results.
+So, out of these traditional board games,
+the game of goal was the last one where people were good,
+better than computers.
+That, in 2016, there was my public match
+between Lisette Hall and a computer,
+but it was really, like, a stylish match.
+So, the people really were sitting somewhere
+or the television was filming them,
+and there was, like, a guy looking at the monitor
+and then playing the game, the stones on the go-ban,
+where the algorithm has told them so.
+And at that time, people thought that it would take,
+like, a decade or something,
+for the computers to be able to really play gold,
+because nobody knows what to do.
+But, actually, in this match,
+the computer won for one,
+and showed that it actually is,
+like, like, the algorithm is much more capable
+than how people think.
+There was some discussion of whether the Lisette Hall
+was this strongest player on Earth,
+and sometimes, another guy was saying,
+I am the strongest player probably was.
+So, there was still hope that maybe one person
+will be able to beat the computer, but, unfortunately,
+he was not able to, so, you're later, he lost as well.
+But, anyway, after two years of development,
+we have an algorithm called Alpha Zero,
+which is able to learn to play chess itself
+or go itself, or show itself, really just by sitting
+at one side of the board,
+and then going to the other side,
+and I just really just,
+self-playing itself,
+and after roughly 40 million games played
+with themselves, they are able to surpass.
+But, I'm not saying humans,
+because humans are no longer best at these games,
+but all other programs, which we have,
+after, and this training takes,
+like, hours in a real time.
+If you have a lot of computational resources, right?
+So, there are more games, which you could think of,
+but, well, that's probably all for all the games,
+but, we have seen some applications
+of reinforcement learning already,
+because it can be used to generally optimize
+any non-differentiable loss, right?
+In SGD, we need something different,
+so that we have a gradient, and we can do the update,
+and in the reinforcement learning,
+this reward signal can be, whatever.
+So, you can use that to generate
+neural network architectures, optimizers,
+activation, solve these things,
+because you can just create a model,
+or network, which will output
+and other network that you can train on some data,
+and then use the development performance,
+S, your reward signal, and a new try to come up with,
+like, a such type of parameters, or such architecture,
+which will maximize this reward, which is,
+how the model does on some unseen thing.
+Right, the cooling data centers,
+single-larbing, controlled by AI,
+which led to some nice cost of the reduction,
+and also, the models, like the chatGPDs,
+and all these, which we are using,
+uses reinforcement learning to actually be able
+to follow the instructions, like you can start with a large language model,
+but that just predicts an expert in the sentence,
+but we want the model to do something else,
+like to generate responses between like,
+which will help for useful, and all these nice objectives.
+And that is, right now, good.
+I'm not sure if I can say the best way,
+but maybe one of the two best ways,
+how to achieve that is,
+is using reinforcement learning, right?
+So, that's probably, in half a commercial,
+for now, is the question?
+Yeah, so the question is, what is the second best way?
+There is an approach called DPO,
+dialect preference optimization,
+which still is formalized with reinforcement learning,
+but they came with a trick to make the reward differentiable.
+So, they somehow avoid the need for the reinforcement learning
+by reformulating the reward signal there,
+so that you can come with the derivative of it directly.
+So, you don't need to have the reward model,
+and instead, you are fine tuning,
+some kind of a language model,
+but in a way, which, like it's not a usual loss,
+which you are using there,
+it's still a reinforcement learning clause,
+but because you can do it with a gradient,
+it's not usually called reinforcement learning,
+even if a formulation is like that.
+It's DPO, if you want to find a better about it.
+But people, right now, don't know,
+which of them is better ones,
+different trade-offs, and different data sets,
+are useful for all of them.
+But it seems the largest ones,
+so still the GGPT engine in I,
+and I think the best open source one right now,
+are still using the other reinforcement learning from human feedback.
+Yeah, it's definitely easier,
+and that's why the DPO is,
+like more spread or more used,
+definitely in the open source world.
+What's not obvious is how it compares
+with ROHF, right?
+So, there are some tests,
+some of them says the DPO is better,
+the other says the reinforcement learning,
+the human feedback is better, it's difficult to say,
+that seems all the large models,
+still use the ROHF,
+but it's not obvious whether it's just because they already know it,
+or because they came up with data sets and procedures,
+which works better with ROHF,
+and if I update the DPO,
+it would be better,
+like the directly using them on DPO,
+maybe leads to various results,
+but if you recreate the architecture
+from scratch, it would be better.
+This is difficult, and it's expected
+or people assume it would take like something
+like a one more year to get more comparable evaluations
+from the community impact, so we will see what happens.
+But there are various blocks,
+and people collect all these information,
+and there are many ideas
+why the approach should be better.
+But in the end, there are both reinforcement learning,
+in some sense,
+that they use the same way of computing the reward,
+and the reward is just like technical technically,
+or formulating the reward,
+but technically they complete it.
+Okay, so,
+we will start nice and simple,
+so if you have seen some introduction
+to reinforcement learning,
+you will have already seen that,
+but don't worry, we will get to something
+more debishly learning English quickly.
+So, let's assume that we have this problem
+of so-called multi-armed band aids.
+So, what does that mean?
+Well, this slot machine is something
+which is not very known here,
+or at least in Czech Republic, or maybe in Europe,
+but in the states,
+it's like, well, no, everybody knows how these things work.
+There are a lot of them in Las Vegas.
+And so, this is a slot machine,
+where you put some money,
+and then you pull the lever,
+that's all you're in,
+and then you wait,
+and either you win some money,
+or you lose some money,
+and because you are most delusing,
+this is called,
+and one arm, it's banded,
+because it drops you,
+and it's got this one arm,
+which you can pull.
+And if you have a full room,
+you can fill with these machines,
+and that's what's called,
+multi-armed banded,
+problem,
+because they're with multiple of these machines.
+And in the settings,
+their goal might be,
+well,
+idea to win as much as you can,
+realistically,
+to lose as little as you can,
+so you can stay in the case,
+for as long as possible.
+So, let's say that we have got,
+some number of,
+of these,
+of these machines,
+and interacting with them,
+we will call it like,
+what we really want to interact,
+we will say that we are performing an action,
+right,
+so we'll have connections,
+each corresponding to pulling the lever
+on one of the machines,
+and each machine produces,
+a reward when we,
+I wouldn't use it,
+the reward is focused,
+sometimes it's sometimes it's low,
+and we don't know how they,
+the reward actually look like,
+right,
+so this is a sample of how the rewards might look like,
+so for the example there,
+are normally distributed to some randomly chosen mean,
+and the fixed variance,
+but of course,
+when you want to interact with the machines,
+you don't know this, right,
+and the only thing which you can do is,
+do the interaction,
+so start pulling the levers,
+and see what happens.
+So let's say that we have got this interaction,
+of selecting a sequence of action,
+and after every action,
+we will observe the reward of,
+what,
+what the machine,
+machine gave us.
+And so,
+if we knew what the real,
+means of the rewards of the individual actions are,
+right,
+this Q star,
+the notation will became clearer in a few slides,
+but these Q star are the flag of real,
+mean of the reward.
+Then if we knew them,
+then the optimal strategy would be to take,
+the machine with our action,
+which is the highest,
+expected reward,
+and then just apply it all the time,
+just stand there and just use it,
+because,
+on average,
+we will get the largest reward,
+or we would lose the least.
+So,
+but we don't know,
+right,
+we don't know what these real,
+values of these actions are,
+but we can estimate it,
+right, what we can do is we can say,
+okay,
+we don't know it exactly,
+but maybe let's try,
+right,
+at the beginning,
+we could use every action once,
+and then we would see a reward
+from each of these actions,
+and that would be some kind of an estimate.
+Generally,
+when we have performed some action,
+some number of times,
+we could form an estimate of the value,
+and that would be the average,
+of the reward,
+which we have seen from the one specific action.
+This,
+this average,
+even if we only have one of them,
+it's an unbiased estimate.
+In the same way,
+how a gradient of portfolio of neural network,
+if you just take a single example,
+and then compute the gradient,
+and it's an unbiased estimate,
+then here it is as well,
+because,
+well,
+we would like to know,
+an expectation,
+and we can sample from it,
+right,
+so even the average of some number of rewards,
+as an unbiased estimate,
+and it is actually converges
+to the real value as the number of actions,
+say, time goes to infinity,
+because of the law of large numbers, for example.
+So that's a good thing,
+we could have some kind of estimates.
+So when we have these these estimates,
+then we could choose the so-called gradient action,
+by the gradient action,
+is the one which seems the best,
+according to the estimate which we have.
+Those like the act the best,
+but it doesn't need to be optimal,
+it's just the best with respect to the current estimate,
+so it's called the gradient action.
+So that,
+and this might be our strategy,
+right,
+to always perform a gradient action.
+And generally,
+that's not the bad thing,
+but,
+so if you imagine that we would star by,
+I don't know,
+sampling every action once,
+and then just taking the gradient one,
+and then sampling it while it was still gradient or something.
+So that works kind of fine,
+but there is a one problem which can happen,
+and that's if at the beginning,
+we would have sampled something low
+from this optimization,
+and instead sampled something larger,
+for example, from this one for the second best,
+then this would be the gradient action,
+and then when we have performed it multiple times,
+the estimate would converge to the real expectation.
+But we would never try to,
+actually optimal action because,
+well,
+our estimate of it seems too low.
+So this kind of a problem is like the main,
+or the central topic in reinforcement learning,
+because there are two ways what we are,
+two things which we need to do.
+First,
+we need to use these three directions to actually get,
+as a large reward as we can,
+and that's called an exploitation.
+So using the knowledge,
+we have to obtain as much as possible.
+But we also need to make sure
+our estimates are reasonable,
+the reasonable exact,
+so that the really action is actually the optimal one.
+And so this is part,
+or this other process is called exploration,
+either explore what the actions actually do,
+and what the rewards of them are.
+And we need to make sure that we do both of these reasonably interleaf,
+so that we will end up with the optimum behavior.
+So like to illustrate this,
+let's say that you will go for dinner,
+to your favorite restaurant.
+And then when you go there,
+then you probably have some kind of favorite meal,
+so we have got this menu,
+and then there's some idea of how good in BBSR,
+and then some of them is your favorite,
+and you know that if you eat it,
+you feel good,
+and it will taste great,
+and everything.
+So doing this,
+like going to the restaurant,
+and then ordering your favorite meal,
+that's the exploitation part,
+right, you have some kind of knowledge,
+and you want to maximize your satisfaction
+by doing the best action,
+the greedy action available to you.
+But it might easily happen that on the menu,
+there is somehow hidden,
+like a magical meal,
+which you would prefer even more.
+But you don't know,
+right, you haven't tried it,
+or maybe you tried it once,
+and it wasn't very good,
+because it will spoil the day or something.
+But it might happen that there are these options there,
+which you just don't know about,
+so the exploration phase,
+is the one which tries to make sure
+that there are no hidden or unknown magical options,
+which you don't know about, right?
+So exploration would correspond,
+going to the restaurant,
+and then ordering your meal,
+which you haven't had, for example.
+So in the context of our multi-armed bandits,
+how we can do the exploration,
+well, we need sometimes to also try actions,
+which are not the greedy ones, right?
+So a very, very crude solution
+would be to use something which is called
+an epsilon greedy approach.
+That means it's greedy most of the time.
+So for example, in 90% of the cases,
+you will do the greedy action.
+But in the rest, 10%, you will perform exploration.
+And in this case,
+exploration will just mean taking random action, right?
+So, and this epsilon there,
+that's the probability of the exploration.
+So if we will use, for example,
+the epsilon greedy for epsilon of 10%,
+then in 90%, we will do the greedy action,
+and then with 1% probability,
+we will choose the other action.
+So what I mean is that, like,
+in 10% of the cases, you will choose random actions,
+and we have a 10 of them.
+So each action has a 1% chance of being selected
+in every trial.
+And this exploration is,
+my asymptotically optimal in a sense,
+that, or I would say,
+it's converges to the optimal solution,
+because every action will be performed,
+like infinitely many times,
+in a very long gram.
+And it means that all the estimates, which you have,
+will converge to the real values of the actions,
+and that means that at some point,
+the greedy action will be the optimal action.
+So there are some graphs.
+It was trading this.
+So these are graphs,
+which are averages of 1,000 runs
+with different random seats, right?
+So here, we follow this epsilon greedy strategy.
+So we have the estimates of the actions,
+and in every step,
+we either choose a greedy action with a probability of 1,
+or a random action with a probability of epsilon.
+So here, we measure the number of times,
+we actually perform the optimal action.
+This corresponds to this example here,
+so the optimal action is 3, right?
+So here, the green line,
+that's the completely greedy strategy,
+so epsilon is 0.
+So at the beginning,
+you start by sampling every action once,
+and then you just go for the greedy strategy.
+And you can see that,
+we actually perform the optimal,
+optimal action only in roughly one third of the cases,
+but then it doesn't improve because,
+well, you will converge to using function phi,
+or some sub-optimal ones,
+but it will stay with the greedy action.
+On the other hand,
+if you add some exploration,
+that can make your results much better,
+so with a 10% exploration,
+you can, after 1000 steps,
+you will be sampling the optimal action in 80% of times.
+So there is, of course, a price to the exploration,
+but if we do the exploration,
+then, for example, for this epsilon of 10%,
+we will be performing the greedy action in 90% of the times,
+and then there is the exploration part.
+So in the exploration part,
+we can still randomly perform the optimal action in one
+percent of the time in absolute.
+So we will be able to do the optimal action in 91% of the times,
+but that the rest will always be dedicated to exploration.
+On the other hand,
+with a red curve or with a smaller epsilon,
+this could converge to 99.1% of times
+doing the optimal action,
+and then the exploration in the remaining ones,
+but you can see that the converges much slower,
+so in the end it will be a trade-off of how long
+you want to interact.
+So the balancing the exploration and the exploitation
+is always tricky.
+So this was really just a question.
+So when I say so the question is
+how what is the difference between the greedy and option of them?
+So the greedy is the currently best
+in a sense that greedy is the action,
+which maximizes the estimated value.
+So we have this estimate of how good we think the actions are,
+so on this slide that are these QD estimates.
+And so the greedy is the action,
+which has the largest estimate rate.
+When I say optimal,
+then I mean an action,
+which has the largest actually real value.
+So this is what I would call optimal.
+And of course,
+we want this to converge.
+And if the estimate is converged,
+then also the greedy action will become an optimal action,
+and that's what we want.
+So this is a very simplified example,
+which illustrates the basic problems
+which we will need to deal with in very important learning.
+But the setting is very simplified in a sense
+that there is no memory or something,
+like we do one interaction,
+we get immediately a reward,
+and then we go over or we start again.
+But if we imagine things like playing chess,
+it's not like you do one move,
+and then if somebody will lose right.
+So there is some kind of a state,
+you need to see kinds of actions,
+and only at the end of the game,
+you will see whether you have one or lost.
+So in the Renaissance learning,
+we use this so called Markov decision process
+to describe how the environment and the agent interact.
+So we have these two components, the agent,
+but that's like you, that's what you want to control.
+And then the environment,
+and that's like the system with some kind of rules,
+but into it, which you need to interact with.
+The interaction works by the agent performing actions.
+Right, so the agent chooses an action to perform.
+We will assume that there is like a fixed number of actions,
+which we can choose from.
+And this action is performed in the environment,
+so the environment has some kind of a state.
+So in a board game,
+that could be the places of all the figures.
+In the cardboard, for example,
+the state will be the position of the card and the velocities
+of the ball and things like that.
+And when you apply an action as the agent,
+the environment does something,
+so the action somehow influences the environment.
+And the result of that is twofold.
+First, the environment changes state
+or somehow reacts to the action.
+So in general, the new state, of course,
+can be the same as before, but it can be different.
+So for example, if you say, I want to move this bishop there,
+so the original state is where the bishop was.
+And the original place and the new state is when there is.
+The new position may be also the piece of the opponent is missing,
+if it was there and something.
+And in addition to that, you will get a reward.
+So to reward is, like,
+some kind of a relation,
+really like a reward from the environment,
+it's not necessarily, it doesn't necessarily mean that this reward
+is immediately caused by this action.
+So for example, if you,
+I don't know if you imagine playing bowling,
+then your action is at some point, like you throw the ball.
+And then there will be many steps where it doesn't
+get a matter of what you do,
+you can be drinking beer,
+you can be dancing or something.
+But the ball is rolling, right?
+And at some point, it will hit the, I don't know,
+the arc balls, I don't know, these things are called.
+And then you will get the reward,
+like the number of them that you were able to knock over,
+but it can be really, very much delayed.
+In the case of the chess, for example,
+the reward would be probably zero of during the game,
+because it doesn't even matter who has more pieces.
+The only important part is at the end,
+whether you will win or lose.
+So the reward in the game of chess would be zero.
+Under the end, and then the last reward would be,
+I don't know, plus one or minus one, for example,
+for winning and losing.
+And so this interaction goes on and on.
+So this new state is being passed by agent,
+and that again is a chance of producing another action,
+and so this interaction can continue.
+So an important property of the environment here,
+is that the behavior depends only on the current state.
+So the behavior cannot depend on the previous state,
+or previous actions, or something.
+Everything which influences the environment behavior
+needs to be captured by the state.
+Of course, the state could remember all past actions.
+The state could remember whatever you want,
+but like mathematically, the behavior of the environment
+depends solely on the current state.
+That's why it's called the Markov decision process,
+because this property, the Markov in property,
+means that you only depend on the current time stamp,
+and not on the things which were too far in the past.
+So formally, this same D.P.
+consists of states and actions.
+And then there is this behavior of the environment.
+So formally, it's called the dynamics of the environment.
+And when you give it a current state and a current action,
+it will tell you what the new state and reward will be.
+But because the environment can be stochastic,
+this dynamic is not really just a function,
+which could determine the deterministically,
+give you the next state and reward.
+But it's a whole distribution, because it can generate multiple
+outputs or the distribution tells you what outputs
+and with which probability they can generate.
+So we have got this distribution, which gets to inputs,
+and then generates a pair, next state and a reward.
+And then this D.P. contains also a technical parameter,
+which is called a discount discount.
+So I will explain why it is there.
+So reward, that's the immediate value which you get from the environment.
+But we will be interested in maximizing the so-called
+return, so it's like a similar reward and a return.
+So a return is like the overall value, the overall performance
+of some interaction.
+So when you do some interaction, you will produce
+list or sequence of rewards.
+And when you sum them, you will get your return.
+And that's what we want to optimize,
+like we want to optimize, not just single reward
+and every time, but we want to optimize the overall
+sum of rewards, so the overall return, which we will get.
+Now, sometimes these interactions with the environment
+have natural boundaries, like playing chess, play,
+and then you win or lose or there is a draw.
+So these are so-called episodic tasks when there are
+natural episodes, and at some point they end,
+and then you start, start in you.
+Out of these episodic tasks, some of them are actually guaranteed
+to end after some fixed number, maximum number of steps.
+So they are finite horizon episodic tasks.
+And so for these, summing the rewards is perfectly fine,
+because you will always be summing just the bounded number
+of rewards.
+But for the other cases, either we have episodic tasks,
+but without fixed boundary, or maybe you have an interaction,
+which does not match early break into episodes,
+if you say, I don't know, driving car.
+You can think about the archiving from a to b,
+but you can just think about it the archiving,
+and you can be driving for hours.
+So it's not like there is like five minute steps
+where the interaction stops.
+Or breathing, can I say, well, you could say that
+you want to preserve this one pattern or out,
+but like a general process of breathing,
+preferably, doesn't have these boundaries.
+So these are so-called continuing tasks,
+where it's not easy to say where they ends.
+And in this case, you could be summing here,
+like unlimited number of rewards.
+So for these sums, for these returns, to be well-defined,
+we will need some way to afford these sums to be bounded,
+and we will do that with this discount factor.
+So what we in fact do is that we sum the rewards,
+but the rewards, which we get in case steps,
+is multiplied by gamma 2k.
+So the reward we should get farther in the future
+will be smaller, and this part will make sure
+that this return is well-defined.
+But today, we will be concentrating only
+on these finite horizon tasks.
+So just ignore the discount factor.
+I will put it at the air, so if you know that it's there,
+but today, the gamma will always be one.
+Yes?
+Yeah, yeah, of course.
+So I said that this will always converge.
+So what I didn't say explicitly,
+is that we assume that the rewards are bounded.
+So we assume that there is a maximum reward,
+which we can get.
+Of course, otherwise it could grow infinitely.
+So it would be, it would be bad.
+Like even the reward was one over gamma 2k,
+or something, right?
+And that would be bad.
+So what I didn't even say here,
+is that we expect the rewards to be bounded actually.
+So now we know it won't.
+We want to maximize the overall interaction
+with the environments as the sum of the rewards.
+And so where will our models be?
+Where will we put the networks?
+So we will, the editors will be the agent, right?
+So the agent is something which gets the current state
+and then produces a decision, so an action.
+And formally, that this agent is described as a policy, right?
+So the policy that the agent and the policy is something
+which gets the current state and produces an action.
+So this is our model's model's look like.
+So really the policy will be an inter with some parameter theta,
+producing the output.
+So it's like a condition of model,
+which is what we have been doing all the time right
+and supervised classification for example.
+And even when you implement it,
+you're a driver for the car,
+gym, car, pole, assignment,
+and go to state, these four numbers,
+and then produces one action.
+So the output of these policies are our actions.
+But the policy itself,
+we'll just generate a categorical distribution,
+as you would expect.
+That's what we do normally for all the classifications.
+So there, it will produce logic,
+there will be some softmax activation,
+and we will get a distribution.
+So now there is a menacing,
+little king slide.
+What we need to do is we need to have a way
+of evaluating how good a policy is.
+So what we need to say is,
+or to define is a way of measuring
+performance of a policy.
+So let's say that we have been given a policy.
+And the value of that policy,
+to be measured by a value function,
+and this value function tells you the following.
+If you are in some initial state S,
+and then if you would do infinite amount of interactions
+with the environment,
+what would the average return be?
+So if you imagine how this interaction works,
+then you have got the agent here,
+write which generates the actions,
+and then here we have got the environment,
+and then the generates the states.
+So the value function corresponds to
+starting, for example, here on the cycle,
+write so we have you have a state,
+and then you will be interacting.
+So the agent will choose an action,
+it will give it to the environment,
+the environment will produce an x state,
+and you will just be doing this interaction
+until the episode stops.
+And so if you imagine doing all of these interactions,
+then the value function tells you what the expected return would be.
+So what the average performance of that policy is,
+when you start in this state,
+and then just interact with the environment.
+So formally this interaction has two components,
+one is to sample the action from the policy.
+The policy could also be sarcastic,
+so maybe the agent also wants to perform multiple actions,
+or it might be one-hot in the three-litre choice.
+But that's one part of the interaction,
+generating the action.
+And then once you have the action,
+write what you can do is you can apply it in the environment.
+So the environment will get the state and the action,
+and it will produce an output reward,
+and then it will produce results in state.
+And then this,
+so because you've gotten the reward,
+we'll say, okay,
+so this reward will be returned,
+so that's the one-to-date which we'll give to the user,
+but we also need to continue with the interaction,
+so we will also consider the next step,
+because it's in the future,
+we'll multiply it by one gamma.
+So let's get this counted.
+And then again,
+we'll sample an action applied in the environment,
+get a reward,
+gamma times one more step,
+generate an action applied in the environment,
+and so on and so on.
+So this interaction will go until it finishes,
+and this large sequence of expectations,
+that's the very function.
+But even if it looks weird,
+it's really just the average outcome you would get
+when you just interact with the environment.
+So this is the case where you are here in this loop.
+Sometimes it's practical to consider
+how the police behaves when you start in this place.
+So when you are in the situation
+that you have not only just the state,
+but also the action, right?
+So already the agent has chosen the action.
+So when you measure the value of the policy on this place,
+it's called an action value function.
+So you already have the action described,
+that's then on the SQ.
+And they are really the same in a sense
+that they both measure the expected traitor,
+and they just differ in a way
+where they start in these interactions.
+So we have got the very function and the action that you want.
+Because they are so similar,
+you can recursively express them using the one another, right?
+So you can say,
+well, this action value function
+I can compute it by doing this one step.
+And then relying on the value function in the next state,
+right?
+I can say,
+is I can say the action value function
+for the given state and action.
+Well, we will do this one step.
+So the environment will give us the reward and the next state.
+And we will return the reward
+plus discounting gamma times.
+And then the very function, right,
+in the next state.
+The value function is again,
+this long interaction.
+So we can just do one step and then just say,
+and now the rest, right?
+But the rest then is the very function
+because it's in the like other half of this cycle.
+And similarly,
+you can express the value function using the action value function
+because where you just do this one step of generating the action.
+And then just end now I will rely on the action value function.
+Right?
+So if you have this very long sequence of expectations, right?
+They correspond to like steps in this.
+Sorry here.
+Steps in this in this interaction.
+And the value function always starts with this expectation,
+which samples the action.
+And the action value function starts with this expectation,
+where the action is performed in the environment.
+So we know how to evaluate the single policy.
+And that actually allows us to define what the optimum value function is.
+So what's the best thing which we can get well.
+We can just consider all possible policies there are
+and take the value function of the best of them.
+And we will denote this as the optimal value function.
+When you want to distinguish between value function and the action value function,
+you can say state value function.
+And it's the noted as the star, right?
+So instead of the policy,
+there is this star like the optimal one.
+We can also of course define the optimal action value function again
+by considering all possible agents or in other words,
+or possible policies and just taking the expected
+return of the best of them.
+And the good thing about the optimal action value function is that
+if we had it, if we know what the performance of the best possible policy
+is for a given state and action.
+We can actually define the optimal policy itself.
+We could say, well, when we are in some state S,
+we can just choose whatever action so that the optimal action value function
+is the largest.
+So it's somebody can exactly tell you how good the sum sum policy is
+then you can say, okay, so I would just consider doing all the actions
+in this state and then you will get the evaluation like how
+would the interaction continue and you will just choose the action
+which leads to the state action pair, which gives you the largest
+expected trader.
+So once we have the optimal action value function,
+we can easily define the policy.
+So the good thing is that these abstract definitions
+actually exist and are unique.
+So under some reasonable assumption,
+so either finite horizon tasks, which is what you do,
+or if the discount factor is smaller than one and the rebots are
+bounded, then there is an optimal behavior, right?
+So there is an optimal value function, optimal action value function
+and possibly several optimal policies, right?
+Like if we are playing this bowling, right?
+The optimal behavior or like the optimal value function just means
+what is the highest reward we can get, so that would be like 300 points
+or how many can get when you play very well.
+But there could be multiple policies because there can be multiple ways
+how you can do that by either you can just throw normally
+or you can do a backflake and then throw a wall or something.
+But the score, that's unique, right?
+This is 300, which which you can get.
+So this was some some basic theory.
+And now let's see of what we can actually do.
+How we can train an agent to achieve hopefully this optimal optimal value.
+So we will train the policy and we will do it by maximizing the expected
+rate, right? So we just want the performance of interactions
+of this policy with the environment to be the largest.
+So how we will do that? Well, we will use the usual neural network approach
+and that will be to use this as a loss.
+Well, if I say as a loss, then usually we minimize the loss
+and we want to maximize this. So we will use the negative expected
+loss. But in order to be able to optimize the model,
+we need to be able to compute the derivatives of that.
+And we will see that it's actually doable, right?
+So we will come up with a way of computing the gradient of the value function.
+And from that on, it will be straightforward because,
+well, we will just do some kind of SGD using this gradient
+instead of the usual. Well, the usual one.
+And of course, the gradient itself will not really be differentiable.
+My slates not like, right? Because the rewards and the environments
+they are just given to you in some discrete way.
+So we will somehow come up with this gradient.
+But once we have it, then we can do the updates
+that of an optimizer. So how to do this?
+This value function that's a very large expectation, right?
+Because of the expectation of the interactions of the agent with the environment.
+But when you think about how the value function looks like,
+or when you look at how it looks like, then it's this enormous sequence of expectations.
+And when we want to compute the derivative,
+we just need to take this enormous formula
+and then just compute the gradient.
+And it is actually doable, right?
+Because gradients and expectations swap that's fine.
+Gradients and addition that's fine.
+And multiply multiplication by constant.
+That's also fine. So there is nothing bad in this formula,
+which we could not compute the derivative of.
+So we will come up with a gradient formula,
+really just by taking the definition of the value function,
+computing the derivatives and then somehow collecting
+or writing down the result in some compact form.
+So this result is called a policy gradient theorem,
+which tells you how the gradient looks like.
+So let's say for simplicity that the states and actions are finite.
+Of course, we might want infinite actions, infinite states.
+But let's say that they are finite for the time being,
+we don't use the discount factor,
+so we assume that we have got this finite horizon tasks.
+And we have this parametrized policy,
+so some model which will produce the actions given states.
+Now we need to describe how the environment works.
+So the environment starts the episodes in some of the states.
+Maybe just in one of the states, when we have played chess,
+there is just an initial starting state.
+In some environments there might be multiple starting states.
+In the gym card pole, for example,
+the card starts with like a random position
+and a random rotation of the pole.
+So let's say that there is some distribution H,
+which describes the initial states.
+And then what people also do is we will give a name to the so-called unpolicy distribution.
+So imagine that you are doing these interactions.
+And so there are some possible states in the environment.
+And like when you are doing the interaction,
+then you are visiting some of these states probably more often,
+some of them less often.
+And so if you imagine like an entity in the amount of interactions
+of your policy with the environment.
+And then when you look at what these states,
+you visit with what probability,
+then this distribution is called unpolicy distributions.
+Like where you will be on average when you follow the policy
+and interact with the environment.
+We will denote this mu s.
+And so it gives you like a probability in which you are in the state s
+if you are interacting with the environment for really many times.
+So the quantity which we will want to maximize
+will be the value function in the initial states.
+Right, the probability function is defined for state.
+So we will compute the expectation over the initial states.
+And that's what we want to maximize.
+And so the theorem states that the gradient of the value function
+for a given state can be written by this not nicely looking formula.
+It's actually only proportional to it.
+It's not really exact.
+And the gradient of the quantity which we want to optimize
+can also be written by some luckily shorter formula than the other one.
+So what does the formula mean or how does it first?
+There are two parts in this.
+First, here we consider all possible states s prime.
+And we consider them with a probability with which we can get from the initial state s
+to the s prime.
+So what we want to do is we want to consider states where we will get when we start with the state s
+and then follow this policy by.
+So that's the first part.
+So we will consider states and the state where we get more often will get larger weight
+because they are important because they will be visited multiple times.
+More times than the ones with a small probability.
+And once we have a state, then for that state, we will have this quantity which
+considers all the actions.
+And then it takes the gradient of the policy with respect to the parameters.
+This is the usual gradient to compute when we do neural network computations.
+And we will multiply it by the action value function.
+So how good a policy is if it starts in a state s prime at this one and we perform the action
+So intuitively, what this does is you want to compute how the changes of theta of the parameters
+will influence the expected trigger.
+So what you do is first you look at how changing these parameters influence the output of the policy.
+So this is part here tells you if you change the theta a bit.
+Will the policy generate some action with a larger probability or smaller probability?
+So the change in theta is how it will transform into the probability of an action.
+And then if we imagine some action being now more probable, for example, than before,
+then what we will do is we will consider how this will influence the overall performance.
+So now we will generate a more often.
+So what do we get when we generate a in s prime?
+Well, the action value function tells us the result of it.
+Like what we will get on average when we do this section.
+So this part here on the right does us how changing the parameters will influence the actions
+and how changing the actions will influence the overall return of the policy.
+And we do this for all states weighted by the probability that we will actually get there.
+We don't care about states where we cannot get from s because changing the parameters will not influence any behavior.
+Or any return when we start in s because we cannot get from s to s.
+And then the overall derivative of the overall objective is the same as the difference of where the states come from.
+So here in the very function we started in some given state and then we computed the probability which we can get with some s prime.
+And here we will just consider the states with respect to the unpolicy distribution.
+So we consider each state with a probability how likely it is that we are in that state when we interact with the environment using the policy by.
+So yes, so there is just an notification of what this means.
+So this p means a probability of getting to from state s to s prime in any number of steps.
+So what you can imagine is you can have counters on the states.
+You will do a lot of interactions and then every state will get the probability which will be the count.
+How many times we were divided by the number of steps which we performed.
+Now it's like if you imagine that the initial states are simple according to these unpolicy distribution and then you follow this policy by then that that's what the mu is.
+So that the mu is including the information of where how the environment starts on average.
+So if you imagine like a lot of interactions where you will always start in state according to the unpolicy distribution and then follow the policy.
+And then you imagine like infinite number of these interactions then this mu s will tell you the probability of you are in some given state s.
+So maybe I will elaborate how these two things interact and maybe it will be better.
+So what I want to say is that consider like this part when we have in the very function so the probability of getting from s to s prime.
+And then let's say that I would also add an expectation so I would sample the initial states from the unpolicy distribution.
+So these two terms that is the unpolicy distribution.
+So the unpolicy distribution tells you if you start in the state according to the initial state and then consider what is the probability of getting from the initial state to a prime when following the policy by that's mu.
+Yeah, thanks. So the initial state is not something you can influence so that's actually like part of the of the mdp dynamics are you can imagine that there will be like a special.
+So technical initial state at the beginning and then the mdp dynamics would give you the first state which would be one of these initial states independently on what action you do but you don't influence it that's given by the environment.
+And in most cases the only one of the states is the initial one like if you are playing chess you always start with an empty well not empty board but the standard standard board so you can really think about it as a single state and that's fine.
+And then if there is just a single initial state then this would be the unpolicy distribution like the probability that you get to some state as prime from the one initial state.
+So the good thing is that the proof of the gradient of the very function will fit on one slide.
+Well you have to be happy for at least some small small gains but the proof is straight forward right so because well we haven't really proven anything complex so it has to be straight forward because well we don't know anything advanced.
+So let's look at what the value function of the sort of what the gradient of the value function will look like.
+So first we will write down the definition of the value function right so we can define the value function by sampling the actions from the policy and then deferring to the action value function.
+So we can instead of the expectation explicitly say sum over all the actions here is the probability of the action in the policy right so this is the expectation and then there is the action function.
+So this just means like let's do the interaction in the environment like so the value function means I will start by sampling in.
+So now I will start putting the gradient in so I will swap it with the sum and then I have got a.
+So the gradient of that is the derivative of the first times the second so that this part.
+And then plus the first term times the gradient of the second one so this is straightforward and now this term that that's finished right because many of these terms are like that with this part right so that will stay there so we will do nothing with it well because we can compute it right this is just a gradient of the policy that's fine.
+We can do compute that using some big propagation algorithm and this is some some constants so this is fine.
+The problematic part is this term because here we need to do the derivative of the action value function and again the action value function is some.
+Some beast of expectations of like many interactions with the environment so we have to we have to continue to deal with this part.
+We will and what we will do is we will again use the definition of the action very function and do one more step of the interaction so now when we have an action what we need to do is we need to give the state and the action to the environment.
+And the environment gives us the next state and the reward.
+So we will produce the reward and then we will say normally it will be gamma times the very functioning the next state.
+Here we assume that the gamma is one so I'm writing it down it will make it unnecessarily complicated but of course it will be done.
+And so here we have the very functioning the next state so now again let's look at what we can do with the gradient so the gradient will go inside.
+And now we have got several terms here but only one of them will produce a non zero derivative because the probability that's just a number so derivative will be zero the reward is just a number to derivative of the to be zero to the only interesting part is the very function.
+So I will have here the gradient of the very function so the reward because the derivative of that is zero time just canceling it.
+But also means I don't care about really obtaining it from the environment so you can imagine that we would just consider the following state and just disregard the reward at all.
+And now we are really done right because we started with the gradient of the very function now we again have a gradient of the very function but in the next state.
+So now we will like do these expansions more and more and more right so we will replace this very function by by this formula itself recursively right so instead of the very function we will have again.
+This this whole line there and then we will continue and continue and continue to be expanding the very function until the episode terminates so we have finite horizon pass so stop at some point.
+So when that happens we need to collect all the terms which were created so the good thing is all the terms which were created looks like this.
+There is an action very function in some state and action and the gradient of the policy so we have got these terms here and the question is.
+Like where all the terms are so first there is this one which is there and it's available there just just for the initial state right so we can.
+So that's one possibility the other possibility to come from from this this line so how did we got into s prime well we started an s.
+We generated an action and the environment put us into s prime so this s prime that's that's there because we got from s to s prime in a single step sample connection and.
+And the environment gave us the next on the next line like there would be a double prime it's not there but if if you continue expanding there we end s double prime and we would get to s double prime by starting in s then doing one step and another step in the environment so overall we will consider.
+All possible number of steps which we could make from from zero just means staying to the initial state to to age like doing age steps and for.
+Each state s prime we will measure the probability of how with which we can get from s to the test prime in in the given number of steps right because here we will get the doing the action.
+So that is the probability of getting from s to s prime so now we are nearly done in the original formulation we didn't say the probability of getting from s to s prime in some number of steps we just said the probability of getting.
+To to s prime but these and our distributions are nearly the same is just that this on the left side like physically this number is larger than than one right here on the left side when you compute the expectation of it.
+Then the overall sum would be the average length of an episode right if you imagine the probability of getting from s to s prime in the number of steps for all possible case then the expectation of that is the average length of an episode.
+So if we divide this part on the left side by the average length of the episode we get exactly the probability of getting from s to s prime.
+And now we are nearly there we just need to deal with the fact where we only need to consider the initial state and exactly as we already discussed when you consider.
+So starting in the initial state and then getting from s to s prime this is the unpolicy distribution so we are there.
+So what we will be doing with.
+So there are just some nodes that it can be generalized for infinite states infinite actions infinite the result length but we won't.
+So what we will do with it is we will come up with an algorithm.
+Well we will not come up with it we will just describe an algorithm who Williams came with 92.
+The algorithm is called reinforce to make it you know we are whether reinforce is the name of the field or the name of the algorithm or this.
+And we will really directly minimize the expected return the one was gradient we just computed.
+So how does the gradient look like well by the definition that's this formula right we consider the states and the actions and now when we have the sum over states.
+And the states multiplied by the mu as we can just write it down as an expectation where the states are sampled from the impossible distribution.
+So now we need to deal with this part and what we will do or what we will be.
+Well you are not but what I am unhappy about now and you will be unhappy because I will tell you that you should be unhappy about it is this sum over all the actions.
+Now the thing is when we train a network we have always used losses which were expectations like our loss was an expectation over the training date.
+And we were able to evaluate them quickly because well we just sampled the number of them and that will be useful here as well.
+Now the good thing is that this is an expectation over states in the unpolicy distribution.
+Imagine that we will do a lot of interactions so we always start an episode running under the end start another run it until the end start another running under the end then the states which we get the sequence of states exactly has this unpolicy distribution.
+So if you just randomly take a state from the interaction with the environment it comes from this distribution automatically by itself right so it's it's good thing how to how to sample from it.
+But we would also like to be able to use the actions which we have generated when interacting with the environment but here we have a sum over all the actions but what I would want is here to be an expectation where the action comes from the policy because if it was there we could evaluate it by sampling it with a single action which.
+And that's exactly what the agent do when it interacts with the environment.
+So to if I really want this expectation to be here then I would just add the remaining parts which which I need there right so for this expectation to be there I would need to multiply this by the probability.
+Of the action given the state because then this sum.
+Multiplied by this probability would be the expectation so that that's the ice but of course I can all just add add some some term into the formula so I will need to edit both to denominator and the denominator and now I can merge the sum and the probability.
+Together into the into the expectation so what I will get there is the derivative of the policy divided by the policy then.
+And of course of course this action function.
+Well this part can actually be written with less letters that the same thing but with less letters by realizing how the gradient of a logarithm looks like well the gradient of a logarithm is one over whatever was there in the logarithm.
+Times the gradient of the of the inside of the logarithm so when you look at it then these these two terms which we had there can actually be written down just as a gradient of the logarithm.
+So the the gradient which we have can be the expectation over the states over the unpolicy distribution actions from the policy then we have the action function and then we have the gradient of a negative block.
+So the last part is something which you know right that the usual loss which we have used for classification negative block lake note still we have gotten to the same thing even if the logarithm just appeared magically the end.
+And so this loss is actually very similar to what we use in classification but the difference between this and the usual is that this action here.
+That's not the optimal action we don't know the correct solution is when you do some action and this is just the one we should sample so in the supervised learning this is where the knowledge went went in like we wanted to maximize the probability of the correct action but here we don't have a correct action so here the knowledge comes from the.
+So the action value function because the action value function tells us whether some action a is good or not like like we get this this this return like how doing the action will influence the the performance in the rest of the episode.
+So when you do so imagine that we are we have sample connection right and the action generates a gradient in the lost landscape and we have gotten some.
+So what we do is we take the gradient and we multiply it by the action value function so we will go in the direction.
+And the length of that will be the action value function so if this action was a good one then the the action value function will be large and we will do like a large movement in the opposite of this action so good actions gets positively reinforced right on the other hand if we.
+And then we will still do the action more like we will still go in the in the gradient of performing the action more but the the length I will travel in that in the direction is.
+What the applied by the action value function and it's the action is is not very good it will be smaller than then the correct action right so whenever I was sample good action I will do it more in the future whenever I sample not great action some sub optimum one I will still do it more but I'll do it less.
+I'm good action right so the optimization might look like this that I'm traveling in in different directions but generally in the in the direction of the of the good actions I travel with greater speed blank energy whatever.
+So you might say well where you will get this action value function from right because it's like a non trivial quantity so what I will do is I will estimate it with a single sample so what I what I mean by it is that I will start and I will do one interaction with the environments I will do one episode I will start in a zero.
+I will use the policy to generate an action that will give me a reward and next day and the actor will give me another action and so on so I will do this interaction until the episode finishes so I've done one interaction now when I have it.
+I what I can do is for each state and action pair which I visited I can sum the rewards.
+I got I would just say to intensity so I can sum the the rewards until the end of the episode for each state and action pair in this episode I know what a sample of return look like like one interaction how good it was.
+And this this quantity this sample that's the one sample from from this action value function right because the action value function tells you how the interaction from a given state and action would look like if you do a lot of episodes well I did one.
+So that's an unbiased sample from this expectation so I will use it so I will use this sum of the rewards as a sample of this action value function so the algorithm grain force algorithm.
+Interleafs to stats first I would generate one episode of state action reward interactions and when it finishes I will do an update and the update I will do for all state and action pairs which were which were there.
+When training I will use the return so the estimate of this action function as a multiplicative factor of the gradient in the update so instead of this action being the gold one as in the supervised learning I'm using the sample one but the the the the park which evaluates how good an action is or not is through this multiplicative factor of.
+the return right so after me speaking for a long time we have arrived something which is kind of similar to what we have done right we have just changed way of where the the gold data goes.
+So yeah there are some graphs showing that it works well whatever let's improve the algorithm we will improve it slightly and the thing is.
+It's kind of weird that even if we sample and incorrect actions some suboptimal action we still do the update in a way that we might.
+We do it more in the future like if you imagine for example the cardboard environment in the cardboard environment we want to drive the cart as long as possible and how we can do it is we can say that every reward is plus one.
+And then the sum of the rewards is well the number of steps which we were able to drive the cart without failure and we want this to be largest as possible 500.
+So in this case for example the all the rewards are always positive right so all these queue values will positive so even if we do a bad action the one which will crash the car.
+In in a few steps then this update will still increase the probability of that from action it just without smaller strength than a good action but this is weird pride it will be better to like not in force or not increase the probability of a bad action in the first place it would be better to see yeah this is a bad action I will not do it.
+I will do something else right so instead of going in the direction of the gradient of doing the direction I could go the opposite one I could like go back for us and just do whatever not just just not this bad action so.
+But we it might like but if all the action really functions are for example positive as in the car pole assignment then that's not what the algorithm does so what we could do well we could look at these action really functions and we could center them like mean center them we could say okay.
+Let's let's shift them so that the the mean that will always be zero and that means that the better than average actions for that are better actions than the average will get a positive.
+Wait so we will increase the probability while the worse than average actions for the verse sections will get a negative.
+So we will go in the opposite direction of the gradient so we will do them less so we will do this normalization and we can do this normalization actually independently for every state.
+So for every state we will compute something which we will call the baseline.
+That will be like the mean right and then in the formula we will center so we will subtract the baseline from from the action very function.
+And so first this doesn't change the gradient or it makes sense that the the reward they don't have absolute meaning it's about which of the actions gives you larger or the smaller one but if you have an environment and you add plus one to all the rewards the optimal behavior should still be the same.
+So it makes intuitively sense that but it can be done but let's also show it formally so what I want to show is that I've added this this subsection of the baseline from the previous theorem I like I knew that the gradient with respect to the function which we care about looks like this and I've added there this minus baseline.
+So let's see that it doesn't change anything so we will see that it actually gives us a zero in this whole formula.
+So why is it? Well when you imagine this baseline then it's being multiplied by this this gradient right so this that's the term which I have here the sum over all the actions of the baseline times the gradient.
+And we will show that this is actually zero to then the it will still be fine so why is this zero well the baseline can go in front of the sum because this goes over the actions.
+Now we can swap this sum and the gradient and here we have some of probabilities from a probability distribution where about their gives us just one all the time independently on how the individual probabilities look like and the gradient of a constant that just zero.
+But this makes sense the optimal behavior doesn't depend on the specific values it depends on the relations like which action is better than the other one and that's not changed by by shifting the returns by constant.
+And so this is called reinforce the baseline and the best baseline can be shown that it minimizes the variance is the expectation of the of the return right so we will actually use the the mean centering and well we have a name of what the expected action value function is that's the very function right so we will use the very function as the baseline.
+Now that means that we need to have it we need to be able to compute it so now our model will have another component and that will be this very function so now we will for given state produce not just the policy but for the given state will also produce one number regression the very function.
+We will use it during training right so during training we will subtract from this g our expected value function but you also need to train it right and how we are going to train it well when we are in this state.
+Action pair we are seeing this this return for this sum of the rewards and well that's one sample of the value function in the current state so what we will do is we will optimize the the value function using the means for error.
+between like the what the value function computes at this point and what the return.
+So we have to square what what what the return was so you can think about it like just that we track what we average.
+return is in a given state right and we track it by by computing the means for error of whatever our estimate is and what we are observing and that's so we are tracking the mean.
+And then we can use it during training and even if this is not perfect this estimate it's fine because any baseline can be you is just that it has the really the the value function value then it gives us the best estimator but it's still an estimator with whatever value so we don't have to care that much for it not to be great.
+So let's see some more interesting application of that let's find out how we could train how we could come up with a convolutional neural network which would be better than whatever either of us submitted for the C far C far competition for example.
+So we now have all actually there is necessarily components to start designing networks with other neural networks so how we are going to do it.
+Well we will have something which we are called a controller and the goal of the controller is to generate in your own network so it would generate usually fixed sequence of hyperparameters you can image in it like like what kind of convolutions we are going to use.
+So we will need to find a way how to describe it and then this is the model which we will do usually it's like an RNA and the coder because we need to generate some of our sequence and RNA and target generating sequences.
+So the controller that's the agent probably the policy in our settings so the action will be the architecture so the sequence of hyperparameters then the interaction in the environment will be to training network with this architecture and then measuring its performance on the validation set so getting some kind of accuracy or loss or something.
+And then we use this as a reward given to the agent and then the agent uses the reinforce algorithm to come up with a gradient which can be used to update the control RNA and so that in the next step it would generate hopefully better action better architecture of the neural network.
+So in the settings let's try and so called mass net network the first one generated by the other neural networks.
+So it's actually trained on C far because it's much faster than on image net and they just hope that maximizing C far development accuracy will be fine.
+So how to describe a neural network so at this point people thought okay we know that we have always made our networks to look very similar at the beginning there is like a single convolution layer and then we will have some some.
+Like reduction places like convolutions with strife too so there will be some blocks whose goal is to make the horizontal resolution smaller and then we will have some so called normal cells like these residual blocks or some sequences of convolutions where we don't change the horizontal and vertical resolution.
+And so they say okay let the neural network to design these two blocks so this is already the result right so what we will want is you will want to generate the so called normal cell so that's like a sequence of blocks.
+So in in in in resident this this that that was this to three grad three blocks with a residual connection around it right that's that's what this this normal cell would look like for resident so they say it will be some kind of a cell which can do that.
+And we will do as a another one whose goal is to perform the pooling so the first convolution in all the paths where there will have tried to so that's what the what the model will well we'll generate to cells and then we will combine them together with a fixed algorithm so we always start with a two direction cells and a number of normal cell as a reduction cell right so we would be five stages as in all other networks.
+So this was physically prescribed and the model was able capable of generating just these two cells.
+They also had a way of how to do that on C far in the same way as in C for competition so some number of the normal cells.
+So how to describe the individual blocks well the individual of the cells right so the cells are composed of so called blocks.
+So blocks is like this this note is this green part and the block has two inputs and applies either addition or concatenation on it.
+That's all the design of the author so they say okay so every block we'll just add do things together or content concatenate them together and all these two inputs.
+Our process each by some operations so they consider large number of convolutions that find separable convolutions pooling whatever it's the goal of the model to decide which of them.
+So each block is described by five parameters the input to the first block the input to the second block the operation for the first block the operation for the second block and the combine combining method.
+The inputs can be either the input to the current block or the input to the previous block so that allows us to create residue of connection because we might take the inputs.
+As like from the input of the previous block and of course all the blocks which we have already generated and the operations and the combined combining method just come from some fixed set of operations provided by the author and then they say and let's use five blocks for every cell.
+So this is already the result you can see that in every block there are these five so in every cell there are these five blocks age with two inputs and the structure and these operations are just automatically generated right so what they did is they trained 20,000 architectures which took five days on four days on 500 GPUs.
+But they were able to come up with models which surpassed everything what people designed manually from 2012 to 2017 so yes it took like 2,000 GPU days but it's probably still cheaper than the combining power of all the deep learning researchers for five years.
+And not everybody was doing image images but but yes.
+Yes exactly unlike an efficient and they didn't care about how efficient the model was.
+But I also will tell you how the efficient and the make it efficient.
+So an efficient net they didn't fall out very similar procedure but they use or they did some three three large changes or first one is they included this efficiency requirement to the reward.
+So the reward is no longer just the development accuracy but we will include also the performance requirement of the model.
+So what we do is we will use the measure the number of operations which we need to do here they really measure date from the number of parameters and all the operations.
+There are some other papers which which measure this physically on some machines and mobile to really see the real latency instead of like theoretical requirements.
+But when you have these two, when you have these two objectives then it probably will be difficult to satisfy both especially when they are like somehow opposing each other because the better architecture will probably be slower right.
+So what they did is they estimated how these two things can be balanced. So by looking at some already trained models they they got an idea that doubling computation requirements can bring something like 5% gain.
+So that's what they kind of estimated. So that's that was like the trade off between the computation requirements and the development accuracy which they thought was reasonable.
+And so they that's how they came up with this exponent which seems to balance these targets as well as possible.
+And this part with the flops had some some target which which they kind of went for.
+So the larger the requirements where the less the model was happy. So the what the model needed to do is first to balance these things together and also to come up with a good solution with like target level of performance computation requirements.
+When you do this you can no longer just design cells is here because here they just design cells and then somebody stack it into a large model.
+But if you care for efficiency you cannot do that anymore like that. So the search space needed to be changed updated so that it would allow the neural network to actually design all the layers influence the number of channels and things like that.
+So I'll describe that on the next slide. And just technical only just trained directly on an image net but for a small number of it.
+So this time the no longer use the reinforced algorithm was baseline which they did in nasnes or they use some improvement of the algorithm but principally it's similar algorithm.
+And this time they only needed a thousand architectures and then like this is the table of the results right so what the search space is well the search space is this table in a sense of the goal will be to generate these seven lines.
+So they say okay the overall overall architecture will be composed of seven blocks so I've got these seven rows in this table.
+And for each row I need to decide what kind of convolution I'm going to use so they had a normal convolution that by separate local convolution and then this mobile inverted bottleneck.
+Then they had a kernel size which you needed to choose either three times three or five times five whether or not using squeeze and excitation they use it all the time so it's not here in the stable but you could have said no.
+But it doesn't didn't help then you need we can say whether you want to have some kind of an skip operation so identity area like residual connection or anything or maybe some bullying there or whatever.
+And again the model just chose the residual connection all places so again it's not visible on this table then you can choose also the filter size so the number channels.
+So and also the number of layers so how many times you will repeat this same block and that in that position.
+So the the important is probably the control over the number of channels instead of the usual let's double things right because that means you can you can save a lot.
+And also allowing the model to choose where it wants to do the most computation by itself.
+Other than that well the model just tried a thousand of these tables and then for each of them it got the validation performance it got the computation requirements that transformed into a reward that transformed into the gradient of the value function and that that.
+So now you can train your efficient net version three if you have got 500 GPU to spare for a few days so just a shameless plug before before we will have a break I actually have a whole course on this well you can probably see that I like it well.
+Even the deep learning but also the important learning is great so there is a course on that which well covers how to combine this very important learning with a neural network so I have seen that you already know how to do convolutional network.
+But after going through the deep learning of course you know it already and the course works in the same way as deep learning so it's in summer semester it has got trees like to.
+And required hours you get eight credits for for passing in there are a codex assignments well you know you know the right and it's also an elected course in some of the master programs so.
+And that's where you can go to if you would like a very important learning and now that's all we have done on the important learning career so let's have a short break and then we will continue with a generative models.
+So after the quick introduction to the reading for the learning area let's concentrate or let's discuss generative models and we will speak about generative models for two lectures now.
+And we will start with a with a image once most right so nowadays you can generate images videos of those songs lyrics speech and all these things from using using so called generative models right so like a here you go it was like well the generative for the link will make the human artists obsolete right.
+Well and at that point it was like ha ha let's not going to happen but well just a month after the initial meme the models were improved so that they no longer were a matter of being clothed and nowadays you know how the models are actually actually.
+Very good so how these models work how you train a model to generate generate either nice looking hands or at least alien looking hands.
+So we will do that by training model to understand like a distribution so what I mean is that when we have normal models we started with some input X and then we computed the distribution over the outputs now we'll be in the situation where we only have the data so we have good just X and we will want to understand.
+How these images look like so what are what could be the probabilities of various images and then hopefully also being able to generate.
+Things from this distribution which means generate preliminary images but it's going to be slightly tricky because now we need to like previously the input data was really on input but now to to describe this we also need to to put them on output you need to be able to really.
+Generate these these data and if you imagine if you imagine these being images then just doing I don't know something for classification or something won't cut it because we will need to generate a lot of values.
+And there will be some non trivial dependencies or interactions so modeling such structured outputs will be challenging.
+And generally we will aim for being able to sample from from these distributions which will allow us to sample the axis so what we will do is you will try to convert things back to the settings which we which we know and what we know.
+Is the network which would start with some input right and then produce X now something what we were used to like having conditional models starting somewhere producing X but when we just have the data what will we start with well.
+What we will what most generative models is they assume that this exists the images for example are not just generated from like by themselves but there is some some latent variable.
+Which describes like what's only image how many people they are whether the trees look normal or something like some kind of like the core information in the data and then there is the process which takes this latent variable like description of the data and actually produce the data from it.
+So we have some kind of latent space which describes what there will be on the image and then we let a process of like really like transforming this information from this abstract representation into.
+Into the images into into the domain of what we are interested about like if we are talking about speech synthesis then the latent variable could be like the sentence which you want to say the kind of voice which you want to use speed and things so on and then.
+The excess would be really like the amplitudes of the other speaker with the data right for the images that can be some description of what would there be.
+It could be either very abstract or very very low level whatever and then we will just generate the exits and the idea is.
+When we want to generate new access we will instead generate new Z which should be somehow we should be more simpler than generating images and then we will use this process of transforming the latent variable into into real output.
+So formally to describe this so called graphical model we will say okay the probability of generating x can be computed by considering all possible latent variables and for each latent variable we will consider its probability.
+And then we will consider the conditional probability of generating x given the latent variable now this thing is true all the time like this is the.
+theorem of complete probability or something like this is like when you consider all possible outcomes of for example one how one die fell down and then you are interested in one thing to know you know what is the.
+Well whatever whatever information then you can always complete it in this way.
+And so this is somehow over that multiplied by piece that is just an expectation right so we will model the probability of some x as.
+Conditional model which generates it from latent variable that an expectation of that for all latent variables.
+And in this in this part this will be our our network right so we will have in your network which given the latent variable will produce excess and.
+Today what we will do is that this distribution of where the latent variable comes from will be very simple so we will train a model so that this so called prior is probability over the latent variables will be.
+Something trivial so for example an normal standard normal distribution right and then sampling from it will be fine we're just sample from from a known distribution.
+And but then we will process this quantity by the new network and hopefully we will always get a nice image.
+So if we want to train the model which will produce some kinds of the data given the latent variables.
+One way what we could do is to use this whole call out of encoder architecture so auto encoder architecture is not necessarily generative models is just an idea that.
+You could train a model to start from x and then generate the same thing on the output that's why it's called an auto encoder.
+Of course starting with x and generating x is kind of trivial right just copy it so how to make this challenging well one thing which you can do is you can do like an compressive.
+Auto encoder in a sense that you force the auto encoder to represent the input with something much smaller.
+And then again generating the same input from the small representations was like come some kind of compression and you could train a model in this way and it would learn how to like compress it into into something smaller.
+So if you train this and there will be just a single hidden layer here and single hidden layer here then that's the space that would be the PCA decomposition of the whole input like from a principle component analysis kind of thing that's how where this converges to but.
+can be done and it makes this auto encoding more challenging the other thing which you could do to make this more challenging is to use the so called denozing auto encoders in a sense that instead of generating x from x we would take the input data and some noise.
+And we would like the model to denoize it so to get rid of the whatever noises we put there and this would allow the model to understand how the clean data look quite like because we would say yeah this is not great from this you should do this so if you imagine the space of all the images we would always say well this this image should go here this image should go here so this this way we would be like.
+explaining of how the like space of all the good images look like well in both of these cases we could say okay so let's.
+Let's take this part so in this other encoder first part it's called an encoder because it encodes the input into this lighting variable space and the second part is the coder.
+So we could say yeah the coder that will be the part of the model which we can use for generating some outputs right we could.
+After training the other encoder we could sample the lighting variable run it through the decoder and get an image.
+So that's a good idea but it doesn't work so why doesn't it work well at the beginning of the time during the training we have got some some input data so when we pass them to the encoder they get met into various places of the lighting space.
+But then and then the decoder maps them to the code outputs but during sampling if you just take random point in the lighting space there is no guarantee that.
+This was like in encoded from some some input data so that means the decoder was never changed to process it in any way so the output of the decoder might be something very weird right to show you.
+By can another example of that imagine that I want to do I will process eminist through this in this compressive way so maybe one way with the model put to is when you get the input it will like learn some set of basic.
+It will learn some set of like basic image basic shapes like I don't know maybe the three could be represented like this like so you can imagine it here but some basic shapes and then this latent space will just tell you which of these shapes you should use.
+But if you selected randomly you could create something which is not really legit like so you could select like this this this this is like a rocket or something.
+Right because like if you just have like a collection of small pieces then you can easily represent the whole eminist into it but if you just randomly select each of these pieces independently then there is no guarantee that running it through the encoder will actually produce the digit.
+So that's that's a problematic part but the good thing is that we can fix it so we will update this auto encoder architecture by making sure that the whole latent space will be covered.
+And then the generation by sampling the latent variable and passing it through the decoder will be viable.
+So this modification of this auto encoder is called a variational auto encoder.
+So let's assume that we have selected this this latent space so we have got some distribution over the latent space it will be called a prior.
+And in the end it will be normal distribution for us just because it's easy to work with.
+The the coder will be approximated by new networks so given the latent variable we will produce x however when when training we need to be able to do the opposite information as well we need to start with x generate that.
+This is like the that's the the encoder part like in theory this this encoder could really just be the the inverse of the decoder if we were we able to like change direction of this arrow we could use it as an encoder but we want it is not simple with any neural network could just do an inversion of that so instead we will train.
+Another model like the encoder and we will train them so that they are inverses of each other by the way there are models where you can physically invert this.
+When you do like a limited set of layers only and so that's another way how this can be trained I will mention it in any intellectuals just doesn't briefly but here we will just train both components to be there on inverses so we will also have the encoder.
+The encoder will have slightly different set of arguments parameters and it goes from the input data to the latest.
+So the question is how to train it we need to come up with some suitable loss.
+And before we will do that we will need one technical inequality some something which we will.
+We will need and it's called a jensen's inequality which I want to describe so the jensen's inequality.
+Is like a generalization of the properties of convex function so when you have a convex function it means that if we have got like two function values then if you look at the function values between these points they need to be.
+Lower or equal to where the line connecting these two points are so physically I could say well if I consider linear combination of points or this is the line going from you to V so if I take one point on it and look.
+So this is the linear combination of the inputs right so if I say okay let's combine them and then look at the function value at that point.
+And then if I look at the function values and do linear combination of of them in this way then the function value below the the interpolation so really just the convex functions are these balls and there is the the opposite the tension of that and that's the concave functions.
+And so the jensen's inequality generalizes the the above not just the two points but to any convox combination of points like the convox combination of points is when you will do like a weighted average of points where the weights some to one.
+So instead of having just two points you could have three or even more and the jensen's inequality tells you what happens when you either do the convex combination inside the function call or or outside of it so here there are for example three points.
+So here you can imagine to be like a plane of how you can combine the function values and then the whole function would be.
+And like it depends on whether you look in the two dimensional and three dimensional and sorry was showing it in the three dimensional way so even in the two dimensional way what this says is that well if you combine these in any combination then all the function values need to be loaded.
+So why is this use for us well it will or we will use it to move a convox function inside an expectation so when you have an expectation the expectation is.
+In some sense a convex combination of the values which you which are interested in so the the jensen's inequality tells you that if you say if you compute the F of some expectation and F is convex then the upper bound for that is the expectation of the convex function applied for the body so we can swap the the convex function and expectation but.
+There it's not an equality but at least it's a suitable inequality and we will use it on on the logarithm right so you can say that the logarithm is not really a convex function it's a concave one so you can imagine using it on a minus logarithm minus logarithm is a nice convex function.
+So our loss will well be as usual the negative flock likelihood well I'm writing just the positive look like this point because I was too lazy to put the minus is there but that's what we will want like as in the maximum like the estimation when we have an input data x we will try to maximize its probability.
+We want the model to give this this data point the probability of one ideally.
+And we know that our general at it model works by computing the expectation of all possibility variables and for each of them it computes the conditional probability of being able to generate x from the given from the given set.
+So probably there are some small number of this latent variables which will actually be capable of generating x if you imagine the x being like a spoken sentence and the z is the space of all possible sentences which you can say then most of them will not generate x with large probability they would generate doesn't.
+But some of these latent variables sets some of these sentences will actually be exactly what what is being spoken or being very similar so ideally we would like to estimate this expectation by a single sample.
+Right there is like usually infinitely many of these latent variables so for computing this expectation for this infinitely many variables that's not very likely to finish quickly.
+So we would like to sample it with a single sample we have done this all the time in even in the very important learning during this gd we whenever you see large expectation you just sample it.
+But here just sampling a random set would be bad like imagine that you have got this this spoken sentence and then you randomly generate any sentence and you say now this sentence will generate the speech well won't because it's a different sentence probably right so.
+But even if an expectation is to be true the the chance that you will get to the real set is extremely small so this estimate would be really.
+So dramatically bad so instead what we will want is we will want to take a good set for x we will want to to consider latent variables which is actually capable of of producing x.
+And we will do that using the encoder right because the encoder is exactly the component which for a given x should be capable of given us a latent variable that which can generate.
+So what we would want is instead of sampling sets from the prior we would like to change the expectation so that it considers the latent variables given to us by the encoder.
+Because if we could use this this bottom formulation we could effectively sample it with a single sample we would just run it in coder and then we would sample one of the outputs from the encoder but all the outputs from the encoder are latent variables capable of generating the x.
+However changing the expectation of course is not without its consequences so in order to change this distribution into another one what needs to happen.
+Well this is now like here this is like the sum over all z here we have got pz time whatever the inside of the expectation and when you have the expectation with respect to the encoder then the sum over z and here we have probability of the z given by the encoder and then there is the inside of the expectation.
+So to make this expectation into this one we need to take this this pz from the expectation inside the value which we have in the expectation on the other hand we need to put the probability given by the encoder to the expectation.
+Which means we need to take it from the inside of the expectation so changing these two distributions means that there will be a ratio right of these probabilities where this one was originally hidden in this expectation and now it's here on the other hand here I need to have the probability with respect to the encoder.
+So I needed to borrow it from here so I also need to have it in the denominator.
+So adding this ratio is what allows me to change the distributions.
+If you are going to the different personal learning this is just the important sampling trick and you have seen so many times that you are just doing it in your sleep.
+So what now happens is we will combine the logarithm and the expectation so the genesis and the quality kicks in and we will move the logarithm inside that means the result is just a lower bound.
+And we will have the logarithm of probability so look likelihood that's coming closer to some to some loss which we know and here we have the logarithm of this ratio.
+So now when you look at it like an expectation of the logarithm of the two ratios well that's this is something we have already defined on the second lecture and that's the KL divergence by this is the KL divergence between the two distributions.
+So what we have done is we have started with the look like we have end up with an expectation where we sample from the encoder which is what we desired.
+And then as a price we got the KL divergence between these two distributions so the encoder and the prior.
+And when the result is just a lower bound it is still enough for us to allow training right because normally we want to maximize the look likelihood so if you will do is instead we will maximize this formula.
+And because it's a lower bound if we maximize this to some level we know that we have maximize the look likelihood to the same level or maybe even more.
+So this for value is actually as a name it's being used in many areas.
+I mean it's called a variational lower bound or evidence lower bound and actually it is even possible to quantify what we will lose in this inequality.
+So let's say that by some magical coincidence somebody told me that the variational lower bound should look like this it would be the block likelihood.
+And then the KL divergence between the encoder and then the inversion of the decoder.
+So this is the KL divergence so it's non negative so this quantity this evidence lower bound is obviously a lower bound on the look likelihood and you will show that this evidence lower bound is exactly this quantity.
+And it will be actually kind of straightforward so this lower bound is so I will write this as a large expectation.
+And I will use the encoder here because that's what this KL divergence is the KL divergence is an expectation of the look.
+P minus block q well when this is minus so it's look q minus look p but the minus swaps the signs and now we will do some gymnastics here first we will merge these probabilities into joint probability.
+And now we will split it again but this time we will make Z to be the only one right so here it was X and then Z X and now we have Z and X given Z and at this point we will merge these things together into the KL divergence and now we have gotten exactly the formula which which we had here which means.
+That the portion lost by divergence and inequality hidden there is this so the KL divergence between the encoder and the inversion of the decoder.
+So as I said we will train by minimizing the variance lower bound or the negative version of it.
+So now how are we going to to compute it well this expectation will be estimated by a single sample so we will sample a single Z from the encoder that means the encoder actually needs to generate whole distribution.
+So because we said that we want to generate balls to cover the latent space the encoder needs to to be distribution so we will parameterize it as a normal distribution so we will our model will compute the mean new and the variance sigma sigma square we will predict the standard deviation actually and in order for it to be positive.
+We will use the X as the activation functions of the network will predict the logarithm of the standard deviation the same way.
+As for example in the fast RC and then we predicted or in the right area and then we predicted the logarithm of the sizes of the bounding boxes.
+So we use the normal distributions for two reasons first we can work with it easily so we can sample from it efficiently we can compute the KL divergence analytically.
+And well if you say that we will distribute your parameterize the encoder using the mean and variance then the maximum interval principle also tells us that well normal distribution is the most general one anyway.
+Regarding the prior we will use a standard normal distribution just because then the scale divergence is a KL divergence between two normal distributions for which we can have a formula actually and the standard one is just simple to sample from so the whole model which we have looks like this we have the encoder which.
+So produce a distribution so mean and sigma the standard distribution standard deviation sorry then we will sample that so one point in the in the latent space and then we will run the code the first half of the loss.
+So that's so called reconstruction was so what it does is that it starts with an X and the goal is to produce the the same X with a as highest probability is possible so this is the reconstruction part we try to reconstruct X from from itself so that's straight forward there is like the the part which we train in the normal auto encoder says well and then this part.
+of the variation lower bound that's the so called latent plus so here the goal is for the encoder to be close to the prior so this is the part where we make we try to make sure that we will cover the whole whole prior so the whole latent space because well we want every encoder to actually actually cover it.
+So there is one little detail which we need to handle and that is sampling here in this step we sample that from a normal distribution given the parameters.
+And we need to do it in way that we can back propagate the gradient in the opposite direction.
+And that's not straightforward because we'll sampling some non trivial.
+non process for which computing the derivative might be tricky.
+Luckily there exists a way how to do it there exists a so called reparameterization trick which allows us to be big propagate through sampling from the normal distribution not every distribution.
+Provides or allows for the reparameterization trick but the normal distribution does and that's because if we have a normal distribution.
+With some parameters we can get the same distribution by generating noise from the standard normal distribution so here there are no parameters.
+Then we multiply it by the standard deviation right thus obtaining normal distribution.
+With the experimenters and then we add the mean thus obtaining the target distribution which we won't.
+However, this formulation may be if it might look very similar.
+It actually allows us to propagate through because when you look at it in some math point of view this is the mean plus the deviation times epsilon.
+So computing the derivative of this formula with respect to the mean standard deviation and epsilon is trivial.
+So when we implement the sampling by generating the noise and then multiplying it with the standard deviation and adding new then whenever the gradient comes.
+We will be able to compute the derivatives with respect to all these elements and then we won't be possible we won't be able to back propagate through this sampling because this is something which we cannot do but.
+The trick is that right now the sampling happened on the distribution where the parameters are not present so the reparameterization trick allows us to move the sampling or perform the sampling.
+On a distribution without any parameters so that we get the derivatives of the new and the standard deviation so.
+The whole architecture means we have the encoder generating the parameters of the distribution then we simply using the reparameterization trick and finally we are on the code.
+So let's have a look at some visualizations here you can see a trained variational auto encoder and actually you what we are seeing is the generative part so after training the variational auto encoder on these two data sets with a two dimensional latency space what we will do is we will generate data by sampling points from the two dimensional latency space.
+So this is the center of the latent space and this is one dimension of the latent space and this is the other dimension of the latent space and then for example this point has some latent coordinates and we will pass it into the decoder and that gives us this image.
+You can see that the latent space actually has nice and interpretable structure right because this dimension corresponds to the rotation of the model and this.
+The latent space dimension or axis corresponds to the mood right there are the smiling some neutral face and then a frowning face.
+All that without specifying anything right it's just that the the manifold those are the latent space is organized so that similar data are close to each other and that causes this this nice structure to appear here you can see the amnest being generated from this two dimensional latent space you can see that all the digits are there.
+And not that not just that they are all there but similar digits are close to each other.
+And that's because where they look similar so they are organized in the latent space in a way that things are close to each other but not all the digits are really in a continuous region you can see that the six is are both here and here.
+And I believe there would be some other examples.
+For example there are some tools here which are which are also here so the images are kind of blurry right the reason for that is that we are generating images just from the two dimensional space.
+So there the the digits don't differ much in style and they are not of high quality if we increase the dimensionality of the latent space the samples are less blurry.
+And you can see that we are there is a larger variety involved and in in rotations of of the digits.
+So the latent loss which we have there makes sure that every image is encoded into some noncipital portion of space but we need to make sure that the strength of the latent loss is good enough.
+So if the latent loss would be too weak then even if every point would be mapped into other holes fear or the part of the latent space there could be still some holes from which we would generate non-sensical samples.
+So ideally we want the latent loss to be strong enough so that the data would really cover the whole whole latent space to show you what happens when the strength of the regularization is not optimal.
+So here is what happens if the loss has to to large weight right so what I mean is that when we train these components you could add some kind of weight here.
+So we could say times C for some constant. So if this constant is too large what will happen is that the latent loss will dominate and all samples will be mapped into the whole latent space this way.
+And that means that during the reconstruction we will always generate the average sample the average data right so that's this this is part.
+On the other hand if our latent loss is too weak so the correspond to this part you can see that the samples are not always present a villages look and see some like.
+Like digit like appearance but they look more like alien digits then then do the digits.
+So that's all for today. I hope you enjoyed today's lecture so we will see each other either on the online Thursday practicals or next Tuesday so have a nice weekend see you.

@@ -1,0 +1,1119 @@
+Hello everybody, welcome. It's my pleasure to meet you at the last lecture of our course
+so great to have you here. Because in the last lecture you might be interested in knowing
+what will happen in the examination period, how you can balance the course. So it depends on
+whether you will go through this, I will make other assignments root or you will go to the exam.
+If you want to do all the assignments, if you will do all the assignments, then you don't need
+to do anything specific. Once you submit all the tasks to record eggs, I will be notified
+and in if you, I don't know, in a day or two or something, you will get the great
+so nothing to be done there. If, instead, you will go to the exam, then you will need to enroll
+there are dates already set up in the student information system and the rules are that every week
+of the examination period there is one exam and this also includes this one week of the examination
+period in September, September, one week is designed designated as the examination period. So yes,
+there will be also one date in September. Now regarding the exam, you can get up to 100 points
+for the exam and there are some points which you need to achieve to get the great 3, 2 and 1.
+And when you have record eggs, then in record eggs, you can have some additional points
+prior so there are regular points in in record eggs. There is 123, I think of them or will be
+this week and you need to have at least 80 to pass the practicals and anything above
+will be transferred to the exam score. So the exam score will be the error, surplus points,
+plus whatever you will be able to answer. So if, for example, you would get 140 points in record eggs,
+then you would get plus 60 points in the exam, it means you would pass automatically
+without you even required to go there. It is possible to get like slightly harder 150 or even
+more than 60 in record eggs. So that's how it is. So now regarding the topic of the
+today's lecture, we will talk, we will start discussing the speech synthesis. We know how to generate
+images from the last and the lecture and at the one before it and we already know how to generate
+texts by using either recurrent or transformer decoder. So now let's generate speech.
+When I say speech, what I mean is I mean that audio signal and that needs to have some non-civil
+frequencies. So let's say it will be 16 kilohertz, which means we will need 16,000 samples for
+a second of speech and the values are amplitude. So we can imagine they are values from minus 1,
+usually encoded in a discrete way using 16 bits or 8 bits. When generating speech, of course,
+what we mostly think is a process where you take text past it to the synthesizer
+and then we'll generate speech for you, which is definitely what you will describe in the end.
+But at the beginning, we will mostly concentrate on this part where the generator
+will just generate speech. Of course, there need to be some kind of conditioning for the
+speech to be reasonable. But in the few slides at the beginning, we will just generate the audio samples
+out of blue without any explicit conditioning and then we will add conditioning later.
+And so regarding the generation of the audio signal, we will just use an auto-regressive
+model in the beginning. So it's auto-regressive model means that we generated how sequence
+were by generating its individual elements each being conditioned on all the elements which we
+have generated already. And we will use a convolutional decoder, right? So we will have like a decoder
+out of the model, which will just generate the sequence. So it can look like this. This
+the outputs are sample, so this is x1, x2, and so on. And it's an auto-regressive model,
+right? So this x1 is being passed here and the input is x2 is being passed here and the input and so on.
+So the inputs here, they are just the output which we have generated in the previous timestamp
+and at the beginning here, there is some beginning of sequence kind of single.
+It's really just the decoder and when it's convolutional, the good thing is that we can
+train it in parallel using feature forcing, right? So during training, we will just pass the whole
+input there of seti by one and we will let the model to generate every sample from the audio signal
+in parallel. During inference that will still be difficult to the model, which we described first
+will be very slow on inference, but we will improve it later with nice trick.
+One of the issues which we need to deal with is the receptive field. Like if you've imagined
+that we'll have just for convolutions each with a kernel size of 2, right? Then this last sample
+would be conditioned on only five samples from the input sequence and if you consider that we
+need 16,000 per second then this could be very very few. So what we need to do is we need to come
+up with a way of making this receptive field larger to be able to condition the output on
+multiple of the inputs. But when we were processing images, we didn't need to do this,
+right? It was just just working and we didn't do anything specific and that's because when we did
+the image processing, we were using strides, right? So when you imagine like the input input image
+when we consider this very small limited kernels, then we always also conditioned every feature
+on a very small neighborhood, but then when we once we performs a number of strides, then the outputs
+were smaller and smaller, but what does it mean is that in the original image, these regions corresponds
+to larger and larger pieces, right? So after three strides, a single pixel in this representation
+corresponds to like eight times eight, originally the original image. So at that point, the three-time
+three convolution was actually covering a non-tivial apart of the image. So that's good. We might
+say, okay, let's just try. But the problematic part with the strides is that if we do it, then the output
+would shrink, right? So it would be smaller, but we need the output of the same size as the input.
+We again did that also with the images. So when we needed to process images and then generate
+high resolution output, for example, as in the segmentation task, we knew this architecture were
+we at the beginning grind these convolutions with strides, obtained the representations with
+very abstract features, with many channels and a smaller solutions. At that point, we actually
+considered very far parts of the image. And then we use the opposite process, transpose,
+convolutions, and then also the residual connections. So generate the output of the same resolution
+as on the input. So we couldn't do it here as well, but we will proceed differently. And what
+you will do is we will allow the convolution to consider like further neighbors to consider
+values which are further apart without striding. So what we will use is the so-called dilated
+or atres convolutions. And in this dilated convolution, what happens is that when we process the
+input image or atres are the input values, then we consider not immediately neighboring values,
+but the values which neighbor by this dilation factor, so when the dilation is to instead of
+processing the immediate neighbors, we will process elements which are apart by an offset of two.
+So I have an visualization here. So we have seen the regular convolution, the failed convolution,
+we are even seeing the transpose convolution which can make the output larger. And now we will
+consider the dilated convolution. So in the dilated convolution, you can see that when we apply the
+kernel, we do it not on the dense consecutive part of the image, but we consider like holes in the
+input image. That's why it's also called atres convolutions because well that's all in fraction
+or something. So what we will do is we will consider larger and larger dilation factors.
+And after, for example, here after four layers, what we will do is we will have a dilation
+factor of eight. So this output value will depend on two to four, sixteen values in the input
+sequence. And that's nice because with doubling the dilation rate, the receptive field grows exponentially,
+so that this value depends on exponentially many values on the input with respect to the number of
+layers. So this dilated convolution, you can think about it slightly as a convolution like like
+when we did try it, the here imagine that we would do a straight to a this point. It means we
+would generate output for only every second output then. So at that point, running to usual convolution
+after running a straight to would give us similar effect. But we don't want to throw them away
+and that means we have another parameter of the convolution which is the dilation rate.
+So now when we look at the kuda, the convolution layer, you will finally know all the arguments
+right? So the convolution has the input and output channels, kernel size, tried,
+adding dilation, we've just described it now. Groups, that's the number of groups we want to
+compute the convolution in, we discussed it in rest next model, bias, you know why it should be
+true or false. So now after the whole course, you know all the convolutional arguments. So
+getting back to our example at hand, this is the overview of the architecture. So we use this
+dilated convolutions to get like a convolution with a very large kernel size. So one way how you can
+think about it is that this is like an approximation of a convolution with a kernel size of 16,
+because this really depends on 16 values on the input, just an approximation. But it is much faster
+to run than a single convolution with this very large kernel size. And we will use 10 of those layers
+in the final model. So we will have a receptive field of 1,000. So we will now describe
+what the output of the model will be. So the output of the generated sequences are audio with
+this 16 kilohertz frequency. And finally, in the end, the output should be 16 bits, because
+our recorded audio used 16 samples. But that means that if we just wanted to generate them directly,
+we would need to consider quite large number of classes. So we could do classification into these
+many classes. But the model would probably not run very quickly. And the quality might not be
+even great, because for each of these samples, we would need to generate seed multiple times,
+but maybe maybe it would work. But what the authors have decided instead is that they one,
+they they are using just 8 bit samples. And then they use some transformation, which out of these
+8 bit samples generate 16 bit samples. And this actually shouldn't be performed in some
+linear kind of way, because that's not how our ears work. It needs to be done more in some kind of
+a local let's make way. So if you imagine this range from 0 to 1, you don't really want to bucket
+it like this instead you really want to do it in some kind of an exponential way, right where these
+are the audio amplitudes. But people have been studying this for for many years. So the authors just
+adopt the new law encoding, which is one of the standardized encoding for doing this for representing
+16 bit samples using 8 bit values. And it is one of the encodings used by mobile phones.
+So if you are doing like a GSM call call, then that's roughly something what. That's one of
+the possible encodings for that you will have. When you look at it, then it's really just like a
+logarithm roughly of a base of 256 out of the out of the input signal, right.
+If this is, if this x is in minus 1 to 1 to 1 range. So to see the difference, I have some samples
+prepared for you. So this is the original 16 bit speech. This is an example of synthesized
+speech that was created by a neural code. And now this is a version encoded into this mu law encoding.
+This is an example of a digital speech that was created by a neural code.
+So you can still understand it, but of course the quality suffers a bit, but regarding the
+understandability of the speech is not so bad. But of course the regression in performance is
+irreplaceable, so they will improve it in some later versions of the thing.
+So the overall architecture will look like this. We have seen just the dilated convolution.
+So it's just the decoder price, so we will take the input, which is the generated speech of
+set it by one. At the beginning we will do some unusual classical convolution to generate the required
+number of filters. And then each layer will have this residual connection and then we
+have got two convolutions. The one will be the dilated one, so the one which will
+consider a longer and longer dependencies. There is some unusual activation, which we will
+discuss in a minute. And then there is another convolution which generates, again,
+beg the same number of channels as required. Right-hand generates output in the same space
+as before. So again, you can think about it from the universe of approximation theory.
+Like this is the part, which is the first hidden layer with a non-linear activation. And then we
+have got this output layer, which is the generated, the output in the same space as on the
+input without any activation. It's a question.
+Yes, so there are no normalization layers and no report layer. They really just train it like this.
+They even don't say anything about batch norms in the paper. I assume that they are using them.
+And if it's not in the original architecture, then they are definitely now, but they don't say.
+But in my head I'm imagining them there, but because we are doing a lot of convolutions
+and we're then the only place where it's about could have been used would be here anyway,
+because we wouldn't normally edit on the convolution. And then the output is taken here
+and through one hidden layer we will get the features and then use the output layer into 256
+classes of the mirror encoding and then there will be a sub-max activation. They have a weird visualization
+here that they are copying this value from all the layers, but this is nearly the same as taking
+the value of the output, because the residual connection just adds all those things all together
+apart from the first one. So here they have everything apart from the input. So it looks weird,
+but if I said here the output minus the input, it will be the same.
+So regarding the activation, I said there is a weird. So it's like unusual in this context,
+but it's something what we have already seen. So they use something which is called a gated
+activation unit, which is the thing we saw in GRUs, for example, an LSTM, so we generated
+the output, so after linear transformation we applied the non-linearity and then we gated it,
+so we multiplied by the dynamically computed value from 0 to 1. So which was computed using
+a linear transformation of the input and then passing it through the sigmoid layer. It just
+got a little bit dark, isn't it? Maybe it's better. And so the reason why they do it is that because
+it gives better results. Unfortunately with respect to these gated activations, I don't have
+a good intuition or reason why it should be better than just using a vanish or hello of the
+comparable size. But we will see that also this is beneficial for the transformers, so I have
+got a slide there. I like to show you what kind of activation is being used nowadays in this large
+language models and models like that. And it seems that instead of just using a single non-linear
+it is better to use this gated version so we would like a sigmoid of something and
+non-linear activation of something and then multiplying it elementwise. So I have any better
+reason than it just works. I don't have to offer to you to I cannot offer you no more.
+So I said that I will promise that at some point you will start generating things
+conditioned on the input. Yeah, a question.
+So the question is how like whether this visualization or this diagram is like a standard one. So
+I think I did bad bad job at explaining it. So what this part is that's the dilated
+convolution. Right because convolution that's the start thing. So what they mean by this is that
+they will take like the half the output of the dilated convolution and then they will pass it through
+the tana inch right. So what I didn't. So I have a stand. So the bed part is not like the
+diagram but this this is what in output in some sense because the idea is that really these
+excess are these excess and then I have got the kernel in the convolution so this is the convolution
+and I will just take like half of the inputs here and half of the inputs here. So one way how you can
+look at it is that I would like large convolution and then I will like get some output and then I
+would play it into how and then go to the let's go to the right but it's difficult to write. So instead
+they it seems like we are running two convolutions one for each of them but of course physically
+this is implemented by a single layer just being split it after the computation.
+I think so but I wouldn't like if I just saw that diagram I wouldn't be sure exactly what's
+happening so from this point of view is not super standard. It's not wrong but definitely
+accompanying this with some explanation is a good idea.
+Yep so the conditioning part right so let's say you would like to condition the outputs on
+some kind of of conditioning so first let's consider the so-called global
+conditionings or the global conditioning means it's like conditioning without any time
+excess so like the speaker we should speak or whether it should be in a whisper voice or how quickly
+they should sound or something like so it's like a constant kind of information without the time
+excess and if we get such a conditioning what you will do is we will edit in every of these
+dilated convolutions right so whenever we are running any of these convolutions so even here
+like in any of these nodes like we will add also the current conditioning and the
+ideas that the conditioning is some kind of a vector I don't know one I think will speak or
+whatever then we will use a dense layer linear transformation to transform it into the channels
+generated by this convolution and we really do this everywhere. So it can be used to any point
+just on the input but but to wherever wherever you want and so that's the like global conditioning
+and then of course we might have something specific to say right so they call it
+global conditioning in the paper what they mean is you have got some sequence which describe
+which you should what you should say at this point these are not really letters of of the
+utterance or something but they are more like like frequency spectrums of what you should say
+in every time right so the idea is that you have got some some conditioning and you should
+generate speech which corresponds directly to this so we will again pass it everywhere in the network
+but because this has some kind of a time axis then we won't be just copying the same thing
+to all the time steps but we will just take the proportional or rather the suitable corresponding
+part that we're touching for the corresponding part of the conditioning will go to the right
+input. So if our conditioning has really also the time axis then we will you can think about
+that we will concatenate it with the inputs on every layer and then run the convolution.
+Of course the conditioning will usually not have the same resolution usually it will be
+a lower sampling frequency so we can think about the conditioning as being some kind of
+spectra for every 10 millisecond or something like that and we will see later how we can
+generate them so we will first up scale them so that they have really the same resolution
+as the output we will use trans post convolutions for that and then once we have gotten to the
+same resolution we can just add them there. So this is similar to for example what we will be doing
+in this condition or generation of images if you imagine that we have got like a lower
+resolution image and you want to generate a higher resolution one you can take it up scale it
+to the resolution of the larger one and then just copy it on the input whenever you want to do
+something that is exactly what we are doing in the ddm ddim conditional.
+Yes yes in order to use that we need to know how long the sequence should be and also in
+which part of the sequence will be saying what right at this point you can just say hi like
+like h and i somebody has already needed to decide how long the h will be i will be and
+somebody has already decided a quite low level detail also what will be what will be
+sake they had some prior models for that so in the original type of they don't really describe
+how to get such a sequence that just we just have it already. So the the wavelength as we are
+describing it it's more like generating nicely sounding audio data from from spectra
+than generating speech from from the given text but there were already pipelines how to
+get this kind of spectra information and we will see some new neural network architecture for
+that you know in a gf it's a bit weird but that's how this ends up to be so in the original
+paper as I already said they they don't say many more details but like a little later more details
+were found out so in their model they used 30 layers and they are grouped into like three
+stacks 10 layers each and each of these steaks the dilating rays rate increases by a factor of
+two right so in the first 10 we are seeing further and further away after 10 layers
+the receptive field is 1,204 because the dilation rate on the last layer is 512 and we are using
+kernel size of 2 and we repeat this three times so you can think about this stack as approximation
+of a convolution with very large kernel you can think about it as a convolution with a kernel of
+1,204 but definitely not as expressive and definitely much faster to compute because of these
+dilation factors right the residual connection has the dimension of 512 the output of the
+dilated convolution also an output of 512 which are split it into these two chunks each of 256 units
+and then in the output set so here right we will generate again very small number of units
+and generators 1506 filters also on the output layer and so the model is trained for one million
+updates that sounds a lot well it sounded a lot at the time now it's like yeah I'm going to
+find 12 be done in a day or something and with a fixed learning rate spike is smaller
+problem the default one but other than that nothing special and what the idea is they provided
+audio samples at the time which people very really are already everywhere surprised by the quality
+and they also did like user evaluation compared to the systems they they had right so the
+base lines here they are not bad or they've already spent at the time many years and spent a lot
+of money to try to come up with the best species as a system right because you know it's used
+useful for the mobile phones and everything so what can we see here is the my comparison between
+the best base line so whatever they had what was working working the best and then this this orange
+one is the wave net this L plus F the just described the way how the local conditioning works
+how I so it's like linguistic features and F is like a frequency of what they should be saying but
+it just some some magical local conditioning and then the users listen to the samples and they
+be sure they should say whether they prefer the A or B or they are the say of course without knowing
+which is which and so for English they got like an 30% the outputs were the same but
+in 50% people like the wave net and 20% they like the original base lines so this is like
+two times more than than this which is just a lot right because there have been many graphs like
+that previously where the differences were very small and now the difference was very large
+for Chinese the result was well in 60% of the cases the root outputs were kind of the same
+and in the rest they they did most of the better but the result was not as convincing as for English
+so we also here to some samples but we will do it only when we also describe how to do the
+conditioning cry so we can really start from text and generic new deal so now before getting to that
+let's mention this this gate ir activations so this gate ir activations also
+seems to work the best in transformers and I'm talking just about the FFM module right so in the FFM
+module we have some layer with some activations so we usually have parallel and it's like a larger one
+and then we scale it back to the original dimension so for example here can we have
+and 12 dimensions here we can have four times as much and then we will scale it back and add
+and then there might be drop out there not for something but this is like the overall idea so
+we are talking about this layer right here we need some non-linear activation
+by the way when you look at this this is kind of what we are doing also in the wave net
+right it's just that with instead of linear layers they are convolutions but this is pretty
+transformer actually but but it's just like the result of the universal approximation to your
+environment is like the smallest universal is a strong block so we have already seen brello being
+used these formulas come from some papers they describe it in this wave and it looks weird
+so what they mean is that we have this x input to the FFM then this is the first linear activation
+this is the brello uh and then output output in array and we have seen the yellow activation
+so the one used in bird right and we discussed the switch activation when we were talking about
+attention that for example and we kind of yet don't know whether the yellow there is better
+or not and we will see some results on on the next slide so regarding the gated activations right
+what we can do is we could use for example this gated linear unit so the gated linear unit means
+that I'm using some linear activation part here and because it's gated then it's the
+vast through a sigmoid right so when this would be used in a transformer then the input x would
+go through a layer and then half of it would be passed through sigmoid half of it put
+the past through linear transformation then we would do element wise multiplication and then we
+would pass it for the later layer of course for for these and these to be comparable we will
+need to change the sizes of the layers because if we do it this way then the output the dimensions
+of this part is just half so the W2 would be smaller so if you want to compare these these two things
+you need to usually the settings is to choose whatever hidden size is so the number of parameters
+is the same in these two situations and apart from from from gau we could again use our usual
+activations right so we can get the so called regular regulations, regular activations
+and they work by always having like a linear part and then some non-linear activation be
+trillow or swish and so to have a look at the the results so here are tables kind of small
+but I will explain from from various papers the top two ones are from a paper which is called
+gau variants improved transformers so that is the first paper showing that this is actually a good
+idea and so what we can see here is that here this is the glue benchmark so the one which we also
+used in birds so a lot of natural language understanding tasks so the most interesting is the first
+colon which is just the average of all the many numbers later and they consider here the ffn
+with relogelow and swish so you can see that the guillow helps but really so marginally that
+the relo is probably a little less good anyway and swish seems to be slightly worse so first answer is
+that even if you use guillow in birds like they just use guillow because they said that the GPT also
+but the the gated ones so these are the gated activations are definitely definitely better like
+it's just 0.4 or something but at this point to just get it for free that's kind of a lot of
+too early the milwan the bi linear is there just for reference like the bi linear thing has no
+activation even on the left side right so it's like still on linear because of this multiplication
+but it's kind of little and linear so the there is also the tunnel very good but the
+part from that seems to be a good idea right here on the right we can see what data said that
+the one which we used for reading comprehension before being translated to the original English one
+and again the outcomes are kind of similar right so relow is even better than guillow and swish
+is like really comparable but if you go to the gated versions this better like the guillow
+and the regaloo and things I like that are slightly higher then there was another paper which
+evaluated a lot of improvement to transformers because well there are
+dozens of papers every year to say what to do better in transformer but it's difficult to do
+the evaluations correctly so they took the most promising improvements from 20 papers or so
+and then they had a huge table showing how they really compare with each other and this is just one
+part of the paper showing the various activations which we can use in the ethyphen module
+and they they show the evaluation in many tasks so this is just a language like the loss of
+the pre-training but this is the super glue so like an improved version of this glue data set
+or more difficult version of the data set this is summarization question answering and machine
+translation and so this is the usual vanilla transformer and this is the guillow thing so
+the the guillow is kind of comparable in many of these tasks quietly is actually better on the
+super glue so maybe it is slightly better and then it may be not but what definitely is true
+is that these gated versions so this is the guillow regaloo and cv glue are definitely all
+ball price or they are better than the baseline sometimes considerably so I would have these two
+papers people have like start using this gated activations kind of automatically show if you use
+GPT for something and they use either guillow or swigloid depends both are still being used
+in the architecture which seems to get slightly better results when you really fix a number of
+parameters compared with just a single non-gated activations but again no good reason why
+as have I ever seen if you found that and come up about a nice argument why this should
+work better than me I would be happy to know so anyway let's get back the wavelength so we have
+seen how the wavelength can be trained but the problematic part is that we cannot do the
+inference quickly so we will now describe a different model called parallel wavelength which will
+allow us to do the inference in parallel instead of the autoregressive one so first we will
+improve the quality of the original wavelength without dealing with the spiralization so first
+the the mu law transformation is like not bad but it seems weird to generate such a I don't know
+my full speech or low quality speech when you have these nice models so they decided to do it
+differently so what you want to do is you want to do like a regression kind of thing
+right you want to predict the amplitude seen every time step so what you could do is you could just
+go for like a regression or a normal resolution sorry normal distribution there but what they
+found out that the quality of that wasn't that large and one of the problem is that if the output
+distribution is not really unimodled so I don't know if the output distribution is called these two
+hubs then this cannot be modeled well by an normal distribution like normal distribution whatever you do
+has one point where the maximum mean and mode are the same thing and then you get some kind of
+variance but sometimes you want to predict something more more complex so training the model was
+was kind of challenging so instead what they do is instead of just using a single distribution they
+use so called a mixture of distributions like so what they say is they say the output is modeled
+by some number they use 10 of of distributions so they say a logistic so in your head you can
+imagine this being normal and I will explain what logistic distribution is but it's fine to just see
+n so what they do is they generate like 10 normal distributions logistic distributions per
+times that per per per the output and then for each of these distributions they generate weight
+how much it will be the part of of the output and then they take the weighted average of those so this
+way you have a distribution which could have 10 modes or just one depending on what the model
+chooses but this gives like more parameters more capacity to to the output progression kind of thing
+and in some models this gives better results so what about the logistic thing so the logistic
+distribution is really very similar to normal distribution if I just show you the picture on the right
+maybe I would convince you that this is just a normal distribution and the difference between the
+logistic and the normal distribution is that in the normal distribution sorry in the logistic distribution
+the cumulative density function is sigma right so the thing where you say what's the probability
+that the output is smaller than given value so that's the usual sigmoid so here what you are seeing
+the probability density function that's the derivative of sigma so you can write it down once you know
+that but it looks general very similar it's just that at the edges it doesn't go down
+it's quickly as the normal distribution so it is good like heavier tails but it's kind of similar
+but the good thing is that you can work with it much more nicely because the cumulative density
+function has this nice shape it's a function which all the models you know newer frameworks can
+compute compared to the error function of an normal distribution which even doesn't have an
+explicit formula right so they just use it for convenience but in your head you can just think normal
+distribution just slightly different shape but kind of kind of similar anyway so then when you want
+to compute the probability density of the function either you could explicitly compute
+the derivative but what they do instead is say okay so when I want to know the probability of
+given value right so they kind of think about the samples as being from 32,768 to 32,767 or something right
+so what they want to do is when they get an output like free or something they want to compute
+what's the probability density function of it and so they just see like look at the
+look at the pdf and then just say okay let's let's integrate a column or compute the area of the
+column which is with a one center at the x and to integrate it well that's simple because we have
+the primitive function like the sigmoid so we just subtract the sigmoid from the value of
+set it by a small bit and subtract the value away if subtracted something from it and we can also
+handle the cases near the edges so that we will be able to integrate for the rest of the range
+you mean the pice yes exactly the pice need to be distribution so they are generated by the
+model as well by being geologids being generated apply through soft marks and then use the weights
+so this is what they use in the parallel wave net teacher we'll get to the teacher part quickly
+with a pen mixture component and then show that this gives better results compared to this new
+plot in coding so now to deal with the most pressing issue how to make the inference faster
+so what we will is we will change the model instead of really being auto regressive generating sample
+based on the previous samples we will use a formulation which is more similar to what we have seen
+in the other generative models so the formulation where you get some latent variable on the
+input and then you produce some sequence on the output and we will do it in such a way that
+when you have some some X here then it will be computed from the corresponding Z but also from the
+previous ones right so the whole sequence of Z will generate that one X so when the model is generating
+I don't know X prime here the one neighboring there it doesn't know X because it's not auto regressive
+but it can see all these Zs as well so hopefully it could get some idea of what the X looks like
+because it sees all the inputs which were needed or required to generate that X so we start with this
+random noise without an structure and hopefully the model will be able to change it into a nice
+sound date sound date speech so formally the output of the model will be logistic distribution
+where the mean and the scale this scale you can think about it as a standard deviation or
+very and but it's called scale in this distribution and the given scale being computed from the
+Z's until the time step and so the model generates a distribution but we need to
+really get one output and in a way that the the model in the next step knows which we have
+sampled so what we will do is we will take the the Z in that specific timestamp multiplied
+by the corresponding scale and add the new right so this way the X in time t depends on the whole
+sequence of Zs and the last Zt being like the random bits of how it's being generated from the
+distribution so doing this once like started to unstructured noise and then passing it through the
+through the improved wave net parallel wave net doesn't really generate good enough results
+like it's not bad to see that the score of this time and good in actually bad it can be better
+so what we can do is we can just repeat this process time number of times so we can imagine that
+our model will like start with Z to when I now denote it as X0 and then it will generate X1 and then
+we will use this again in the same architecture but with different plates and to use this again
+as the noise on the input and in generate X2 on the output so the idea is that we have like computed
+once and but then because the dependencies between the first outputs are not that great we will pass it
+again through the same architecture and this way we can like correct the mistakes which we did so
+doing this a number of times and the use for helps the model to generate the better better
+else like you can think about it as like this one model of this iteration being like like like
+denoising from when I'm really loosely speaking uh in the image generation and there also we
+like performed multiple of these steps so here we can also do multiple steps and the good thing
+is that the new step will again be able to see the access right so inside this one iteration we
+don't know if we have generated around us but in the next iteration we can so we can like add
+more consistency and more details we use the same parameterization in every layer so that means it
+on the output after m iterations we will still get a logistic distribution on the output and it is
+possible to write down how the parameters look like it's not important nobody even write this down
+to the code they have it in the paper but they just means that it's trying to explicitly
+know or parameterize distribution but when you implement it you just prelay like compute things
+uh in this way you just get the output kind automatically but it's possible so the main point is
+that even if you repeat this many times still after these any iterations the output is still
+logistic distribution and we know what it's mean is and what it's still is and of course the
+good thing about this is that we can run this in parallel but that's how it was created so what's
+the cache we catch where there is a cache and the cache is that we can now train quickly
+but we cannot sorry we can we can run the predictions trick quickly but we cannot train quickly
+because now that we have got that if we would try to train it in the usual way so maximizing the
+block like load of the data we would need to compute the z specific value of latent variable
+which can be used to generate x like similar to the VAE we need to know what the latent value
+we should use to generate the x so using this formulation it actually can be computed exactly
+like the model is so constructed that if we have x we can reconstruct the z
+manually so how to how to how to see that so in the first time step we know that this x
+when t is 1 like these are some kind of constants because they don't depend on an z so we will get
+z 1 directly from this formula so that's nice and then to get z 2 right what we need to do is we need
+to consider this where t is 2 here we will have z 2 but these means and scales depend on z 1 but
+we have it so we could compute that 2 and then we can compute that 3 but there's a 3 you would
+depend on z 2 and z 1 so the problematic part is that the zets can be computed but auto
+aggressively so what have we done is that we have changed the model so that the auto
+aggressively is still needed but not during inference but during training so that's bad because we
+cannot train this really effectively but we now have two models right the original wave net which
+can train quickly and cannot do inference quickly and then this power wave net which cannot train
+quickly but can run inference quickly so what we will do is we will take the both like the best
+of both of these worlds by first training the original wave net model we will call it a wave net
+feature and that can be trained effectively and if we give it a whole sequence on input right
+it can also compute the output so when we give it already a sample it can get us like the
+distributions of how likely this is the sample as a whole is and then we have the the
+parallel wave net which will call this student and what we will do is we will generate it
+a random latency we will let it generate an output it can do quickly and then the teacher
+well because we have the whole sequence on the input the teacher can tell us the distributions
+of all of those x-rays of all of those outputs and we will train the the student to generate the
+same output distributions as the teacher right so this is called distillation and because now it's
+distributions they call it a probability density distributions the wave net teacher
+uses this mixture of roger sticks on the on the output so how the overall overall process works
+we have instead of really considering some specific example we will just not thinking about
+any specific example we will just generate a random latency sample we will generate an output
+for that we can estimate it look like little quickly with a wave net and then we will just
+try to match the distributions from the student and the teacher now when I say match
+we will just try to minimize the KL divergence between these two distributions so
+some whatever generated by the student and by the teacher so the KL divergence well that just the
+cross entropy minus entropy if you if you remember so this now looks very similar
+to the usual cross entropy loss but there is also this this entropy part that was actually kind
+of novel because in many on some previous papers people consider just the cross entropy one
+because that's how losses look like but here it's important to include also also the entropy
+part so why it is the case imagine that the teacher is generating white noise so really random
+audio samples the the mean of that will be 0 if the m that you start from minus one to one
+so this this cross entropy can be minimized by generating 0s all the time for example but from
+the audio point of view like white noise is like kind of sound right or 0 it's like so that's
+definitely not not a good model right because we can learn complete silence instead of a
+very annoying white noise sound and that the problem is exactly in the entropy part right we need
+to also keep or we need to maximize the entropy of the student because if we do it and even the
+student will again generate this annoying output which well we are happy because that's what the
+teacher did as well so we need to we need to minimize scale average in some sense you can
+think about it slightly as again right and again we also have two components where the second one
+acted as a source of training signal for the first one but it's slightly different here right the
+teacher is fixed during the training of the student they don't try to out with each other very
+religious student want to train on the teacher but it's like a similar kind of trick we don't
+know how to compete the loss exactly so we use some other nice way how to do it and in this way
+we just try to mimic what the teacher model does so now some technical details we need to minimize
+this so there is this entropy and the cross entropy part the entropy part that can be computed explicitly
+so it doesn't seem to matter for the formulas look like it's possible to come up or when you
+like analytically look at it the the final formula doesn't depend on x each only depends on the
+noise sample so that's that's straightforward to optimize we need to do anything special just
+write it down as a loss and the model will just be propagated and it will be fine but most more
+interesting part is is the cross entropy entropy right because what we need to do is we need to
+somehow get an output of the student to in order to be able to compute it now when I just said
+the cross entropy of that then it's like a simplification because these are sequences right but
+we don't want to think about all sequences it would like to come up with a loss which would
+consider the individual time steps so that can be done it's nothing nothing surprising or the
+output is nothing surprising but let's do it correctly so this this cross entropy that's the
+expectation right of the x from the student distribution of the logarithm of the probability from
+the teacher distribution so I wrote it down here as integral we cannot write it down as a
+sum because we are in a continuous domain and so the teacher distribution that's here it's a
+product of x i being generated by x 1 to x i minus 1 right because that's what we started it we it
+was an autoregressive factorize distribution so we can we can do it here so instead of this we'll
+have a crowdark because of the logarithm it will change into a sum so here we get the sum of the
+percent of the students sequence and like we hold in the teacher sequence so now we only have
+individual elements here and the sequence is here so we would like to get just corresponding time steps
+each other so we was played the student part into student probability into two parts one for all the
+x is before times that t then the one for the times that t condition on the existing ones and then
+the x is after this step and now first we will move this into an expectation here so because it's
+like the integral of something times whatever so from the definition that's an expectation so we
+condition everything or we compute the expectation for all the regenerated samples from the x sequence
+then we have this green and the the part on the black part which are the part which we care about
+so the distributions from the student and from the teacher model on the corresponding time steps
+and then we have got this this whatever will happen after this time's the t so this part is not
+really important right because this integral integrates to one because it's a probability distribution
+that is nothing in condition on it because no other x t's larger than t or x i's larger than t
+are there so we can just ignore it so the what we get is something kind of straightforward
+and that's the cross entropy being computed on the corresponding time steps and each
+being conditioned on the quality generated access so if I just said that this was the
+the way how we can how we can compute the cross entropy it wouldn't be really surprising because
+that's what you'd probably guess but that's how you can how you can derive it so in order to
+to compute this what we will do is we will get a single sample from the student
+right so we'll start with that and generate hold on our outputs then we can compute all these
+outputs in parallel in t sure that's important because we have the whole sample in the teacher
+would need to generate the x t's that would take long but because the student generate all of them
+at the same time then we can just compute it using teacher forcing so then after we have
+these and these distributions well we just compute this quantity and we'll have a loss right
+in order to do that for this cross entropy it's an expectation so we will estimate it by sampling
+from the student distribution we can actually sample multiple x t's from the distribution when
+you really have like the explicit form of the distribution we can do multiple samples right it's
+always better to have multiple samples than just one even for the big size we use 12, 20 and one
+right but we will not be generating a whole sequence is from the student because that would take long
+but once we have generated one sequence and we have got some distributions in every time step
+then in every time step we can still consider various output and just try to match the
+distribution of the teacher right you can look at it as that we have got a teacher which has
+some distribution possibly on on motor and so and we have some some hour distribution and we
+try to match them so what we will do is we will just generate many samples from this one distribution
+we will look at how their probability look like in the teacher and we will try to match all of those
+yep and one one reason why this also works is that because we have got this continuous distribution
+so we can do this representation tricks similar to the VAE so we can actually come with a
+derivative of sampling from the distribution right because that's what we did when the student
+generated an output it sampled from the distributions and then passed it to the teacher so if we instead
+use the categorical distribution we couldn't do it so that's the ultimate reason why
+we also stopped using the categorical distribution as before because we need something where we
+could back propagate through the sampling step after the student finishes so in some sense you can
+think about it slightly as a weird variational of the encoder right there also we generate
+the distribution sample from it did something push the gradients back so technically we are doing
+a lot of these steps anyway so now let's stop with them off and let's look at the results
+so in the parallel we've made the use for iterations with 10, 10, 10 and 30 layers
+compared to 30, 30 and 30 layers in the wave net and they used much smaller dimensions so
+the residuals and the gatings have just the dimension of 64 compared to 512 in wave net so they
+probably realized they didn't actually need such large capacity so let's have a look at the results
+of these are the original wave net for results and here we are seeing this is a minopinian score
+so the human evaluators were listening to samples and they gave every sample a grade from
+one to five with five being the best one being the first and here we can see the average results
+and so first let's see what the higher frequency and better samples and more data did right so
+this is the part of the wave net teacher so by having more data better my representation of the
+outputs they were able to improve the quality of the wave net itself and then the parallel version
+can actually achieve the same scores so people cannot hear any difference but the parallel wave net
+can generate 50,000 samples per second so we really 25 seconds of audio per second
+instead of 170 samples which the autoregressive model they tried so it's like 3,000 times
+fast as before so even if it requires a map that the 3,000 speed-up is probably worth it
+just poor comparison if we didn't do this multiple iterations but if we did just one with the
+40 layers then we could get to the minopinian scores of 4.2 so it's still drink something but
+it would be on the level of what they could do with some pre-oprior on neural approaches so
+it's not bad but it's definitely worth it to have slightly larger model it's just
+half of the size anyways so it will be the larger you can even use this model to generate
+speech from multiple speakers with a single model like we have with the global conditions you can
+imagine it would be like a one-hot encoding of what speaker you want to use they say that
+when they do this they need to slide the larger model so they use 30 layers then every iteration
+so it's like roughly 2 times as large as before and they use it to generate for the English
+voices and one Japanese voice from the single from the single model and well the only thing which
+they can compare to are like the other existing approaches so they use the same data and there are
+like two dominant approaches they were two dominant approaches how to solve the problem before
+wavelength came and one of that is the concatenative approach where you just take the the small
+pieces of the recorded voice and somehow concatenate them together in a suitable way
+so you always use some small parts of the speech of the people of the person said
+but you need to be very careful to somehow connect them well or you can use some kind of parametric
+model which generates this spectra which we will talk about in in a JP and then converts
+this spectra who audio or using some fixed pipeline like real equations which will give you audio
+with a correct frequency spectra but generally the distilled model or like the wavelength model
+is always quite a lot better than what they could have done before
+so I would just I would just really slide through this this is just just for fun it's just that
+it's not as easy as it seems until now if you just use the KL divergent flows then still the
+resulting speech might not sound natural for example if the new new speaker would be whispering
+all the time then the KL divergence would still be happy because from the frequency point of view
+it's very similar to what the like the distribution of the speech looks like or the voice can be
+very low or but but but so even if technically the KL divergence can be made very low it might
+be here rebels so people could really hear the difference so they edits some additional losses
+to make sure that the output is reasonably indistinguishable from the real audio so first what they do
+is they try to make sure that the frequency bands of the amount of I don't know the signs or
+among the signal in various frequency it's roughly the same so they compute the short-term
+Fourier transform like the spectra of the gold data and of the generated data and try to
+match them right or this way you won't be whispering because you can see this on all the
+frequency spectra quite well then then they also consider using so perceptual loss that's what
+the vision people do as well instead of just spectra what you can use it you can take some
+pre-trained model which can like recognize speech or it goes on speech to text and such a model
+which you can is able to generate these abstract features or for MH when you start with the MHR
+got this one last layer before the classification layer and what you might want is when such a pre-trained
+model classification model takes the input you you may want the the features to be indistinguishable
+between the gold data and the generated data so the perks and improve the scores slightly further
+and you can also make sure that the model really pays large attention to the to the
+conditioning so we already used this this guidance free thing when sampling images right so what
+you could do is you could consider various conditioning and you would like to like decrease or
+like minimize the difference between the student and the teacher output for the same conditioning
+but on the other hand you might want to say but if the conditioning is different if you want to say
+something different then these outputs should be really not very close to each other right so
+you would just say not just say the same thing as the teacher but you will also say but if you
+should say something different it should sound something different so this way the model
+we are not just generate high probable output independently on the conditioning but it will
+make sure to generate only the parts which are suitable right now for this specific conditioning so
+these are just additional details and they show some some evaluations so without the power loss
+without this spectrum part they didn't even run the evaluation because they said it was
+obviously a bad verse but when you include it then the results are kind of good already so this
+is a compared by by people with a contenting system and adding the perceptual odds improves the
+quality slightly so the the wind rate has just gone up with a contrastive version so that the
+model when they really evaluate in other places you cannot see really any improvements here and they
+say that it mostly help with generating less noisy output but the writers didn't really consider
+it that much in the evaluation but they thought for themselves that it was perfect because the audio
+was clear so now let's deal with these weird spectra at the beginning right let's come up with a
+system which will start with characters and generate speech and we will describe the so-called
+Techotron 2 model that's of course a continuation of the Techotron model the Techotron
+the name they say in the paper that they like voted in the team and half of the team like
+tacos and the other like dinosaurs so they thought what they'll call the model and then the
+Techotron group one so they created the Techotron instead of a dinosaur based model and so what
+we will do is in this model is that we will train a model in an end-to-end way but it will
+have two components train separately the first one is what we have just described a model which
+will be the wave net based and that will get spectrograms on the input and generate
+the samples by itself so when I say spectrograms what I mean is that for every fixed time of the
+input so for every 12.5 milliseconds I will have a spectrum and the spectrum it's like a vector
+of number of studying you how much of the individual frequency should be there in the signal
+this spectrum is being computed on 50 milliseconds of the audio and instead of being in the linear
+scale it's being transformed to this male scale it's like a logarithmic scale with some frequency
+so this is like a specific knowledge somebody tells us what good spectra we should use for
+regenerating speech so they just take this from the long used research before that so here
+we'll have the spectrograms so each spectrum is here like a column right and then the columns
+that are the time frames and 25 to 12.5 milliseconds seconds I have a new column so then when
+generating the samples I will first run the transpose convolutions on this on this exercise to scale
+it up to the required frequency of 24 kilohertz and then I will use it as a conditioning in the
+wave net and generate the samples so this we actually have this already right trained and then
+we will have a first part which will start with the input texts and generate the spectrograms
+the spectrograms can be computed explicitly from the data so we can train these things independently
+and the part which generates the spectra that's kind of standard sequence to sequence model
+so we will start the encoder the encoder gets input texts we will consider it to be sequence
+of characters we will have character embeddings then we will do some processing we will start
+by some number of convolutional layers so we will consider the neighboring characters like in English
+when you have like letter A it can be pronounced in various different ways depending on how the
+neighboring characters look like so the convolution will look there then we will run a bi-directional
+STM to the contextualization and this will be the encoded sequence which will be passed the
+attention and then this is upper part here that's just the decoder so the main decoder that's
+these two LSTM layers that's the main decoder cell it uses a can attention to attend to the
+encoded representations so to the individual characters of the input and then when the decoder
+produces an output then until now the decoder always generates a number of discrete samples so
+now it won't how it would generate the vector of like like to eventually it would generate a
+spectrum so it would generate one column in this in this spectrum image right so we need to know whether
+it ends or not so but instead of having this end of sequence symbol add it to the dictionary here
+we cannot do it in this way so we add an output layer with one output and do a binary classification
+whether this is all or not and then we have some transformation whose goal is to generate the
+spectrum right so what they say is that instead of generating the spectrum directly with this one
+linear layer they have like post networks so they still run some number of conclusions on on this
+output and they see that they improve and improve the result so in theory you could just go here
+and just ignore it but but adding it there is better right so we don't we just don't have one
+output but we have a multiple output layers and then this spectrum from the previous times that
+needs to be passed to the decoder and what they do is they like normally you embed the
+generated character in the discrete decoder so then they use another just two layers
+to transform it mutably and pass it again on the on the input state of the decoder right so
+part things being slightly more continuous than then usual this is just the usual architecture
+so there are some details about the spectra which are there just for fun they also use slightly
+different attention or slightly improve attention that something what you can find in many places
+it's called location sensitive attention sometimes it's called monotonic attention and the
+thing is the attention here is kind of special if you do machine translation then you can really
+like jump anywhere in the input sequence but here when you need to take characters and then pronounce
+them then you will always process them sequentially right when you generate the speech you really
+shouldn't say the first word then the third one and then the second one you really need to do it
+in a sequential way it's just that you don't know how long you should stay on a single character
+so they add to the attention the ability to see what was attended in the previous step right to
+the attention well in every time step see what it did in the last step and that will help it
+to really go through the sequence nice and gradually because one of the problems of attention
+is it can lose track as we can start cycling or you can just skip a part part of the input
+but if you know that you want to attend the whole input monotonically then this can have the
+attention a lot because it will always do just like local incremental steps right so how well
+will you do it we will consider the button our attention so that's the edit attention in the edit
+attention we consider the encoded elements of the input sequence the state of the decoder there is some
+bias right and then there is the rest of the of the attention so what they do is they also
+add the attention from the previous step here so apart from these two or three elements we will also
+add the attention so what they do is they they consider the previous step but if you compute
+like the attention for the imaging that there is like an old cat kind of thing right now you want to
+compute the attention for A then maybe it would be nice when you compute the attention for A to
+also see whether you attend it C right because you might not have attended A at all but you
+attend it C and now when I would you want to attend A so you'll probably would like to know
+how the local neighborhood of the attention look like in the previous step and well we have a
+convolution to to do this for us right so we'll run one D convolution on the previous attention
+which will makes it makes not just the current times like character of the sequence also the
+other ones and then we will use this as an additional input here right so that will make the attention
+better and the the resulting system is is really not yes or there so it's like in some sense
+good and we will we will listen to how it works so the base lines are the parametric and the
+concatenant system when they say wave net linguistics then they mean the wave net from the original
+paper where the conditioning was some whatever way they were able to do with some some pipeline
+this is the ground truth and what they can do is well not very far from the real ground truth
+so in some sense this is a success so let's let's listen to the to the samples
+uh so some complex and out of the main birds first
+so these are
+outputs of the model not the ground truth they are really what the model does and they show that the
+model can do a lot of interesting things it understand that for example the word read
+and read has different pronunciation depending on the context right
+and the dessert and dessert is pronounced differently whether it's a verb or not and present and
+present right one is with s the other is with zets and things like that so it looks really nice so
+let's try to do uh also some some evaluation right so here the people got like two samples
+and they should say whether they were about to say or one was better and the other one was better
+so let's let's try it again here as well I will I will play you two samples of the same sentence
+I run it again
+and then another sample
+so the first one again
+and the second one
+so who thinks the first sample is the ground truth
+yes
+and the second one
+so maybe let's do it differently who thinks who what is the like let's guess what the generated
+one is right so who thinks that the first sample is the generated one okay and who thinks that it's
+the second one was generated so the first one is the ground truth actually right
+okay so let's try another another sample
+again
+and the second one
+first one
+and the second one
+okay so who think the first sample is generated
+some number of you who thinks that the second sample is generated
+uh this is a slightly half an hour so the first one is generated and the second is ground truth
+so you see that this is really difficult to to evaluate in some sense
+so when when these discourse are so close to each other it's really pretty difficult to
+say anything like when you look at these comparisons most of the samples were evaluated to be
+about the same and but generate generally you can see that this left side is slightly larger
+than the right one right so still the ground truth is slightly better but the difference is
+right up difficult to to really hear and and this is paper from 2017 still right so
+the models have definitely probably improved from the time but they are not really
+there aren't many publications which would talk about how these best models look like nowadays
+but at least this wave net seems to be used still and over at least is in the names of the
+models which they use uh by the way to show you some some some ablations
+first what we can do is we could uh think well how well the wave net model does there right
+because what people did is they came up with this kind of formula for converting spectra
+into the audio signal so there is this great in limb transformation for example which can do that
+so here they they take their model uh this time train on a linear spectrum because that's what
+this bocoder does and try to evaluate it and they show that the results are considerably
+versatile this uh if you don't really use a nice way of generating samples from from the spectra
+the only thing which people were able to come up in the past two decades like in some kind of
+formula I think uh works considerably worse on the other hand the result between the linear and
+the model's spectra are actually very minor so it doesn't really matter that much about it's
+slightly better to use the uh to use the melody ones uh and they also show the the capacity and
+regarding the number of layers uh right so the if we have 30 layers uh with these three cycles
+and uh then uh dilation layers uh in every I never cycle then uh that's uh how they get their
+output uh right uh and then uh they consider uh networks which would be less uh D uh contains
+more cycles with a less receptive field so instead of being able to see uh like 250 milliseconds
+around uh you can only see like 21 milliseconds to the past but uh actually it's not your model
+even better results uh than than the previous one but the the reason for that compared to the original
+wave net is that you only need to see to the samples from the previous spectrum in some away
+in some way right because when you are generating an output we have a spectra on the input which
+describes 12.5 milliseconds so you what you need is you need to make sure that these two different
+spectra get combined nicely but as you only think you don't need to care about anything much further
+apart at least from the results uh right when you just uh consider 10 milliseconds and sometimes
+you can be just inside the same spectrum so now it's the results get slightly worse and the
+the less receptive field you will have then the it will go down gradually so in this last experiment
+they don't use the dilated convolutions and oh they just used 30 convolutions with a colonized
+that way obtaining very small receptive field and low quality of the output.
+So now let's have a break and we will continue after us.
+So let's get to the last topic I have prepared for you in this course and that will be
+networks with external memory so until now all the knowledge which a model had was stored
+either directly in the network weights or maybe in the states of the of the recurrent networks
+so what I mean by this is that if you have a model for you get an image and then it says it's a dog
+right then all the knowledge about what a dog is is being stored in the theta somewhere there
+in the models but sometimes that is not really uh great because it would be like if the
+model would be capable of accessing some kind of knowledge information from some other place
+then it might be useful for example when you have this language model then it's trained
+on some some data until some point and then when some some new event appears or somebody
+knew is a president or something and right now what you need to do with you to read trying the whole
+model with billions of parameters so having a way of accessing some kind of other places then
+just the weights might be useful or if you consider an RNN then the RNN tries to maintain some kind
+of a memory between the steps right so we have got these states it's a long short term memory
+anyway but sometimes this kind of a memory might not be enough for for for doing what we would want
+for example let's say that we would be processing like a sequence of images and then it's
+some point you would like to recall what what we got in the image in like 10 steps in the past
+and we'll just storing all that in the hidden state of a single LSDM or multiple LSDM
+even probably not very well so people try to think about these deficits and they came up with
+various ways how to improve the situation and this also is connected to like how our brains work
+or mammals brain work so in some very cartoonish view we have got like two kinds of memory
+like the working memory where you can like get the information like from your brain and then you
+can do like active inference on these things which you have got in your working memory and apart
+from the working memory I would like this large storage in your brain and you can like copy the
+information from them and so if you are like playing various games like came I don't know how
+you say came off kind English like the thing which you you're like I'm glad some kind of cloth and
+then there'll be like 20 items and then you're able to look at it for 30 seconds and then it gets
+hidden away and then you to write all of them or as many of them as you can then this is like
+training your working memory but then you forget it very quickly afterwards but and so so this is
+mostly what the for example LSDM has like the working memory it's like the state being passed
+from different times but it cannot like access any other larger pool of memory where it could
+like offload an information or get it from them so people tried to give the models
+of for example some kind of recurrence cell a possibility to like store things or access things
+in some external memory and the idea is that the memory will just be only some kind of a matrix where
+the the rows would be like memory cells it would be vector of some some size let's say D right
+we have got some number of the cells and this memory the network will be allowed to use so it will
+be allowed to write to the cells of the memory then it will be automatically kept intact and then
+at some point it will also be able to read from it so this way being able to increase the capacity
+of what you can remember and another way we can look at it is that theoretically this memory
+could be pre-filled with some knowledge like the latest events or something but when you have
+such a memory the model needs to learn how to use it right because it needs to write something
+there and read from it and we shouldn't really like implement it directly like when we have
+networks they train that is what they do like we give them data and train to do the same thing so
+ideally we would like to come up with a way that the model will learn how to use the memory so
+it will learn how to how to read from it or what to read from it and what to write from it so that's
+what we will now describe model capable of accessing this kind of external memory during
+curriculum processing originally this model was called neural touring machines because the idea was
+that when we have these algorithms with this state like the pre-machine then normally the
+neural networks cannot do it but if we give the some kind of recurrence and access to this kind of
+tape then maybe we could come up with a larger set of algorithms but you don't have to just think
+about it as simulating during machine that doesn't make much sense but it can really be used in
+many or more reasonable tasks so how the overall model will look like so we will have some kind
+of a recurrence cell so we will be processing like the sequence of inputs and the sequence of
+outputs generate the sequence of outputs and like originally what we had was this I don't know
+well as TN cell which probably passes some state between the timestamps and that was it right
+and now we will edit the possibility of accessing a memory so we will give our cell or model
+like an interface of being able to read and try from the memory and it will decide what it will
+like read and what it will write so in this context the usual model which we would have
+is called the controller because apart from generating the output also generates the instructions
+to the read heads and to the right heads so we will in every time step we'll read from the memory
+possibly multiple times so everyone read is being performed by one head so read heads means that
+maybe you can read like two values in every time step and then we'll write something
+usually we will rewrite just a single value so in many of the models you own a single
+right head but in theory that would be many of the right so how the execution then then works
+well we go the input the controller gets the state on the previous times step and it generates
+three outputs right so the instructions for reading the instructions for writing and then the
+these instructions for reading and writing will be performed so we will get an updated memory
+which will be automatically passed to the next time step and the reading heads
+generated out so in this image it seems like the reading heads are passed passing things to the
+controller but they aren't really prior because the controller has ended and generated
+the read heads so they in fact are like being passed to the next time step prices the controller
+said I want to read something and then at some point it says and now I have these results and
+I will do something with it so similarly there are the values which the controller can be
+previous step but of course the the value which we just read might influence the current output
+right because sometimes you might want immediately respond to what was there in the memory so
+the values which we read will not be just passed to the previous times step but it will also be used
+when generating the current output so you can think about it they don't have it nicely here in this
+image but you can think about it as the controller having like two parts one is really
+the controller which generates the interactions and then we will have like an output or a
+second part of the controller which gets the the value from from the first one and then it gets the
+value from from the memory and then combining those to better it would generate an output
+so because we need everything to be differentiable we cannot just read by saying read the second
+row right because if you do it like that it would be difficult to commit a derivative of a
+discrete decision so instead you will just use a tension they didn't call it this way because this
+is like three years before transformer paper but that's what we want to do right we want to read
+something from the memory so we will generate like a query of what we would like to read from the
+memory and then just compute the attention between this query and the memory cells which we have
+which will give us a distribution over it right and then we will just take the elements of the
+memory so like the values according to this distribution right so they did it in kind of simple
+simple way here prides so that even in the attention we have got queries keys and values then
+here they consider the memory to be both the keys and the values they don't distinguish between it
+and then the model just generates the query so that's what you will do for reading for writing
+we will again use like an attention like of a approach to to get the distribution over the
+rows where we want to write but writing can mean either like increment thinking value which is
+there or or rewriting the value which is there and because these two are both reasonable
+possibilities they allow the model to do both right so their write is being composed of two parts
+first raising so you might decide whether you want to erase the value which was there in the cell
+or not and then incrementing the result right so if you just want to increment you will not
+erase but you will increment if you want to write there something you won't be able to erase
+and then you will just add zero so you will just overwrite the value by whatever we have decided
+so the writing will generate also two vectors right so the one which is being added to the
+vectors and the one which decides what portion of the values should be erased again it needs to
+be differentiable so the erase vector is being passed to the sigmoid so that it's from from 0 to 1
+and the value which you want to write there well that doesn't mean to be limited at all so the
+question is how to do the interesting so I just said that we will do the attention which is only
+half of the truth and the problem is that when we read in the memory there are principally
+two ways of how you decide what you want to read first you might want to find a key most similar
+to what you want right so we have got a cat and I would like to find like an image of a cat in
+your memory or something so you want to consider all the content which you have and just locate
+that the most similar one that's what the attention thing does and that's what they call
+content dressing it's true that in in transformers we have these positional embedding which we
+add to the content so then the attention there can do both things both consider positions and
+consider the the content here they didn't have the same idea so instead they added some explicit
+way of attending specific positions so that what they can do is they can like read
+like sequentially from the memory so you start somewhere and then in every time step you can
+just read next and next and next and next and next address that could be done by the usual
+self attention pride because when we get the position from the right representation from the
+previous step we might want to transform it using this transformation to make it into the
+robotic position on the plus one like next to that but here they they they do it they do it
+kind of manually so to show how such things could be done so first we have for this content and
+dressing which is really the self attention they what they do is way they compute the dot product
+between the queries and then the memory grows but they the actual edges use the cosine
+similarity so when they compute this similarity also divided by the size of the query and
+by the size of the memory cell it would work even without it right if you start to
+ending it without the filament it wouldn't be fine but they didn't include it and it also works fine
+and additionally what they do is they generate a temperature there so why the temperature is there
+well the similarities will generate some distributions so maybe maybe like this
+and so the question is whether you really care about like the mixtures or whether you really want
+to read from two places or whether you care about just the largest one and what you can do
+is when you have the logids right and then when you run them through a softmax then if you
+consider the logids and then being multiplied for example by 100 and then passed through a softmax
+what would happen is that the differences between the individual classes would get much larger
+at this multiplication and in softmax right if this difference is one then it means that the
+log odds so the logarithm of the probability of the other like like this of the two classes
+would be one so this one means that the probability of these two classes
+differ by a factor of 2.72 right that is what the usual of Maxdas already so you can you can
+understand it the logids like if you see the logids of one class is 10 times or is it's
+plus 10 then then some other logids then it means that the probability is considerably larger
+more than million times larger for it so if we will scale the differences by such large quantity
+then the resulting distribution would really be like one hot with the largest class being the
+largest on the other hand if you want to apply this by zero I should do it in different color right
+then the difference would be completely uniform distribution so using this this constant you can
+decide how much strongly you actually want to respect the result of the comparison so this is something
+what the regular attention can also do right because they they don't do the normalization
+in the regular attention so when the query is generated then the length like the norm of the query
+can can convert in this way for the regular attention by the larger the norm it will be the
+the more strongly it will attend to the best matching output and the smaller the norm is
+then the less uniform our attention will happen and so then we need to do the location based
+addressing so what they do is first they decide whether they want to use the content addressing
+so whether they really want just to use the new computer distribution or whether we will do
+something very similar to the previous step so either we will just keep the address from the previous
+times that or we will rewrite it with the with a content based one and again we will do this by
+having a gate computed by a sigmoid to give you values from zero to one to this side which of these
+two possibilities do we want to do anyway once we have the distribution over over the
+rows we will also allow it to shift right so the idea is that if you want to read sequentially
+what will happen is that you will take the position from the previous step and then offset it by one
+you can even do the like content based attention like find some myself and then but then you
+can see what plus one like have like a cat and then write just after it something interesting right
+so the idea is shifts for for both of these of these possibilities and in the simplest way
+the the shifts are just just keep it as it is or shift by one or shift by minus one
+and so the model generates a distribution over these three possibilities and then just combine
+the distributions in this way so they take the three distributions to one shifted by minus one
+the one cat and the one shifted by plus one and then you do a weighted combination of those three
+things so you can write it down in in this way so this is the distribution computed in the previous
+step and then you will keep it there with probability corresponding to these shifts and it's
+really being moved by this by this j here where this j is the thing which goes from minus one
+yes I'll scratch that so in order for this to occur this j would need to go over i minus one i
+plus one so the all possible shifts which would be shifted into the position i
+right and then this this weight of the shifts will be minus one zero and plus one
+and finally we have done a lot of smooth operations to our distributions and that would probably
+make it gradually more and more one-hot more and more low entropy so we to entropy would increase
+so what we will do is we will allow the model to say I don't care about Matta the possibility
+is I only want the the distribution to be one-hot in the same way as before when we gave this
+this constant multiplier to the logics so we will have a so-called sharpening factor generated by the
+network and then we will compute the that power of the given distribution and normalize it
+so if this is one we'll keep it intact if this is this gamma for example is a stand then what would
+happen the values close to one would still stay kind of close to one but if you imagine zero point one
+and zero point one to ten would be very small number right so very small numbers will get even smaller
+by the large ones will not get small that quickly and so the network can decide to do that
+right so the overall process looks like this we start with the content interesting we decide
+whether we keep the content interesting or use the indexing from the previous step we shifted
+possibly by plus minus ones or keep it that and finally we will sharp it and we'll get the final distribution
+and then this will be doing for every time step and this works for both the reading head
+and the writing head so the overall execution works like this the controller part
+right gets the state from the previous time step generates the state for the next time step it
+gets some inputs and then it will generate a lot of outputs right so we need to generate
+instructions for the for the reading heads and for every reading head we need to generate
+the quality key that's like the query of what we want to read in the memory the the temperature
+whether we are using the content based addressing or or from the previous step the shifts for
+for the for the rotation and the sharpening factor and this we do for every read head which we want
+to have and finally we will do instructions also for the one writing head and for the writing head we
+also generate the erase vector what we want to erase and the add vector is what we want to add
+to the places where we do this so this very large number of parameters will be generated here
+and then they will be predated by the reading and the writing heads and the read heads
+will generate you the output so some number of of reads so this will be passed in the next
+time step right so you will get them on input but also what we will do is we will allow them to take
+apart in generating the the output of the model so when generating the output we will consider
+the output of the controller so this need new thing and then we will take the read vectors
+pass them through linear layer and generate them so it is really technical but apart from many
+letters it's not that much difficult and this can actually train and learn to solve various
+problems so in the original paper they are really solving very toyish problems and we will see some
+some in more interesting applications later so at the beginning they just have a copy task
+price so what you get is you get a sequence of elements on the input each element be
+vector and then at some point you will say copy and in the point you should well just repeat the
+sequence and they do this with the sequences of length up to 20 and they try to train just the usual
+LSTM so we can imagine LSTM getting some some input and at some point it will say go and then
+it will mean to generate the same outputs and then they have this neural-turing machine so
+they are external memory and either the controller part can be LSTM or the controller can be
+it forwards or the main thing in the middle can either have a recurrence state or not and here
+they they show how the training works so the training can get to zero error for for the neural
+training machines while the LSTM tries but it never reaches zero to show to show you visually
+how the results might look like and this is an example these are like the inputs right and here
+you can see what outputs the model generated and these are of length 10 and 20 so these are
+the lengths on which it was trained but ideally if you if you learn to like an algorithm of putting
+things in the memory and then just taking it away from it and ideally you should be able to
+generalize to much larger lengths so they evaluated the sequences of length 30 50 and 120
+and you can see that even for the larger the larger sequences kind of work like for this very
+large one perfect but still it's kind of working so this is what you would get with LSTM right
+so with LSTM you can kind of handle the lengths which you were trained on but then if you try
+something longer then first you will have just a limited capacity on the LSTM and then the LSTM
+wasn't actually trained on these longer sequences which might be a bit puzzling for it because
+it may know how to squash these 20 elements in the state but it might not know how to squash
+the other ones and you can see that really it starts generating errors quite quickly and then
+it really doesn't do anything interesting so to show to show what the model has learned while it
+has learned the obvious thing right so when you get the inputs then the inputs are being
+stored in the memory here you can see the location so it started somewhere and then it
+well decreases TV and this is one would expect it to go plus one plus one and starting to let
+zero but it starts somewhere and then just goes minus one but apart from it it kind of makes sense
+and then when you say that you want to start generating the outputs it will well look at the
+place where you start it it actually kind of keep track of where you start it and then it will
+read from the memory using the same sequence prior to nothing really surprising surprising things
+is that it actually trains but in this 2013 it was surprising and I would nowadays when the
+attention can do anything it's like the end might not so they also try to do like a recall kind of
+assignment and so in recall what they do is they they like you get like a sequences on the input
+their sequences are a flint three right and then so that's like your memory that's what you should
+learn and then at some point they say and now I would like you to tell me what follows this element
+right so they will give you one more element you need to locate it in the sequence and then
+generate the one going following it right so it's like recalling something from from the memory
+so again you can get to nearly zero error with using the external memory while for the
+STM it's not long not that great and the interesting thing is that or what kind of
+approach the network chooses right so here we have with these inputs so there are always three
+elements for forever sequence right and these these elements are being separated by saying okay
+we will continue you will continue you will continue at some point you will say and now
+this is the element which I am searching for and please tell me the following ones so what does
+the model do well first whenever it gets one of these elements it just rides them to memory which
+makes sense but it is actually writing something also on on these like intermediate steps
+and what it does there is that it actually computes some kind of hesh of these three
+elements so it rides there like a representation of this sequence element as a whole into a single cell
+right and then when it searches for an element then at this point it is completely the same kind
+of fashion function of that it locates it using this content based dressing and then it starts
+generating the following three elements which are exactly the next the next sequence right
+so these kind of architectures we have got some kind of memory are appearing in in various
+places if you want to train an agent I don't know for play playing a game and you just get like
+this this screen maybe it's like a 3D maze or or something then in environments like that you
+need to actually remember things differently than just storing them in some R&N or something so
+for for these kind of navigation environments or or playing a game like starcraft where you can
+like see parts of the map and then you cannot see them anymore when you don't have any of
+many more units there or something then having an excess to the external memory might be
+a bit interesting or another possibility of where these memories are useful is when you try to do
+some kind of a metal learning or learning to learn so when I say learning to learn what I mean
+well imagine that I want to develop an application which will run on the mobile phone of
+of users and they will be able to like do classify images in whatever in whatever
+hierarchy they choose like man say that you have got three dogs and you would like to be able to
+like mar them nicely on the photos of course the photos can do it for you for like a general category
+it's like people and then usual animals or something but if you are I don't know the owner of three
+spiders then it's not obvious whether some generic kind of solution will work so maybe
+doing something specific would be better and so what we could do what we know now is we can
+let the user to generate the photos and then we could fine tune whatever model we would start
+to create and then hope to learn quickly hopefully but when you know that this is what you want to do
+like you want to come out in the model which will be able to quickly learn a new new hierarchy
+then this setting this curve learning to learn because you try to train a model which will be good
+at learning itself some new stuff and quite a good architecture to do that is actually use the
+external memory right so what we will do is we will come out in the model which will get like a
+sequence of inputs from from the user and it will like store every of these inputs to some kind
+of these memories instead of storing the knowledge to ways if I'm tuning the models to ways
+we will just store them in some external storage right and then we will be able to use it so when
+when doing the the the prediction we will take the input you will somehow access the storm
+memory which we have and then we will produce them and this way we can ideally like train
+to to recognize every of these images after a single photo or two photos or something of course
+if we have a good convolutional presentations and everything but but still so let's consider such
+such a task where we will do exactly what I described so we will be getting sequence of
+images it could be anything but let's say there images and the model will want you or the
+user wants us to classify them into some unknown hierarchy to us so we get an image and we should
+produce class in the next time step we will get the correct class from the user right so the idea
+is that either the user is happy and they won't say or at the beginning it will be training so
+maybe you will just get and every example of exactly one or something but then later on when
+we will do a mistake probably it will be repaired so so we assume that like after doing the
+classification in the next time step somebody will tell us what the correct class was and we
+process the sequence of inputs and our goal is to predict ideally in every time step the correct
+class which we cannot have so we can change this using this external memory kind of thing
+it can be even easier than it was described so the most interesting part is just this content based
+addressing crisis we just need an attention so that we can we can find maybe like the closest
+image to what we have just caught in the memory or something so the writing part can be much
+simplified we will just let the network to produce a vector and we will just store it in memory
+in the paper they have the it's slightly more intelligent what they do is they they
+track which of these memory cells have not been used that much and when they run out of memory
+they just replace the the memory cell which was least presently used but
+conceptually you can think of the memory being large enough without like required to be to be
+to be like removed or deleted and in that case you can just ignore this right part at all
+so let's have a look at how this all works out like so let's assume that we will have five classes
+and we will get 10 instance of every of these classes so we let the episode of 50 steps
+and in every step we will predict which of these five classes it is on the input and so now we
+will start considering this image in the top right so here we can see how good we are during training
+so this is the number of examples on which we have trained on and so what are these numbers
+so the the pink one that's the probability of answering correctly when we see the first instance
+of a given class so at the beginning everything is 20% because well with five classes 20% is a random
+choice the blue one gives you the probability of answering correctly when you see the instance for
+the second time right so in the theory this blue thing could be 100% after seeing everything
+one you would be able to say that that's it and well they actually get to something like 90
+per cent or something so it actually does something and then when you consider the fifth or the
+tenth instance probably the result should be even better now it's surprising that even the first
+instance get more than 20% and then it's because after we have seen for example for classes
+if you get some new image you can just say well it's is the remaining one right I already know
+how these four classes look like so maybe this will be something new so you can do some kind of
+educated guess right so for the first instance it's true that it's so you would like 20% of
+of getting it correctly but after you have seen an instance of an image of one class and then you
+see a new one the random guess has 25% chance so that's why this goes up so doing this with just
+LSDMs would not really hurt because well the capacity there is just mode not large enough
+and for example comparing this with with people is very favorable for for the model but that's
+because this this is kind of difficult to do for people like imagine that you are sitting in
+room and then you have got like a new image what they use as images were like characters of
+various alphabet so there are too many alphabet in the world so they just like took random
+characters and they just give them random labels so you get like a character in alphabet
+if you have never seen another about these five buttons there and you just need to say
+second for example right and then you get another one and then it says like it was correct or not
+like another one will like go green like so that you know what is the correct one and then
+we are doing like these 50 pushes in every episode you get the other the accuracy and then you start
+again with a complete new random pairing of images and labels so this is probably the first
+trading but they were able to get some results so for the second instance the people were able
+to get like to 57% after the tenth instance of the same class they got to more than 90%
+well they can do much better they even try to do more more complex settings by considering
+the classes which would be like a sequences of of five letters right so that the class are in
+that you just couldn't guess it right you could just the labels and the labels are like a
+sequences of five by its characters so that means there would be like 31225 classes
+because it's like five to five possibilities so the model this slightly less
+but results but nothing dramatic for the humans they didn't show the result and they actually
+stated that the task was so frustrating for people that they weren't even able to get a result
+of the people like rejected protest it or doing it so even even when paid then it was like so
+so frustrating to remember these random five letters strings for the various weird characters
+status on the input but these kinds of things of training quickly the here the external memory
+might be something interesting so we'll implement these sort of practical so that you can
+have a better idea of what exactly is happening there and to show you some brief more recent
+example for example when people are processing videos right when they were like a clip
+then one way how to like keep track of what's happening to use some kind of an external memory
+price or in every step you will get the representations from some I don't know video visual
+transformer or something which gets you some some locally encoding of some number of frames
+and then in order to understand what happens what happens in the whole sequence
+using some kind of a memory is a good way price or in every step you will be reading from
+the memory you will be doing some kind of processing of the value which you have read from the
+memory then you'd writing to the memory for using some output and then you would really be
+repeating this again and again right so I won't go through the details but in the paper and that's
+the end of the 22 they were able to get better results on the shell iis data sets which is the
+data set of recordings of some households activities like like like cooking something and opening
+fridge and then things like that there can be multiple of them labeled even in the same time
+because you can do do things you can be moving somewhere and also with an opening again or something
+and then they were really like this you can add on top of any big bowl right and they show
+this actually works quite fine so even nowadays the external memory in some context are actually
+quite useful so oh I'm sorry I used slightly more time than I should two minutes so thank you very much
+for your attention I hope I'll be seeing you also also tomorrow we'll have the last
+devaluation or over 30 money of the competition and the last assignments there will be just one
+new assignment and I will be definitely like discussing with you some kind of a feedback on the
+practicals but if you're not going there or something then I would definitely be interested in
+knowing what you think and what I can make to make this course less painful or like better
+then you can learn more interesting stuff or learn easier or something so either you can come
+to the practicals tomorrow or you can catch me anywhere or writing on the answer or something
+and also please feel free to fill in this I don't know evaluation thinking this student information
+system I also read all of that and it helps me to improve the course for the next year so
+thank you very much and see you tomorrow and good luck in the examination period

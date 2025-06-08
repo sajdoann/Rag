@@ -1,0 +1,960 @@
+Good afternoon, everybody. I'm delighted. I can invite you to hit another lecture. Welcome,
+you're at the art of lecture of our course. This time we will be continuing our exploration
+of the convolutional neural networks. Before I will start myself, maybe other any questions
+or comments or anything on your side.
+Okay, so I will be the one starting.
+We talked a lot about the convolutional neural networks on the previous lecture.
+So what we have found out that the convolutions are a new kind of player, like a special version
+of a fully-connected layer, but very sticked one, and they can provide local interactions
+only so that only a neighborhood of a given value influence is the output.
+The same kind of pattern generates the same output independent on the position on its position.
+And as a side effect of all these, the layer has much less parameters than just the fully-connected one,
+because we share the weights, the positions and local interactions mean that every hidden neuron
+is being computed just from a small number of its predecessors or its inputs.
+Usually, just repeat it three time reconvolutions are enough in a sense that instead of seven times seven
+convolution, you can do three time reconvolutions that has the same receptive field.
+By receptive field, I mean the amount of the input pixels, which influence some specific feature.
+But these three or these significant convolutions are faster to compute than a convolution with a larger kernel.
+During the processing, we start with a very small region, and then we generate more global features or more global information
+throughout the process, and for this we use the pooling layers or the situation where we use a convolution with strides to,
+or a pooling operation with strides to, at that point, we now learn things about large regions, so we generate more global and global features.
+And when that happens, we usually increase our zone number of channels, and doubling the is a reasonable default.
+Right? If the network is deep enough, then we actually can ignore the polyconnected layer, which was there initially, I mean at the end of the network, right?
+Because the convolutions are like, you know, stick to the positions.
+So at some point, we set an end this point will do a polyconnected layer, but if we do a lot of the convolutions, in a sense that a receptive field,
+for a neuron hits the boundaries of the image, then even the convolution themselves can get an idea of where the objects actually are in the image.
+So once the network is deep enough, we can stop adding these polyconnected layers and these were very large so that was fortunate.
+A good way of regularizing the neural networks, or even making the training to actually proceed is to use batch normalizations, and apart from improving the training, they also have regularization effect.
+So we can decrease the strength of that to regularization and even ignore dropout, or maybe use it with a small rate, which is efficient in a sense that usually regularization methods tend to limit the capacity of the model, so we can decrease the other ones.
+So we can have a smaller model with similar performance, but still a small way decay still seems to be useful to improve the performance of our networks.
+At the end of the previous lecture, we started talking about residual networks, about the resonating model, which use these residual connections, so that the network instead of computing directly some output value, it's learned to compute a residual, like a difference, the delta to the value which it has gotten on it.
+And we were able to construct or we described two kinds of regimes.
+In the first one, we just use some number of convolutions, and then we have this residual connection.
+But for networks which would be deep, there would be quite a lot of parameters here, especially when the number of channels would be very large.
+So we have come up with a bottleneck block in a sense that what we did is we decreased the number of channels for the expensive three time three convolution, and then we can expand the number of channels back again.
+And with these two blocks, we have considered several networks which will use just the three time three convolutions when the number of players was small, and then when the number of players do larger, we included this bottleneck blocks, so that the three time three convolution could be cheaper.
+One interesting thing, or non-regular thing in the architecture, is that whenever this new stage, sometimes called a stage, like when you have the same resolution and the same number of channels, then at some point after the pooling player after we used to try to, we will have a smaller resolution, large number of channels, so this one block with the same resolution is sometimes called a stage.
+In the stage, the first convolution has to make the horizontal and vertical resolution smaller, and increases the number of channels.
+However, when you consider residual connections, then in these cases, what happens is that this convolution has to try to, and two times number of channels.
+So if we just append it, the residual connection, then the shades here and here do not match, because the resolution is different, the number of channels is different, so for these residual connections, we still need to do something to just allow adding things.
+So what we do is we just do one-time one convolution with the generalization, that's the smallest possible thing, which we can do to make the shapes compatible, and of course, this has to try to, and two times, the channels is on the input.
+And with these residual connections, we were actually able to improve performance with the deeper networks, and using the fairly regular training regime with the gd and learning great decay, known about a smaller way decay.
+And of course, batch normalization everywhere, we were able to come to the great results.
+Of course, the latest augmentation is still being used, we are doing the random shades, we are doing the scaling, which seems to work well, well previous, so that still still true, but nothing really specific or special happens.
+And when we look at the various depths, you can see that the performance improves quite, like monoconic clay with how the method of getting deeper.
+Yep.
+But what recursive?
+Yeah, so the question is whether sometimes a recursive residual players would make sense, like you could imagine having a large recursive player, and maybe a smaller one.
+Not as I know, like no large architectures actually use them, there will be something we should mention in a minute, where they somehow have multiple inputs, so in some sense you could consider it to be recursive residual connections, but I would say that it most architectures, it's not really done, so it's not that we are missing out.
+On something interesting, but we are not doing it in the assignment.
+So the residual connections, like mean the recursive one or the or just the general ones, yeah, so the residual connections are like extremely important in a sense that they are what allows the network to actually train when the depth is very large.
+And what they are useful for is one way how you can look at it is that when you have this residual connection, then the activations are just copied through it, right, so in the backward direction when you train, then the gradient flows very nicely through them, right, because the derivative of the residual connection is just one, it's just an identity, right, so the gradient just flows through it without any change.
+So you can imagine that whenever we are doing the vector propagation, then the gradient is available readily in like every block or every layer of the network, so what they do is they change the meaning of what the network does, instead of doing a lot of sequential transformation, which depends on each other, the network is now generating a lot of differences.
+But if it doesn't do anything, right, it can just just copy things through, which it couldn't before, because before every layer would do something specific and just copying information will require some non trivial optimization in a sense that if you have this, this judge or just a layer, then copying information means that the weight might exist to be somehow very specific.
+Like either it could be an identity, if you would really want it to do a perfect copy, or it could maybe be just an orthogonal matrix, so that the information would be copied in some sense even if even if rotated or something.
+And to achieve this as GD is kind of tricky, like as GD will try to do something more, so just copying things is hard, and that's what causes very deep networks not to train well, because the network can easily forget the input, because just copying them through is the typical.
+Like if we add the residual connections, then copying became very simple, because the neural network can much easier, it's much easier for the SGD to say, yeah, it just generates zeros here.
+But if nothing seems interesting, then just saying, okay, let's do what I do, anything in this block, that's something of the SGD can do, so the residual connections are there to allow to like effective use of multiple layers.
+Yeah, so the question is how will these two blocks relate, so I wouldn't say there are equivalent in a sense that if we had 256 channels here, right, in all the places, which is the setting, which we have here, then this block on the left side is probably more expressive.
+It has more parameters, it can do more as itself. So I would say that the block on the right is slightly weaker than the block on the left, but the good thing is that it is much smaller and it is much cheaper, and if we have a lot of them in depth, then it's like a trade-off.
+We have cheaper blocks, smaller blocks, but that allows us to stack multiple of them, and we hope that the additional depth will be something useful to us.
+So it's like a trade-off choice. If we had infinite resources, we could have used the block on the left all the time, but it kind of works to make the weaker allowing us to do more of them.
+So you can think about it as like approximation, which is cheaper yet not so exact.
+So the question is why we do this after two layers. So one way how you can look at it is to say, okay, so if we had two layers there, then when you look at it from the universal approximation point of approximation,
+P or M point of view, then this is like a universally strong block. So in P or A, this can compute whatever features we like, because we know that if we have a single layer and then a non-put layer, then we can do anything.
+So if we had just a single layer, then even if there is the non-linear application, then mostly it would just be like a restricted kind of computation.
+So with one layer, it doesn't really work very much. And we will discuss it from several views today. We will see what other alternatives people do, but the way how I see it is to say that with these two layers,
+this can really do anything. So it's like a good, simplest universal kind of block. You can actually think about it as a small network, right?
+We want a small model, which gets input should generate output in the same in the same resolution and should be able to produce whatever, then it itself should have a single hidden layer with an activation and then output layer.
+And this also shows why it's kind of fine to have a brello here and not here, because this fellow makes this hidden layer to be non-linear. So as a whole, it can be universally strong.
+But in the universal approximation program, you also do not have a non-linear activation at the end.
+It's about what you are doing. So here we are just computing real numbers. So we don't need an activation there, because they just produce whatever whatever we want.
+Yes.
+Well, it's something what we will discuss later on, but we can easily do it now. So imagine that we have a network which has several layers. It doesn't really matter much with their fully connected or convolutional lines.
+So if you do it, then when you think about the features here, then they have some kind of a meaning. So the first one, when we have images, it can be like how much, how much dinosaurish the input looks like, the other is how many cucumbers are on the image and other is whether there is a motorcycle or something.
+And after this one layer, the meaning of these dimensions probably will change, because the new network is no reason to copy things through.
+Now, in fact, I am like an exaggerating when I am describing the feature space. It's not like the feature one is the level of dinosaurism, which happens in the picture.
+Right, in reality, the features, like the ones which you think about in some abstract sense, are hidden in the full inner combination.
+Like if you have any images and network understands that there is, I don't know, a person on the image, but there is not a single dimension where this information would be, but you can extract it from the linear combination of the features.
+And when you have this one layer, then this transforms the space, usually somehow. So even if the same set of features is available, probably, or hopefully, they are on different positions after this single layer, because normally the new network has no reason to keep these features spaces the same.
+But with the addition of the residual connection, what exactly happens is that the features space now cannot really change much, because with the residual connections, the meaning of the features here is somehow fixed or like keep the same, kept the same with the residual connection.
+So if here we have some kind of features, then the structure of the features space should be either even the same or very similar after this block.
+So in every stage of the network, right, where the features space is the same, sorry, where the resolution is the same.
+So this one color here, for example, we can really consider the features space to be identical or very similar. It will change when we do the pooling, like when we do the strides, we generate new channels, different resolution at that point.
+There is this one time one convolution also on the residual connection, and this is what will change the features space.
+Makes sense, because once you start generating features for large regions, more of them, right, they look at the new meaning, because we are describing a different object kind of or larger regions.
+So that will change, but inside these stages, the residual connections kind of force the model or strongly motivates the model to keep the same space.
+So that means exactly that if you would remove this one layer, and then run the network and just copy the information through it, it would stop doing anything interesting, because the features space changes between here and there, but in the resident, if you just throw away one of these blocks and copy the information through the effect on the performance will be very small.
+There have been papers showing that people probably weren't expecting it at the beginning, but quickly realized that this is exactly what is going on. So that's really a good good information of how to look at it.
+Well, no, no, in a sense that there is no strict 0.5 times or something. So the gradient from the loss, really definitely travels in the last stage.
+Now the gradient changes in every stage because these residual connections are not identities at the beginning of the stage, but in the whole last stage, the same gradient is available for every block.
+But if you consider every block to generate just the difference with respect to the original feature space in that stage, then it makes sense that they all have the same kind of information.
+But the gradient is modified, although by the gradient, which goes through the block, right? So it's not physically the same, but at the beginning of the training, the gradient gets all the way up.
+But the question is whether it will point to some deterministic direction, like it might say, okay, if this pixel would be more blue than we would think it is a dog, which, well, in some sense it makes it is fine, but I don't think the network really minds to see this information.
+But if the features would be very low level, if the gradient points in the direction which doesn't make sense, then different batches will tend to point in independent direction.
+So this will ultimately cancel out during the optimization process, while the de-more abstract features hopefully would point in the sense that the directions which makes sense, or are consistent during the training, so that would motivate, probably, the network which generates more, more generic or more generalizable features.
+So let's now think about all of the things about simulations.
+You know, when it's actually paper with a good idea comes out, then everybody comes up like a lot of wasps on honey or something like, and everybody tries to improve right things.
+People have ideas, and then people say, so let's do this one improvement of this great paper.
+And then it's the thing which usually happens when some new idea appears, that there also happens with present act, so there were dozens of papers which try to improve or explain or the architecture, which is always nice to look at.
+So we will, we will first look at various observations of what would or would not work if it would have been done differently or as not.
+This paper is from the same team like from the resident team.
+So it's like, you know, they were happy that they made submission to the competition, and then when they had more time, they spent time in three or four months running an incubation experiments.
+So one thing is that this particular connections seems to be pretty important, so they try various ways of how the information could be combined, right in the baseline version, we just add these two things together.
+And here we can see what error we would achieve on on C far, C far 10.
+So what we could do when we combine two informations together, we could say, okay, let's just completely present from the residual connections and 50% from the block.
+And if you do that, then the training goes through, but the performance is much worse.
+And if you, like, some things would not work, for example, if here you do one, right?
+So the residual connection is weaker than than the block computation than the training doesn't converge at all.
+And of course, if you say, say, zero here, so no particular connection, then it also doesn't work at all.
+Here they train a deep network, so 110 layers for C far, right?
+So we know that, I don't know, 18 layers, that could be trained without the residual connection, but 110 layers would really not converge at all.
+So fixed waiting doesn't help us, maybe doing some dynamic waiting could be useful.
+So they also say, okay, let's compute weight dynamically to this side, whether to copy from the block or from the residual connection.
+Like, you can generate weights by doing one layer with a sigmoid activation, either generally to probability.
+And then you can use the probability to copy either from from the block computation or from the residual connection, like one line as the probability of course.
+Doing that actually does not, does not converge unless you are very careful.
+And at the beginning of the training, you say, I won't most of the information to be copied from the residual connection.
+You can do this by influencing the bias of the layer which generates the the logic for the sigmoid, right?
+Say, the bias in this in this layer is minus six, right? And the sigmoid, it looks like this, so minus six is somewhere here.
+So by default, the network will produce zero at the beginning, which will say, copy through the residual connection and not through the block.
+If you use it very carefully, then it trains even if it's verse, but if you make it too strong, if you go to minus seven, it will get even worse.
+So it's like, it can be done, but but it doesn't help anything, it just stands in the way.
+We could wait only the residual connection and that again generates results, which are worse than then just just copying things together.
+We could say, okay, let's add this one time one convolution on this layer. So with this, we will not keep the facial space fixed, but we will do this small operation whenever residue a connection, but that will stand in the way of the gradient in the opposite direction.
+So even if it converges, the results are twice as bad as as without it.
+They reported some different results in the original paper, but that was just for 34 layers, but with 110 layers, doing the one time one convolution, every layer would not keep the word.
+And for example, adding dropout on the residual connections, make the training diverges well.
+The idea is that when the gradient goes through, some parts of it will be lost because the dropout will drop in the forward direction and also in the backward direction.
+So this again stands in the way of copying information. So it's like the unrestricted copying, which seems to do the trick.
+Another nice experiment is how we should arrange things in the block computation, right? In the original formulation we had a rello on this path here, which was kind of strange, right?
+So what we could consider is the version where the rello would be kept inside here in this block.
+So in these images, this is the baseline and these are the real bit for the addition. So it trains what the result are slightly worse.
+And I will discuss it a bit later. On the other end, we could also have done, we could have both the visualization in the path and that makes the results worse, definitely.
+So presumably again, because the gradient doesn't go through nicely during training. And then if we decide to keep everything in in this block, right?
+Because the rello could also be problematic on the on the residual connection because it could.
+The hamper, some some gradient flow. Then we could like we have done this and did it in hell, what we could do is we could try taking the layers and rotating them a bit, right?
+And in another way how you can look at it is you have these layers, convolutional, convolutional, rello, convolutional, rello, CNN, BN, rello.
+And the question is where the residual connection will both go, right? Will it be here or will it be here?
+Or will it be here? I didn't draw enough blocks, but what I mean is that if you have a lot of these blocks, then the question is whether the rello, like what is the residual connection? What is the global connect?
+And actually the best version is the case where the first layer inside this block is batch normalization. And the last one is linear linear layer without an activation.
+So that that's what they do here and this large row of open corresponds to this case. We will offer several insights for why this is the case.
+One view how to look at it is that the batch normalization at the beginning may make sure that the values to this to this linear layer are reasonable because we have edit things here. So now the distributions are larger or different.
+So instead of giving them directly to the linear layer, we could normalize them first and only then do the processing and we will see some other interpretation, but later when we have more data.
+So this version is sometimes called pre-activated version. I don't really know how to understand that I just learned that it's pre-activated and you probably could find the interpretation where I don't know some activation is hidden there, but I don't really know.
+So I just actually just remember it by name, it's like a pre-activated version.
+And when you compare it to the original version, the results are slightly better, especially when the network is deeper.
+So for 200 layers you get results which are nearly more than 0.55% better person points, but this seems to help with a very deep network.
+Even when you try to train a 1000 deep neural network, then it stops training effectively when the value is in the path while the pre-activated version can survive in that many layers.
+But on the other hand, it's not obvious whether it's useful to have such deep networks, but in any case when the result was released, it used this pre-activated versions.
+So these were the ablation experiments on the result itself. And then what people thought about is, okay, in the result, what we do is we scale the depth of the number of layers.
+To the extent that we use the bottleneck blocks, so we make sure that the individual computations are cheap enough so that we can stack enough layers.
+But it's not obvious whether that is the optimal way to go, right, because that's one way how you can scale the network.
+Another thing you could do is you could also scale the width of the network in a sense how much computation you do in one of these blocks.
+And so in wide net, people tried to experiment with it to see whether scaling up should be done by adding layers or by making them wider.
+One motivation for that is that the result network is actually not very friendly to the GPUs we have, right, because the result 152 has 152 layers.
+And the thing is we need to compute them sequentially. So even if our GPU can compress as many computations in parallel, you can parallelize only the individual blocks, but but you need to compute them sequentially.
+So instead having a network which would not be SD, but wider would be more efficient or we could compute it more efficiently with the hardware we have.
+So what did people consider? So this is the usual three time three block, right, this is the bottleneck block of press net where we try to see to show that the middle layer is actually narrow because it uses more or less channels.
+Then they consider a wide version where just the number of channels is much larger, right, so here I don't know you could imagine that we are going to like 16 channels and here we say okay, let's go for a 160 or something.
+This number of channels is kept constant, right, so everywhere the number of channels will be much much wider than before. And for this version, they also consider using dropout here between the convolutional layers.
+So what they do is they do a lot of experiments, they do it on C410 because C410 is fast to train compared to the image net.
+In the resident paper, they didn't have the table, but it's the same as here. So when we say that we train on C4, we of course need to have a different architecture because we don't want to do as many strides as the image net one.
+So in C4, people can use is this, so we start with the 3 times 3 convolution which keeps the spatial resolution and use this number of channels, 60 in the resident.
+And then we have got 3 stages in every stage, we use some large number of these 2, 3 times 3 blocks because of your connections.
+And then at the beginning of the second stage, we use this type 2, so we have the resolutions, we double the number of channels, then again at the beginning of the stage 3.
+And then finally we just do an average pooling of the 8 times 8 regions.
+And here they consider the same architecture, but they also include this widening factor, so they say, okay, if we want, we might generate 10 times as many channels and they will of course make the network less deep in the case.
+So first, let's think about how these convolutions should look like, right, what the block should be.
+So for example, B3 means there will be 3 convolutions, sorry, 2 convolutions, 3 times 3 and 3 times 3. The 1, 3, 1 means there will be a convolutions 1 times 1, then 3 times 3, then 1 times 1.
+They tried some number of these blocks, they said the number of channels so that all these configurations would have roughly the same number of parameters and the same time requirements.
+So as we compare the networks in the sense where it takes similar time to random and similar space to store the results.
+And out of these things, when you look at the results, the usual 2, 3 times 3 convolutions works the best, so that's what they use in the remaining experiments.
+You can see that they explicitly even didn't try B3, but the idea is that it would be worse than the others.
+Maybe they did, they just didn't include it in the paper.
+So now let's think about the depth and width, right, so here there are experiments with deep networks, which get wider and wider, and then when we get even wider, we will make the network less.
+Less deep, so that the requirements in the time and space for them are in the slot.
+So one thing is that if we have fixed that, then making the network wider generates better results, which is something we could expect, right?
+widening the network also improves performance.
+And then when we would say that we would have a budget of, I don't know, 40 million parameters, roughly.
+Then we could consider either deep network, which is not so wide or less deep network, which is wider, and out of these combinations, something in the middle seems to be the best.
+So like instead of having a network, which would not be very wide or very deep, it is better to go somewhere in between, right?
+So make it wide and also make it reasonably deep.
+So it makes sense to scale both of these, that doesn't mean take away, right?
+It's not just about the depth, it's also about the width, so there would be probably a reasonable combination of these two when we want to train a model.
+And then they also think about adding dropout.
+So adding dropout seems, at least for them, it seems to generally help, but when the network is deep, it seems the improvement is the largest.
+It kind of makes sense because if you have a wide network, like in ResNet, then the number of channels, which you have in these blocks is quite small.
+So if you add dropout, it will, like, many of these channels will be dropped.
+So the capacity of the model will decrease, while if the model is wider, then it might be easier for for the network to handle the situation where large number of these intermediate features or channels.
+So it seems that using dropout can also be beneficial, but we need to make sure that the capacity is not limited, and although the improvements are not that great.
+So the question is whether, like, using the stage should probably be fine, or what should we do on the stage front, but the stage front is very much connected also to the resolution of the image, because one thing what the stages do is that they also decrease the resolution.
+So somehow, when we are protesting a image net, we know that we need to do at least eight or six, or something like that, six, maybe, the strides throughout the way.
+So that forces us to do the stages anyway, because when we did the single stage and see for it, mean that the output would still have a 32, 32 resolution, so that would be bad.
+On the other hand, what we could do is we could have more stages than the pooling places, right? Here we have three, or yeah, three places where we do the pooling or it should just do, right?
+But we could, in theory, have more stages in a sense that even on the residual connection, we could add one time one convolution.
+So that will happen in some of the network, which we will see later, but it's difficult to come up with.
+So when people design these, these architectures they tend to, they tend to just use the whole stage for the, for the case where the resolution is the same, but it could have some effect.
+It is used sometimes, like the resonant kind of architecture on the data, which is not, which don't have the spatial dimensions, you could do it.
+And one of the architectures for dealing with tabular data, we're just just features, I don't know, like medical measurement of a patient or something, then doing some kind of a residual connection kind of thing is being done.
+But it's definitely less, less common for the fully connected layers.
+Because with the convoleutions, some kind of a depth is implied by the limited neighborhood.
+Like when you do the convoleutions, you need to do some number of layers so that the convoleutions get large enough so that you can see a reasonably global features.
+So with the fully connected layers, this is not the case, even one, two, three layers will combine everything with everything.
+So it's not common to see, like, 20 fully connected layers is a residual connection because, well, they usually can, could have done it easier.
+But there are architectures where you do something like eight fully connected layers.
+When you try to do some non-privileb space representations, then it can be done, but it's kind of very specific.
+Yeah, so the question is whether, whether, why not, we are not executing the point of being able to actually have many layers.
+So the main idea is probably that in the resident paper, the people were thinking about that, right?
+So when they were thinking about how to make the network better, they just think about stacking more and more layers.
+So the point of the widened paper is that when we try to get a network which would be larger, then we should think, do dimensionally, in a sense, that not only we should add more layers, but probably we should also make them wider, because that also gives you some kind of a boost.
+Just the depth itself might not be the only useful type of parameter to make our network stronger.
+It's still useful to be able to have many layers.
+So from this point of view, it's great that the residual connections are working.
+It's just that if you would want to even better network, but then resident 1952, then it's not that your only choice is to generate resident 304.
+You can also make one another 52 with more channels, and it's seen that it can also be, goes to be efficient.
+So it's not about repeating the purpose of both complementing it with another dimension, which you could also use to make your model stronger.
+And we will see that both of them are actually efficient, like it makes sense to use both of these techniques.
+So resident allows us to grow in depth. We couldn't have done it effectively before that, but that shouldn't make us focus on the depth itself.
+Yep, and then they also say, you know, we shouldn't have to get nice results.
+So now I will describe to architecture very briefly, because they were described together with resident, but they are not being used very much.
+So one is connected with a residual, yes?
+Yeah, so the question is, you have got this C-part n assignment. So definitely, that's the point to do that, right?
+When you do the implementations, one thing is that I want you to do it yourself in a sense that you cannot just just copy the whole implementation.
+But using the ideas from the lecture or the paper is perfectly fine, and that's actually how it's meant to be done, right?
+So it's fine to use all the information, which I've just told you, we will see more various out, you will see what works.
+So using that is perfectly fine, and the main point is for you to decide which of them to use, and implement some of them, and get some experience in like really converting the lecture into an implementation.
+And from the today's assignment assignments, you will also be able to use the implementations, right?
+So I want you once to try it at least some of them yourself, so that they have an idea, and from the today's practical, not not builds, actually for assignment, then you need to do it manually.
+But from the today's assignment, you will be able to actually use all of these networks, which we talked about, so that you can also see how to use them for something useful.
+Sorry, yeah, I have the moral sense, sorry, the moral sense, yes.
+So two ideas, what we could have done differently, right?
+So in ResNet, when you have this one stage, like you have these residual connections, which go over these blocks, but what you could do is, well in theory, you could also have a residual connection,
+which would not go just directly from the block above, but from the two blocks above.
+Like if they have the same feature space, then having this additional residual connections could also be done.
+So that's what people try to dense net, right, in a sense, that when you have a single stage, then the residual connections will go from all the blocks in that stage.
+Of course, once a new stage begins, you need to start a new, because the feature space is new, but inside the block, you could, like, do like every block takes the input of every previous block.
+So let's just come some kind of a recurrent connections.
+It needs to be done carefully because you have more and more inputs, but what it can be done, and it can generate kind of reasonable results.
+But I won't go through it. I don't want you to know it as the exam as well. It's just that people have tried to do that. It seemed to also work on the other end with all other networks, nobody has really practically used that.
+So it was an ice paper, but it had little influence on the shape of the landscape of the models.
+Another thing which people did is they considered the increasing the number of channels gradually, right, in our architectures, we have some fixed number of channels, and then at the beginning of the next stage we have more.
+What we could do is we could, during the stage, increase the number of channels.
+Because we are generating more and more architectures, and maybe like generating more of them would make sense.
+And this can be done, but you need to do it carefully.
+So generally what you will do is when you do more channels, you will copy the old ones, and then you will create a set of new ones.
+So when you enlarge them, you still need to keep the features space, but in every block you can say, and now you have 20 more features, you can just do whatever you want with them.
+And when you do this, it also kind of works.
+And so like this is gradual increase of channels can make the network to be slightly better when you play with the hyper parameters.
+But again, it's just a thought, but mostly people don't do it in practice because it's more difficult to come up with it, and better networks were designed without that in place.
+So it's like it could be done, you know, but more choices which we need to make and we don't want to.
+So this was really just quick. The next idea, I will actually explain it more detail.
+The next one is Resnext, my next presidential letter, and it is still actually being used together with the original rest net, and it is actually a very simple idea.
+So where you have Resnext, what happens is that you have got this three time free convolution which is expensive, right?
+The Resnext is expensive because it considers not just the neighborhood, but also every output channel can be computed from every input channel, right?
+The difficult part in the convolution is that on the channel's front, it's still quadratic, it's like every channel with every channel is connected.
+So the bottleneck block generates small number of channels exactly for this reason, so that the convolution is cheaper, right?
+So when you look at it, what happens is that you have got the original feature space.
+You allow create specific new features, as well as the combination of the original ones, which will be the one who will have the honor of taking part in the free time free convolution.
+So that's what the three-tantic convolution will do.
+It will consider these new features which we have generated, and then the last one-time one convolution maps these improved features because they know something about the surroundings back into the original features space.
+So the thing is 64 times 64 channel, that's still a lot of channels combined together, and probably many of them will not be related to each other.
+So in Resnext they say so, let's do it differently, like, let's generate just this small number of channels maybe for, and then put them into the three-tantic convolution.
+So we can think about, I don't know if we will think about horses, then we'll do, like, for features like the number of people writing the horse, number of hooves, number of horse heads or something.
+And these channels will be combined with each other, but then when we have a new set of features, I don't know for cars, so there will be cars there or formula or boats.
+You don't necessarily need to combine those with horses, right? It should be fine, and the horses are just combined with the reasonably corresponding features.
+So in Resnext what they do is that instead of having, like, this one group of channels where every channel is comparable to the other channel, we will create a large number of independent groups.
+And these three time three convolutions will be performed only inside every of these groups. So we can, in some way, you know that the channel, they don't have a structure.
+So we cannot do the local thing on channels, we cannot say how channels neighbor. So here what they say is that, well, we don't have the structure, so we can create one, right?
+We will just generate some number of four taples of channels, so that the corresponding ones are in the same group. So then the convolution will be able to use this information of all these for features in some neighborhood.
+And then in the end, every of these groups will generate the features in the original feature space and they will be added together.
+So first thing, when you look at this button layer, this actually, the same thing, S, if we had concatenated the output of the time three convolutions.
+And then just run one large convolution, right? Because what happens here in this convolution, we have got one output and it's being computed using using four of these channels here, right?
+And then what we do is we sum it up with the very computed by the second convolution. Here in the second convolution, we compute this very using these four channels.
+So if we instead concatenate these into eight channels and do one convolution, then the single output will be computed by summing the scalar product of the weights with these eight channels, right?
+So we can do them and sum them up or we can concatenate the two single layer later. So that's just the same thing.
+And at the beginning, this, this, me, these many convolutions, this generates portion of each.
+Well, we can just generate one large convolution and then slice the results into four taples, that's also equivalent.
+What people in resonance do is just that the middle convolution, three time three has a new hyperparameter number of groups.
+And the three time three convolution, instead of doing every channel with every channel, it transseveral convolution in parallel, each combining just, in our case, four channels together, four channels together. So it's just the same thing, but the convolution is slightly different thing.
+Right? The, the convolutions now in framers and class and then torch, they, they take this group argument, so we can just say, yeah, and use 32 groups, for example.
+Another way how you can look at it is that this allows us a locality of channels as well.
+They don't have the structure of the channels themselves, but we can create the structure for each of these convolutions in a trainable way, right?
+That will the first layer does. It creates channels such that every four, couple of them should be related to each other.
+So the, the architecture is the same, the only difference is that we can generate blocks which are wider, because this convolution is cheaper, why the convolution is cheaper, right?
+So in this case, when we have got 64 channels, in the reason that we have the complexity of three time three that the kernel size times 64 squared, right?
+Here, when we have got 32 groups, then we still have three time three because that the kernel size.
+And then we have got four for channels in every group, right? And then we need to multiply this by the number of groups.
+So when you look at it, it's like 64 times two, the times eight, yep, hopefully, right? Because it's 16, so it is like eight times cheaper, because we don't need to combine 64 channels each with everyone only for with four, which make it much.
+Much cheaper, and that allows us to make the other convolution wider, actually.
+But the idea was that they generated networks, which have very similar number of parameters and require very similar plots, so very similar number of operations to compute.
+And in this setting, it was actually better than the original result, right? So in using comes structure on the on the channels is actually useful.
+So this is ResNet 50 versus ResNet 50, these are the validation errors of ResNet and ResNet.
+And this is the deeper one with 102 channels. And again, just changing this one convolutions lightly improves the results without affecting time or space.
+They also do some experiments, right? So everybody likes experiments. So think about ResNet 50.
+In the ResNet, we could decide what is the number of channels groups, which we'll have and how many channels they'll get.
+And the thing is creating more and more channels helps even to the level just that having 32 groups with four channels each is better than having 16, eight, four or something.
+Actually, like generating a fine structure on the channels seems to be the best and the same way for the one and one layer.
+So even just for channels in every group seems to be better than any large number of them.
+And then they do the evaluation also on ImageNet.
+Well, they also show here is how about with a deeper or wider increase. So let's consider that we have got ResNet 101.
+And we would like to create a model which is allowed to do twice as much compute.
+We could either make it deeper, do it in the players instead of 100, or we could make it wider more channels in the conclusion.
+Both of those help, right? So both the deeper and the wider model helps, but actually making the model wider gives us the better improvement.
+Which just means that the ResNet 101 is too deep for how wide it is, actually, right?
+And they do similar improvements measured on ResNet and they show that actually during more groups is better than smaller number of groups, which would be wider, which is consistent with the level.
+So that's an interesting idea with a survive because it's so similar to the original ResNet that it's very simple to update your code, but it's consistent with it.
+So these were the architectures. Now let's do something different. Let's talk about regularization, right?
+So how we could regularize our networks, well, we already have virtualization, we know that the label smoothing helps and we have used dropout to some level, at least in the wide net.
+Well, actually mostly of these regularizations will be connected to dropout somehow. So the first method, it's called network with stochastic depth.
+Usually the stochastic depth is the name which used for regularization even it's a very bad name. And what does this does is, well, that's something we'll be already talked about, right?
+We know that when we have the feature space, it is the same inside the residual blocks, I should go even more to the beginning, okay? So I thought I had the image drawn somewhere, but I just to be there.
+Yep, so this one, right? So what we will do is we will consider a very specific dropout and the dropout will be dropping the whole block.
+Right? So our dropout will generate just a single mask, 0 or 1, for the every position, every channel and also every batch example, right?
+So either we just completely skip a block or we just keep it there. And that's the whole idea in the networks with stochastic depth.
+The one interesting thing though is that they say, okay, at the beginning, when the network is doing some low level features, then maybe these processing is like more important, in a sense that when you think about the feature space at the beginning things change, change more than at the end, at the end they are very abstract features which are better and better and better.
+But at the beginning, they are more crucial. So instead of having a fixed rate, everyone in the network, what they do is then say, okay, on the input, we don't drop it all, so the key probability is 1.
+And then at the last layer, the key probability will be something, let's say 50% and then we will have a linear decrease in the survival probability or increase.
+So the first layer gets a very small dropout rate, why the last layer will get whatever 1 usually 50%.
+Of course, as in the dropout, when we drop the block, the activations are smaller, whether they are missing the ones from the block, right?
+So we need to either scale down during the inference or most commonly done, we scale up the block if it survives.
+So looking at the results, what can we see here is that the red line is the non-dropping version.
+So the full line solid line that shows the stochastic depth where we use the linear decay in a sense that we really decrease the probabilities during the network or inside the network.
+And you can see that the performance improves or wide range of dropping the layers and the network is not very sensitive to this hyper parameter and 0.5 seems to do very well.
+This speed up, why it is there? Well, when you decide to drop a block, you don't need to compute it at all, right? We drop it from the whole batch.
+So if you do it, you just say, okay, let's skip this block now, it's dropped, so the network will actually even pass it.
+Without the linear decay, if we have a uniform probability everywhere, it also works kind of fine, that's the dashed line.
+But the resulting peak probability is much larger, right? Because here's a 0.5 means that on average it is actually 0.75, right? So that's why 0.4, 0.8 works reasonably here.
+Now the result is very similar, but it's more aggressive to set this hyper parameter, so people usually go for the linear decay because then the effect of the peak probability is not very large.
+And here you can see like a visualization of the results where here is the depth of the layer and here is the probability which you want to use.
+So what it means is that for networks which are not very deep, you want to have you want to keep many layers, but the deeper and the deeper the network is the larger the best probability.
+It kind of makes sense, like with here for a lot of layers, you can either like each layer probably just like the less on average so you can survive a more of them being removed.
+And also with a smaller number of layers, you are also but link underneath it and again this characteristic depth goes against that. So with the deeper network, you are also thinking more, so aggressively throwing things more seems to be a good idea.
+So the question is why don't we run the blocks in station parallel, we think is we cannot, right?
+Because the residual connections make the computations sequential, not even the residual blocks like even the direct connections.
+So we cannot run this block until this block finishes.
+Yes.
+So what you could do something like that, but the thing is that this is not deep in a sense that this is still a single layer, so from the point of the receptive field.
+The connections cannot see, like you need to stack these three times the convolution so that they can actually consider larger neighborhoods.
+If you have them in parallel, then it doesn't happen, right?
+Because if you have three times the convolution on all of them, then in this result, every pixel is only influenced by the three times the neighborhood.
+Well, if you stack it sequentially, then every pixel is like dependent on a large and large neighborhood where each of these blocks add one more more boundary around that.
+And although when you do this, you could actually imagine this being exactly one white block together.
+So, yeah, you still need some kind of a depth and then that forces the sequentially.
+So that was one thing, it's a fantastic depth.
+Now let's drop out again, but let's drop on the input side.
+So cut out is actually augmenting, you could think about it as a data set augmentation.
+What we will do is we will be dropping things, but one of the problematic things about drop out and colvolutions is that the locality of the values makes the drop out less efficient.
+Like if you have an image and if you imagine that you will drop every pixel uniformly randomly, then what you will get is the image with a white noise.
+But if you do that, you will probably still understand what is there in the image, right, in the same way, as in the, as in the, what I want to say, as in the deep prior, right there we had there we had an image like here, right.
+So here 50% of the pixels were randomly corrupted, but you can still generally see what's happening because even if one pixel is missing, the neighborhood can actually help you, right.
+So if you just do drop out, then the fact that the convolutions can use the local information will make it less efficient.
+So if you want to do drop out, maybe we should somehow use this fact, and so in cut out what they do is they drop things on the input, but not just single pixels, but whole neighborhoods, right.
+So they do is they see for 10, they take see for 10, and they just place gray squares on the input images with the size of 16 times 60.
+Because we are dropping, we also need to think about the, the, the magnitudes of the values. So what they do is when they drop, they don't replace the values with zero, but they replace it with the mean value of the pixel.
+So at least the mean isn't affected even if variance is. Well, it sounds really scientific when I say the mean really, but it's just a great one, right, because the great color is the mean of everything.
+And, and this works surprisingly well, right, you can think about it as a drop out just on the input layer, but including the neighborhoods.
+So if you consider C for 10, by no means connected to the competition page, is running S.
+Well, the idea is that every time when you process an image during thank you, generating new new positions, you don't reuse all ones if this is what you are asking.
+Well, you could keep also the original image, but the problem is that the network will start over fitting on them.
+So the idea is for like never to repeat any data. So if you kept the original one in every epoch, then it would.
+Yes, yes, exactly. For every epoch, we generate new position of the square for every, every painting image without that if you just generated them once, and they trade, then train for several epochs,
+it would be no better than the original, it would be worse because it would lose some some information in some of the images. Now this can still be no easy that some images cannot be classified with this large portion missing, but in other epochs they will.
+So even if there is some noise generated by that, that's what the most regularizations do, they generate some kind of a noise which prevents us to do the over fitting thing.
+Yeah, so definitely the large amount of the amount of the size of the square is an important hyperparameter, so they actually even measure it here in this craft.
+Right, so here what we have is the side of the square we are cutting out. So when it's very small, then the effect is none because it just doesn't cover anything. When it's even for a very large square 24 times 24, still the performance is actually better than not dropping out even, but if we continue, then one one would see probably some kind of a decrease.
+And for CFR 100, that's much more fine grain classification, the optimum is actually a smaller square probably because it's more difficult to do the classification, so you don't like if you can, if you just need to say horse, it's fine if just just one of the leg is going out of a gray square or something, but if you have got five different kind of dogs or horses or something, you need to see more of it than just a stout or something.
+So that's, it's my interpretation of why this is small. So yes, it depends on the data set on how large it is, but doing that, like with with resident or or widened, or even if we are doing some augmentations or ready, this plus means we are doing the shifts and the translations, then just adding cut out to whatever you have seems to work very, very well.
+Yeah, so the question is whether we shouldn't do cut out also on or deeper layers, so the answer is yes, in a sense that when we do drop out in case of data with spatial structure, the good idea is actually to drop whole neighborhoods, right?
+So what people did is they called it a drop block, right? So people came up like this idea, like we don't want to cut out it works well, so let's, let's do a drop out, which will not just do random pixels, but it will do whole neighborhoods, whole regions, right? So that's why it's called drop block.
+Also, when you think about stochastic depth, it's like the ultimate drop out of the whole neighborhood, like the whole image just disappeared. People also did drop out on the whole channels.
+That's another thing what you could do, you could say, okay, this one feature, I will just drop it from all the pixels, right?
+But the drop block seems to be the, like reasonable combination of everything, right? So the algorithm does is that during training, you generate the centers of the regions, and then you drop the whole regions around that.
+Now if you remember, we need to make sure that we do, because I've said it many times now, we need to make sure that the volumes of the data after dropping this reason.
+Normally what we do is after dropping, we scale the remaining values so that on average the volume is unaffected.
+And here they do it as well, but computing the average number of pixels or values which will be dropped is more difficult here, because there are some overlaps between these regions.
+So what they do is what they actually compute the number of values which were not dropped, right?
+And then divide by the multi-ply by the whole number of values. So they really scale up the values proportionally to how many you drop.
+Drop out just as well, but on average.
+On average, you should have dropped how, so I'm multiplying by two.
+And that's an unbiased estimate, so it's probably fine. Here it would be difficult to compute or it would be some work to do the unbiased estimate, because you do the probabilities of just the centers.
+So they just do it, just multiply by the surviving ones and then divide by the surviving ones and multiply by all of them.
+That's one way you can do.
+And they do this on all the channels at the same time. So they try to, they try to average and separately it was working as well, but masking all channels seem to work best.
+That's consistent with the information about the neighborhoods, right? Like, if you decide to drop information about the neighborhood, if you just drop a single channel, the value can leak to the other ones, right?
+But dropping the three-dimensional, like, I don't know hyper, cube or whatever, really removes complete information from some specific neighborhood, which seems to be like the ultimate generalization of drop out for convolutions.
+So they do some experiments, well, everybody, like experiments in the papers and also the graph with colors, right? So here they compare with the usual drop out, which drops out in internal layers, but just independently for every pixel, so it helps, but you can see that not not very much.
+Then they do the spatial drop out. The spatial drop out is the one which drops the whole channels. And this, this blue one is what they do.
+Drop block, where they consider a pre-laderist three-dimensional rectangles, which they set to zero.
+By the way, they also took the hint from the stochastic depth idea, and that's the user in their schedule of the probabilities, so they drop little at the beginning more at the end.
+So with this schedule, the result is better without the schedule, this is the best result. Still, still better than everything else, but it's slightly better to include the information about that.
+So we usually do the drop out constantly everywhere, which just shows that there are some situations where if you would be more careful than dropping more somewhere and less summer would be beneficial.
+But usually, it's not done very much. For the contribution, it's fair that you can do it in this linear decay, but if you are doing a new architecture, then usually you just drop by everywhere with the same strain because it's difficult to come up with a good schedule.
+So they also compare with many augmentation techniques. So when you have usual resonance, so the drop out helps slightly, that's what we have seen, right?
+Special drop out helps even more, but doing drop block is great. By the way, the cutout didn't help them that much.
+It's not like it doesn't hurt at all. They probably didn't have reasonable hyperparameters to do that on the image, and it has taken people some time to do it correctly, like how large the square should actually be. So we will see some better results later.
+They also tried auto-agman, which is a large battery of augmentation operations, and they also compare with levels.
+Levels moving, levels moving is surprisingly good for how little it effort it takes to implement it.
+And the good thing is that it's kind of different or like orthogonal slightly to the dropping, so combining it together with whatever drop out like technique, which you won't seems to be a great idea.
+Now we have seen the best dropping kind of approach, and we will also think about what is the best we can do on the inputs, what we can do with the images, right?
+So when you have an image, we have seen a cutout while here they cut out to black, but whatever, and I already mentioned mix up on the first lecture, or second third, sorry.
+So what's mixed up is a way of generating an input from two images, right? So here they have an image of a cut and the drop, and they combine it 50, so half transparency goes from one image and the other one.
+So it's like, I don't know, very weird, genetic combination of those two creatures, and they also do this on the on the label side, right?
+So they want the network to say 50% dog and 50% cat.
+It actually improves performance in detection classification the image, but it makes the like the recognizing location or even determining which objects are there versus we haven't discussed the locations or the object.
+Detection we will do it on the next lecture is just an information like it helps with the classification, but the image is very difficult to understand, right?
+Cutout helps again slightly, but the ultimate combination seem to be cut mix, so what a cut mix is cut mix is a combination of a cutout and mix up, right?
+So what we will do is we will find a random part of the image, but instead of keeping in black we will just copy a portion of a different image into that place, right?
+So this is a combination where dog is 60% and get a 40% but instead of blending them on top of each other we just generate different regions for each of them, and this kind of augmentation seems to help across all battery of tasks which we can think about.
+So how to do this technically? Well, we first sample the area size of the region which we will copy, right? So it's like from 0% to 100% uniformly.
+We center the bonding box center, so randomly whenever, and then what we do is we cut out the image which keeps the width and high ratio of the original of the original image, so they don't experiment with different shapes.
+It's always the shape of the original image, so with these square roots of lambda, that means that when you compute the area, it will be really lambda times the size of the original image.
+And we also combine the labels, of course, with the flavor ratio, right? So it will no longer be sparse, categorical constraint probability, categorical constraint.
+So when we do this, then they do comparisons with cut out, and they were able to make it work better than the guys from drug block paper.
+So it helps, stochastic that helps, mix up helps, drop block helps the most out of these dropping things, but the cut mix just by itself is actually better than all of them.
+You are implementing it, you of course want to do all of it, right? So you want to do cut mix on the inputs, you want to do some kind of dropings in the inside.
+Many of the papers still use chasvestochastic depth instead of the drop block, but what you will see is a lot of drop blocks.
+You want to do the labels moving because that always helps, and they are some kind of, like independent, in a sense, if you put all of them there, they tend to, like, all of them tend to improve the performance of your, of your models.
+So they have a lot of these evaluations. What is interesting is that when you have this mix up, you could think about mix uping not just on the input layer, but also the features.
+What you could do is you could like have two images, go to the third layer or something, and then mixing the features there, and then continue as a single input. You can do it, and it is.
+Well, in the paper, they kind of make it work in this evaluation, it was actually worse for them, so it's not very simple to do it, it's tricky because you need to run the computation and then merge things.
+You could do this also for the for the cut mix, right? You could do it not on the input, but somewhere inside.
+You could run two images there, and then cut the features, the part of the input of one image, and then paste features from the other one.
+That's what they do in this graph, but they cannot make it work in a sense that the later you do it in the network, the verse are the results.
+The best thing where Dukeet makes is actually just at the beginning, which is fortunate because that's so easy to do, right?
+When you implement this, what you do is you generate a batch, and then you do it inside the batch.
+So every example in the batch, randomly choose this and other friend already in the batch, right?
+You don't do it like beforehand and pair images together or something, you just do it for whatever batch you are processing.
+You don't need to do the augmentations on a batch level, instead of on the image level, but not on the dataset level.
+Yes?
+So the question is, what we could combine more than two images, we could.
+We haven't seen the experiments, so I don't know if it would help or not.
+I think that somebody tried to do that because it seems like an idea which people could come up with, but I haven't seen it results.
+My intuition says, I don't know.
+Okay, so I think now is a good time to have a break, and we will continue after the break by describing a very efficient architecture called efficient net.
+So you can look forward to it, so let's continue in five minutes.
+So I think we can get to it, so now let's describe the best architecture so far for classifying images into classes.
+We will need to basic building blocks before we will be able to describe it, so let's start by describing the squeeze and excitation block.
+The squeeze and excitation block was proposed in squeeze and excitation network, which was the winner of our competition which we have used so far.
+So in that large scale visual recognition challenge, this is one of the last years of the competition, and so what did the people propose, they came up with a new layer or block, which is called squeeze and excitation,
+which can be added to most neural networks, so they edited it to an inception module, they were able to edit to a residual network module.
+So it's just like another building block which seems to give something which for example, resonate couldn't do.
+So what this block does is that it allows us to use some kind of a global information even during the intermediate stages of the processing.
+Normally, convolutions are always local, so it means it's difficult to say for example, which channels are relevant to the whole image.
+You know how they are relevant to small neighborhoods, but not from the global kind of you.
+And so the people say, okay, maybe that could help, right? So let us allow to transform the channels so that it could depend on whatever happened in the whole image.
+Of course, saying whole image, it's easy to say and difficult to do. So what they do is, well, kind of simple at the first, like during the first time you'll hear.
+So what they do is first they combine the information from anywhere in the image and they do it by just computing the average value of every channel, right?
+So if you have one channel, what you will do is you will just average it across the whole image.
+So this allows to give you an information about how single features, single channel actually appears throughout the whole image, not just small neighborhoods.
+So I will draw it from pop instead, right? So here I go to hide with a number of channels.
+So after this average pooling, I'll get a vector of length c, right? So you can think about it as one one c or just c.
+Now our goal will be to come up with weights, which we will use to scale the channels in the input image, right?
+What we will do is we will generate weights for every channel and and that they will say, okay, keep these channels they are fine and maybe this channel doesn't seem interesting for for this specific image as a whole, so let's just scale down.
+These weights will be the result of a sigmoid activation, so they will actually be probabilities, right? So some channels will go through, some channels might be scaled down even to zero if then it will decide to do.
+So how to do that? Well we have a vector of length c and we would like to compute this mask, so we could just say, okay, so let's have a single fully connected layer.
+All right, we have a sigmoid activation that would work, but it would be expensive.
+In a sense that it would use squared parameters and later in the network this c is easily hundreds or even a thousand, so each of these blocks would be too expensive.
+So how we can make the computation cheaper, well, we will just add another layer, right, that always makes cheaper, right?
+I'm kidding, but the thing is we will add another layer in the middle, but the very narrow one, right? So we will do, we will do some non-linear activation on it, for example, hello.
+Again, when you look at it from the point of universal approximation, right, then this in theory could do everything, it would be wide enough.
+Well, we have done the opposite and making it narrow, so it cannot do everything, but like it could, like it's like a generality, if you just limit it in the space of what what it can do.
+But the good thing is that it could be smaller, so in the paper they consider using the one over 16 ratio, right, with a middle layer would be 16 times smaller.
+So how many parameters does it have? Well, c times c divided by 16 for the top layer c times c divided 16 for the bottom layer, so all together it will be c square divided by eight.
+So we only take one eight of the parameters we only need one eight of the computation compared to a single fully connected layer, and empirically it is enough to make the results better, right?
+So when they edit, they edit right after the residual block before the residual connection is added, right?
+So we do the new, new features are computed from the residual block and then we will apply.
+So this is the block which can be put into many architecture and it seems it does something slightly different to what convolution do, right, just the kind of global information, not not available there.
+So we can see that it does global cooling, fully connected, relevant, fully connected, signal it exactly would be described.
+So that's the squeeze and excitation.
+And the last thing we will describe before we will see the architecture is a better, better block, right?
+We have seen how we did either two three time three convolutions.
+But we know that in ResNet we have this bottleneck kind of block.
+So now we will describe another take and the overall block as a large name, it's called a mobile inverted bottleneck convolution.
+It's usually denoted as a beacon.
+And there is some kind of history how people arise edit, but I will instead show you like my idea why this block makes sense, right?
+So what we know is we have this distinction space, which has some number of channels.
+Now we want to a block and we would like this block to like be like do a lot in a sense that in wide net we made it wider, right?
+But we did it in a sense that we also made it the residual connection wider.
+So here what we will do is we want to generate the best possibility of 1506 features.
+And we will do it by considering a two convolutions, right? Let's say I don't know, three time three convolutions.
+And this one it could generate a large number of channels, maybe four times as large or some non-tavial factor.
+Then we will do a non-linear operation, for example, hello, and then let's say that we will do another three again with 256 channels.
+So one thing is this this fellow, which would straight forward thing to be there, we will not edit there.
+And the thing is, well, we this should generate features, both positive and negative, which we want to add to our feature space.
+But the relevant would throw half of that away.
+So one thing is that we would only have computed half of the values we'll have on average, right?
+And we would never be able to decrease the feature actually, right?
+And the thing is that the relevant we needed non-linearities, because we needed our models to like be generic or be able to approximate everything.
+But we actually need them only on the hidden layers.
+So if you think about this as a small network, which should generate 256 regressions like that many real numbers, then the right activation function is actually identity, right?
+We shouldn't do a rello on it, because we want to generate both positive and negative numbers.
+It's just this rello in the middle, which is important, which makes this block as a whole to be universal as strong.
+And it also makes sense to make it wider, because the wider it will be, the stronger it will be in a sense that, you know, the approximation theorem that if this would be like arbitrarily wide, it would be arbitrarily strong.
+And this way, it means that we could like scale as in the wide net, but we don't necessarily need to do it on the residual connection.
+It's actually fine to just make it wider and then back to the original width later.
+So that's what they mean when you say, so the inverted bottleneck means that we are actually making things wider in the middle.
+And the residual connection is connecting the places which are the narrowest.
+So that's one thing what happens, like we organize things in this way.
+And the other way is we will make the convolution cheaper, right?
+So when we want to do a three time three convolution, then a three time three convolution actually does two things at the same time, right?
+It internally combines every channel with every channel.
+And all of all, every position looks in the whole neighborhood.
+If you look at the complexity of a single operation or for a single position, sorry, then we will do three times three because the neighborhood times C times C.
+Computation because every output channel is combined with every input channel in every neighborhood.
+So how to make this cheaper?
+Well, what we will do is instead of one convolution, we will make two conclusions.
+One will deal with the neighborhood.
+And the other will deal with the channels.
+But we will do it separately, right?
+This both consider the neighborhood and channels at the same time.
+So let's do it independently.
+So first, let's do a three time three convolution, but independently for every channel.
+That's, I have it also in the slides, I'm just trying to break myself a bit.
+So this is called a depth-wise separable convolution because it's separately separately on every channel.
+One thing, how you can look at it is that it's a resonance where every group is of size one, right?
+Every channel just considers itself not anything else.
+The good thing about it is that it is cheaper in a sense that this computation is three times three times C and we are not including this another time C,
+because for each channel we just look at the neighborhood.
+Then we will also combine the channels with each other, but we can do it using the usual one time one convolution.
+In this context, this is sometimes called a point-wise convolution because for every point, every region is done independently.
+But that's nothing new that's really something what we have already seen.
+And so this convolution that has the complexity of one time, one time C times C, but all together, right?
+This is usually something like eight times S, cheap as this part, right?
+Because this is nine times C squared, and now this is one time C squared, and this is something usually there is small because number of channels is usually hundreds, right?
+This is like hundreds times cheaper than this one usually.
+Of course, such a separable convolution, that's how it's called separable convolution, is not as strong as the regular one because regular one just can do more in a single step.
+But if we have a lot of them stuck together and empirically, it seems it's fine.
+Like if you have 30 layers of present or something, then even if the convolution is separable, the performance seems to be very, very good.
+But the runtime performance and the size of the parameters is much better, right?
+Roughly eight times faster and time smaller wasn't too like.
+So to show this visually, the separable convolution itself, right?
+It's the depth-pice separable convolution acting on each channel independently, batch norm, rello, and then this convolution, batch norm.
+And no rello here, right?
+Because we want to use this as a feature, which we'll add over some residual connections like them.
+So in this case, this is just one critical convolution, like computed in a separate way.
+But when we want to do the inverted bottleneck, then we need to generate the large number of channels in the first place, right?
+So we start by doing one time one convolution, which numerally, but with wider channels, large number of channels, that's the inversion.
+Then we have this depth-pice separable convolution, so you can think about it as resonance on steroids, right?
+With each group being independently on all the other channels.
+And then we do another convolution to generate the features in the original feature space,
+or a convolution and no rello.
+So in some sense, this is not very different from the original resonant, right?
+The only difference is that the rello is not even here, right?
+And we have large number of channels here instead of smaller, and we have the groups here.
+If we want the squeeze and excitation, it's usually applied here, so not after transforming the features back to the original feature space,
+but we do it in this place of this newly generated original features.
+So we will now take everything and put it together into efficient net.
+The efficient net was proposed in 2011, and it improved the performance of all the existing methods at the time.
+So how does efficient net looks like?
+Well, one thing is that this architecture was generated automatically using another neural network, right?
+Now we don't have enough knowledge to describe how it is done, but don't worry on the 11th lecture or something.
+We will go through the whole process, so we will actually be able to implement it yourself and generate this table for yourself.
+The way how it was created is that some model generated something like 20,000 of these combinations,
+which was trained on CFR 10, looked at whether it worked nicely or not, and then tried to get some information from it and then generate the better table.
+The next time, and the idea was to optimize both the accuracy and the computation complexity, so we also want a small model of just a good one, right?
+So the result, how it looks like, it starts with a free time free convolution, which generates 32 channels.
+So that was prescribed, that would be there.
+And then the network could have selected these one, two, three, four, five, six, seven layers.
+For each layer, it could have chosen the usual convolution or the mobile inverted convolution or the separate convolution with different widening factors and different kernel sizes.
+And with or without the squeeze and excitation block.
+So generally, the algorithm has chosen just the mobile inverted convolution, so they are much smaller, and if you need to optimize them, then why not?
+Actually, it likes this widening factor to be large, so this six means that there is six more channels after this first one time one convolution.
+The kernel sizes actually go up and down, sometimes somehow without any better.
+So our rule only three times the convolution is actually actually doesn't hold here.
+What's most interesting is the work with the channels, because normally we would say, so whenever we do pooling, we will increase the number of channels by two times.
+And here you can see that that's not what's happening, so even the crease number of channels at the beginning, and then they do increase them, sometimes even by a factor of two, but usually by a smaller factor.
+And only at the end, they generate a large number of channels before doing the large, the final average pooling.
+So at the end, we will take this seven times seven times one thousand two hundred eighty, and do the average pooling.
+So the resulting vector will be of a fixed size of one thousand two hundred eighty.
+And this they call the efficient and be zero sort of baseline network.
+It's trained in a kind of usual way, so they, well, they say that use RMS crop with momentum, but if you think about it RMS crop with momentum, we'll track the first and second moment.
+Well, they're just aging without the bias correction.
+So it is, but but with different type of parameters, then what they use, it uses way decay, so we would need to go for it in W, the decay is exponentially decreased.
+By a small factor, every two point four epochs, I don't know where how they came up with these numbers.
+It uses a triple trade on the last layer only, stochastic depth with this linearly decayed probability.
+A lot of data augmentations, which I didn't even even write here.
+And they use a different activation function, which we have seen until now, and that's a switch.
+A switch function has also another name and that's silo, because it was also discovered independently by another team, but it got a larger attention from the second paper.
+So people call it swation and the papers of the original function objected like we were the first and we want our name.
+So then it was very named and there is framework.
+For example, the model saved upon it, you know how it is.
+So what does this function do?
+It's an activation function, which is x times sigmoid of x.
+So how does it look like?
+Well far right, the sigmoid is nearly 1, so this is nearly an identity.
+Far left, this sigmoid is 0, so this is nearly 0.
+And so what happens in the middle?
+So for 0, this sigmoid is 1, half, this is 0, so for 0 we will go to 0.
+And then when we go to the left, this sigmoid will be negative, right?
+So what we'll have, sorry, this actual being negative and this sigmoid will be 0.5.
+So what will happen here is that it will be like,
+0, 0, 0, 0, and here on the right side it's like,
+well I don't have the derivative correct, so it's like more like,
+and then the linear part is this above.
+You got an idea.
+So this is a weird activation function.
+Generally it's like real loop, like 0, 1, 1 side, identity on the other.
+But instead of this trick drop, like we're the derivatives R1 and then immediately zero,
+it's like smoothly decreases the derivative,
+but the interesting thing is that there is this non monoponic monoponicity involved.
+But for some reason it seems that practically it works fine, so the thing is,
+even if you get slightly under zero, you still have a gradient,
+which points you higher, but if you get far enough, then then it actually says,
+okay, you are too small, so I don't know, get away or something.
+Now there is very little intuition why these functions should work fine.
+I don't know, it seems to be weird.
+How people came up with it, at least in the swish paper,
+is that the use and pattern you want to come up with interesting activations.
+And then this was one of the one they tried.
+And it tends to work on every slightly better than the value.
+Now the thing is for small models, or for the network with fully connected layers,
+it could still slightly help to do swish instead of the value.
+On the other hand, what the activation does, it somehow makes the training easier a bit,
+but making your model larger makes training easier as well.
+So for the usual models, you don't usually use them or if you use them,
+you will be disappointed, because everybody who is the paper is like,
+I will use swish from now on, and all my models will be better by a person or something.
+Well, the state for virtual and natural life felt this many times after reading many papers,
+where they reported nice improvements.
+But the reality is that it won't happen, and the reason is,
+or just my understanding of why this happens is that it makes training easier,
+though the model can be better for its capacity.
+But if you are free to make your channels two times as large as before,
+then you can achieve very similar effect via a different way.
+So this helps if you are bounded, because you don't have enough power to do a larger model.
+Or if the model is bounded to fit into some specific specific,
+and then it's because you like missing it or budget, right?
+So usually when you are generating a new model, don't think about it,
+because it helps only once you try to squeeze out as much as you can with a fixed kind of budget.
+Of course, when you do a shared GPT model, then you want to do these things.
+So they use, they use gelo, which is very similar to this one in GPT like models, right?
+They even use gaggle, but we will see these applications later.
+But the reason is that you just cannot make the model 20% larger,
+you will need, for Lama to use 6000 GPUs, right?
+So you would need 100, 200 more GPUs, which you cannot afford, so you play these tricks.
+But if you are doing your models, which train either 30 or 35 seconds, then just increasing the capacity,
+can just get you to the very same kind of area.
+Well, anyway, they do it here, and then that was B0, right?
+So the B0 was the smallest model, smallest baseline.
+Then they say, but we also want a large one.
+Like we want larger and larger models, which could be better and better for larger and larger company.
+But the thing is, what to increase, right?
+We have seen that the ResNet increased depth.
+Why that shows that also increasing with is a good idea, and even in the VGG,
+we have seen that increasing the resolution, the size of the input image, also helps.
+You can see more details, but the network needs more resources.
+So which of these directions we should go?
+And they have a very large portion of the paper to show that you want to use all of them, right?
+So what they do is they say, okay, I have got my network.
+And now I would like to generate a network with two times larger budget, so it can compute twice as long.
+And I will try whether increasing with depth or resolution is a good idea.
+And they did a large grid search with hundreds of combinations where they tried increasing with some level depth to some level.
+And then the resolution is given because you want this budget of two times more expensive computation.
+So they tried scaling with by 1% to percent and percent and to the same thing for the depth, right?
+So after these experiments, they came up with a result that the most effective for them was to scale the width,
+the number of channels by 10% depth, the number of layers by 20% and the resolution by 15%.
+So this, because with its quadratic in the complexity, the channels are squared in most computations,
+the depth is linear in the complexity, so that stays there.
+And the resolution is again quadratic in the complexity, and these numbers are giving you two,
+so that will be twice as expensive network.
+And they used these ratios to scale the networks many times.
+So they started with B0 and generated B1, B2, until B7, each network larger and better than the previous one.
+So this is the computation, a comparison where they compare their model with the existing alternative.
+So the efficient B0 is compared with the resident 50 and the dense net.
+And in these groups, they achieve better performance, right?
+So that's how these groups are created.
+And here you can see that, well, compared to resident 50, the efficient net is five times smaller,
+and requires 11 times less computation, right?
+And these holds on all the levels, so compared with the resident 1152,
+they are seven times eight times smaller and 16 times more more efficient,
+while achieving better results, right?
+They also will be resident 100 here.
+Here, there is S-in and squeeze the next station network, right?
+So for all of these models, they are roughly like a magnitude times faster and roughly five times smaller.
+So this is one of the graph which we have seen, right?
+So right now, you know what the resident is, you know what the inception is?
+I just barely mentioned resident, dense net, sorry, there is a resident next, S-in and so all these, you know, right?
+And this is the family of the efficient model.
+Here is the computation and here is accuracy, so top left is the best, right?
+The cheapest best model.
+And here in this graph, this is the size of the model, I'm going to put it as an accuracy.
+So again, top left is the best thing.
+It's dramatically better than everything else, right?
+They improve it to your slater.
+The improvement is not very large, so the efficient model we need to also exist.
+First, this is funny, right?
+Because in the inefficient model, they say, will you just separate our conclusions?
+We will split this three times three conclusions into two parts.
+And then when they looked at the block, right?
+This is the split conclusions and then say,
+maybe let's just glue these things back together, right?
+But different ones.
+So originally, this was the expansion one and this was the depth-wise,
+convolution, but at the beginning, where the number of channels is small,
+then it's actually better to do it in parallel at the same time than in sequence.
+It only holds for the beginning of the network.
+So it's really just an engineering kind of thing, right?
+But they also realized that their scaling idea,
+like when they did it on a small size, it's increasing the resolution by 15% is a good idea.
+But when they did it many times, they generated networks which need it very large images.
+And that made the training difficult.
+The memory environments were very large.
+And the final effect wasn't that large, actually.
+So here they decided to be conservative.
+And even the largest models were limited to 180 times for 180 pages,
+which allowed them to give more to the width and depth.
+And overall, it actually worked better.
+And although during training, they increased regularization strength.
+Because at the beginning, they need the model to start training.
+But then, when it has done something, they actually increased dropout,
+it makes up various augmentations on the import.
+So that seemed also to help.
+And again, they were able to generate slightly better models,
+compared to the efficient and the efficient that is the black part there.
+Not as large, but still some incrementally improvements.
+Again, they have a different table, like then on the other side,
+because they consider new versions.
+They already started with this table as the initial solution,
+right?
+It's just a real adjustment evolution.
+So why are we talking so much about existing models?
+Well, the things, if you actually want to perform any task on some image data.
+I don't know.
+Let's say that you have got your three favorite dogs at home,
+and you would like to be able to recognize them on photos or something.
+One thing is you can create your own data set
+and then train the convolutional network from scratch,
+so it would be enough to do something like,
+I don't know, 10,000 photos of every dog,
+and then you will train it, so it would be done.
+And in a year, you have a classifier, right?
+But the thing is, for images, we actually already have a model,
+which can give us very nice features.
+And that's actually all these image net portraying networks,
+right? Because if you think about such a network,
+what happens in it is that you generate it any image.
+Well, you put an image in the inside.
+And then on the end, it generates a distribution over these 1000 classes.
+And this is computed from the last player, right?
+So there is this output player.
+And this is a fixed vector, so for efficient,
+for example, it's 100, 200, and 80.
+So what you can do is you can just take this part,
+cut away the output activation and then say,
+this is a magical box, I put the image inside,
+and I get a fixed size vector out of it.
+That is such a good vector that a linear transformation
+can recognize from this vector,
+what one of these 1000 possible objects are there in the image.
+So this is some kind of very abstract features,
+which, well, they were able to recognize many different real-world objects
+on it, so they are probably useful.
+And the thing is, things on the images they look sort of the same.
+Of course, not if you are a Mars or if you take all the pictures
+in day and then you do it in night.
+But if it's just just the real images, things are just still very similar.
+So even if you want to recognize your docs instead of the docs
+in the data set, using this fixed size vector
+instead of the input pixels,
+we'll, well, give you the advantage of learning these features
+from one million annotated images.
+Of course, if you generate one million photos of your docs,
+you will get better results, but you will never probably,
+unless you are a really big fan of your docs,
+you will not generate one million images.
+And so this kind of idea is called transfer learning,
+because we have to learn the features on some data set.
+And now we want to transfer the knowledge to some data set of our own.
+So whatever you are doing classification of any images,
+you don't want to start from scratch.
+You won't, if they are photos.
+If they are handling it, it's not obvious how well it will transfer.
+But if they are in the photos, which they are also in the image net,
+it is definitely a good idea to start that.
+You can even pre-compute this image feature just once at the beginning
+if you're training and then just replace the images with thick,
+strings vectors on your input.
+And then you can train right.
+So then your network would be just single layer,
+probably a pride, which would get the features,
+and then just do the classification into how many classes you want.
+Or maybe you could decide to generate one more fully connected layer,
+and then do whatever classification you want.
+And this will surprisingly work very well,
+but if the features transfer, but especially for the photos,
+they transfer very nicely.
+But you can say,
+but still, this feature is generated in the specific data set.
+Maybe doing something more could be useful, right?
+So actually the best performance, which you can get,
+is not just to take the feature extractor network,
+whatever pre-chain on the image net.
+And then just train the final layer.
+But you could also allow yourself to slightly change,
+modify, even the feature extraction network.
+Even the pre-trained network could be maybe trained.
+But it has to be done very carefully.
+And this process of updating the model,
+trained on some different data set.
+It's called fine tuning, right?
+You have just carefully modifying the network
+to do whatever you want it to do.
+So how does it work?
+Well, first, when you start doing the fine tuning,
+the networks like the classifiers or whatever we have added there
+should be already trained, right?
+Because if this, if you generate this randomly,
+and then start training, then the gradients,
+which go through this randomly generated network,
+are random.
+So you will say, yeah, I want these features to be changed
+in some random direction, right?
+So that can be fine if this list layer
+will train quickly.
+So you will not destroy your precious pre-trained model.
+But if it doesn't, you can lose all the knowledge
+which you will, which somebody has given you in the pre-trained model.
+So the idea is at the beginning to start by
+freezing this part, and just fine tuning, sorry,
+just training this classification layer.
+This can usually be done quickly,
+because, well, if you're just a linear layer,
+how many samples you need to train in a transformation
+really, not much.
+And then, once it has been trained to convergence,
+you can continue by actually training the whole network.
+So this training, one important thing is that
+you need to use a smaller randomly than what you would expect.
+The thing is, all knowledge which you gained
+is hidden in the weights of the pre-trained model.
+If you use a very large running clay,
+you can very easily forget all the information.
+You can revert it if you can do such large updates
+during the SGD optimization,
+that you will just forget or revert everything which you had there,
+and then you will not be able to enjoy
+the good features generated for you.
+So reasonable idea,
+is to use the one 10 of the learning clay
+and what use was used to train the model.
+And especially for the images,
+or one 10 of the usual learning clay.
+So going for one E minus four,
+one 10 times to less than usual,
+is like a reasonable default.
+Of course, the specific size depends on many things on the pre-trained model.
+But for the visual tasks,
+starting with this is a good way to do.
+You also have to be careful about things like
+batch normalization and drop out and everything like that.
+Specifically, the batch normalization is kind of tricky,
+and there are two things tricky about it.
+First is, you need large enough batches
+for batch normalization to work well.
+If, for some reason,
+you can do the fine tuning just on for images at the same time,
+like a very small batch size.
+Then the batch normalization will be so noisy
+that you won't be able to train anything at all.
+And the other thing is that,
+in the batch normalization, if you remember,
+you are computing the mean and the standard deviation from the batch.
+And then you keep a track of the mean and the standard deviation,
+which you use during inference, right?
+For the, you compute the values in the last hundreds of steps
+and then use that for inference.
+So specifically, during fine tuning,
+during the pre-training phase,
+so during the phase where the network is frozen,
+then it's common for the batch normalization to be disabled
+in a sense that it should run in the inference regime,
+using the original or the HTML.
+It's because then even small batches are fine.
+But then, once you start doing the full fine tuning
+so now the whole model is being trained,
+this batch normalization will activate.
+And what will happen is that they will probably
+generate different normalizations inside
+because usually the data will not be exactly
+the data in the original data set,
+but probably with some different distributions.
+So this means that the statistics in the batch normalizations
+will be kind of different.
+It's fine, it will survive.
+But what it means is that these running estimates which you had
+will be very off after the first 100 of updates
+or something or 50 updates.
+They will be really very bad.
+So if you run inference at the time,
+it will look terrible.
+So during training, you can do training.
+And here, I had this frozen pre-trained model.
+And now, so this is a training for us, right?
+So now, what will happen when you start training everything.
+It might go slightly down because now the things
+are a computer, it will be a normalization.
+Things are kind of weird.
+But then, hopefully, it should play a good job.
+And then, this should allow you to get to arbitrary
+height to 1,000%.
+And then, when you look at the validation,
+what will happen is that it will be something.
+And then, it will be terrible.
+But then, hopefully, it will be a job.
+And so, these terrible parts can easily be the result
+of the virtualizations changing internally very fast.
+And you are using just the estimates which still contain
+a lot of history from the face before you started
+the full fine tuning.
+So don't worry at these phases.
+If it looks weird on the validation set,
+it can improve.
+Of course, if it does not, then something is wrong.
+But it is not unusual to see those.
+So the question is whether it would make sense
+to use different learning traits, right?
+Or the newly added part and then another for this.
+So the thing is, people sometimes do it.
+But I wouldn't say there is a consensus in the community
+to decide what's wrong or not.
+One thing that you can look at it is that I educated
+for training these two conversions.
+And then, training as a whole.
+And then, when I training as a whole, I use a single or fixed learning
+trait.
+But if you don't want to do this two phase kind of thing,
+you just want to do one fine tuning.
+Then, using a larger learning trait for newly added part
+compared to the existing part,
+can mitigate the problem where the gradients
+coming through this newly added layer are
+off at the beginning, right?
+Because they will quickly catch up with a larger learning trait.
+So it can be thought of as a prevention of these kind of problems.
+So personally, I usually train these two conversions
+because that usually faster quick to do
+because this part doesn't need to be back propagated.
+So in practice it can be three times faster
+with running with the initial parts frozen.
+And then I use the fixed learning trait for all these layers.
+I think it's more common in the papers,
+not to have these separate learning traits,
+but you can find the papers where people do it.
+So, no definite answer here.
+My practical experience is either train first
+the newly added layer and if you don't,
+then having different learning traits might be useful.
+It might be somehow technical to specify
+different learning traits for different parameters.
+Easier and vital, sure it's slightly more involved
+in the other frameworks,
+but personally for myself,
+I don't do it because I go around it
+with the different training regime.
+So, I think it's time that we end it.
+So, thank you very much for your attention.
+And I'm looking forward to seeing you on the practical
+where we will be doing the fine tuning
+of the networks, specifically efficient nets too.
+Thank you very much and see you tomorrow.
